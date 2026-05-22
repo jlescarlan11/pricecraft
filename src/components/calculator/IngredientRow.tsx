@@ -11,6 +11,8 @@ import {
 } from '../../utils/calculations';
 import { triggerHapticFeedback } from '../../utils/haptics';
 import type { Ingredient } from '../../types/calculator';
+import { CatalogPicker } from '../catalog';
+import type { CatalogIngredient } from '../../types';
 
 interface IngredientRowProps {
   ingredient: Ingredient;
@@ -28,6 +30,7 @@ interface IngredientRowProps {
   };
   isOnlyRow: boolean;
   autoFocus?: boolean;
+  catalogItems?: CatalogIngredient[];
 }
 
 export const IngredientRow: React.FC<IngredientRowProps> = ({
@@ -38,10 +41,40 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
   errors,
   isOnlyRow,
   autoFocus = false,
+  catalogItems = [],
 }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const nameInputRef = useRef<HTMLInputElement>(null);
+  const isCatalogLinked = !!ingredient.catalogIngredientId;
+
+  const handleLinkCatalog = (item: CatalogIngredient) => {
+    onUpdate(ingredient.id, 'catalogIngredientId', item.id);
+    if (!ingredient.name?.trim()) {
+      onUpdate(ingredient.id, 'name', item.name);
+    }
+    onUpdate(ingredient.id, 'measurementMode', 'advanced');
+    onUpdate(ingredient.id, 'purchaseQuantity', item.purchaseQuantity);
+    onUpdate(ingredient.id, 'purchaseUnit', item.purchaseUnit);
+    onUpdate(ingredient.id, 'purchaseCost', item.purchaseCost);
+    const recipeQty = Number(ingredient.recipeQuantity || item.purchaseQuantity);
+    const recipeUnit = ingredient.recipeUnit || item.purchaseUnit;
+    onUpdate(ingredient.id, 'recipeQuantity', recipeQty);
+    onUpdate(ingredient.id, 'recipeUnit', recipeUnit);
+    const cost = calculateIngredientCostFromPurchase(
+      item.purchaseQuantity,
+      item.purchaseUnit,
+      item.purchaseCost,
+      recipeQty,
+      recipeUnit
+    );
+    onUpdate(ingredient.id, 'cost', cost || 0);
+    onUpdate(ingredient.id, 'amount', recipeQty);
+  };
+
+  const handleUnlinkCatalog = () => {
+    onUpdate(ingredient.id, 'catalogIngredientId', '');
+  };
 
   useEffect(() => {
     if (autoFocus && nameInputRef.current) {
@@ -173,6 +206,14 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
             required
             className="flex-1"
           />
+          <div className="pb-1">
+            <CatalogPicker
+              items={catalogItems}
+              selectedId={ingredient.catalogIngredientId}
+              onSelect={handleLinkCatalog}
+              onClear={handleUnlinkCatalog}
+            />
+          </div>
         </div>
 
         {/* Delete Button (Desktop Position) */}
@@ -211,9 +252,10 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
                       label="Quantity"
                       hideLabel
                       error={errors?.purchaseQuantity}
+                      disabled={isCatalogLinked}
                   />
               </div>
-              
+
               <div className="col-span-1 md:col-span-3">
                     <Select
                       label="Unit"
@@ -223,9 +265,10 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
                       onChange={(e) => handleChange('purchaseUnit', e.target.value)}
                       placeholder="Unit"
                       className="text-sm"
+                      disabled={isCatalogLinked}
                   />
               </div>
-              
+
               <div className="col-span-2 md:col-span-4 md:pl-xs">
                     <Input
                       type="number"
@@ -239,6 +282,7 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
                       label="Cost"
                       hideLabel
                       error={errors?.purchaseCost}
+                      disabled={isCatalogLinked}
                   />
               </div>
             </div>

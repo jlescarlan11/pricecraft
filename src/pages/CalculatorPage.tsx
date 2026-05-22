@@ -1,11 +1,15 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { Package } from 'lucide-react';
 import { CalculatorForm } from '../components/calculator';
 import { ResultsDisplay, StickySummary } from '../components/results';
 import { PresetsList } from '../components/presets';
 import { Modal, useToast } from '../components/shared';
+import { DriftBanner } from '../components/drift';
 import { COOKIE_SAMPLE } from '../constants';
 import { useCalculatorState } from '../hooks';
+import { useCatalog } from '../hooks/use-catalog';
+import { usePresets } from '../hooks/use-presets';
+import { computeDriftFromPresets } from '../services/driftService';
 import { triggerHapticFeedback } from '../utils/haptics';
 import type { Preset } from '../types';
 
@@ -38,8 +42,23 @@ export const CalculatorPage: React.FC = () => {
 
   const [isPresetsModalOpen, setIsPresetsModalOpen] = useState(false);
   const [showStickySummary, setShowStickySummary] = useState(false);
+  const [driftDismissed, setDriftDismissed] = useState(false);
   const formRef = useRef<HTMLDivElement>(null);
   const resultsRef = useRef<HTMLDivElement>(null);
+
+  const { items: catalog } = useCatalog();
+  const { presets } = usePresets();
+  const driftEntries = useMemo(
+    () => computeDriftFromPresets(catalog, presets),
+    [catalog, presets]
+  );
+  const affectedPresetCount = useMemo(() => {
+    const ids = new Set<string>();
+    driftEntries.forEach((e) =>
+      e.affectedPresets.forEach((p) => ids.add(p.presetId))
+    );
+    return ids.size;
+  }, [driftEntries]);
 
   const showResults = !!results;
 
@@ -136,6 +155,14 @@ export const CalculatorPage: React.FC = () => {
   return (
     <>
       <div className="animate-in fade-in duration-700 relative">
+        {!driftDismissed && affectedPresetCount > 0 && (
+          <div className="mb-md">
+            <DriftBanner
+              affectedCount={affectedPresetCount}
+              onDismiss={() => setDriftDismissed(true)}
+            />
+          </div>
+        )}
         {/* Intro Section (only when no results and form is empty) */}
         {!showResults && (
           <div className="space-y-lg mb-lg md:mb-2xl">
@@ -192,6 +219,7 @@ export const CalculatorPage: React.FC = () => {
             onRemoveVariantIngredient={removeVariantIngredient}
             onOpenPresets={() => setIsPresetsModalOpen(true)}
             onLoadSample={handleLoadSample}
+            catalogItems={catalog}
           />
         </div>
       </div>

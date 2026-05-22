@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Calculator, Menu, X, Lightbulb, User, LogIn } from 'lucide-react';
+import { Calculator, Menu, X, Lightbulb, User, LogIn, BookOpen } from 'lucide-react';
 import { PricingExplainerModal } from '../help/PricingExplainerModal';
 import { FAQ } from '../help/FAQ';
 import { Modal } from '../shared/Modal';
@@ -46,6 +46,12 @@ export const Header: React.FC = () => {
                 <Lightbulb size={18} />
                 <span>Pricing Tips</span>
               </NavLink>
+              {user && (
+                <NavLink to="/catalog" className={navLinkClass}>
+                  <BookOpen size={18} />
+                  <span>Catalog</span>
+                </NavLink>
+              )}
               <div className="h-6 w-px bg-border-subtle mx-md" />
 
               {user ? (
@@ -87,6 +93,16 @@ export const Header: React.FC = () => {
               <Lightbulb size={18} />
               Pricing Tips
             </NavLink>
+            {user && (
+              <NavLink
+                to="/catalog"
+                className={navLinkClass}
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                <BookOpen size={18} />
+                Catalog
+              </NavLink>
+            )}
 
             <div className="h-px bg-border-subtle my-md" />
 

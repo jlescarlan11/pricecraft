@@ -1,6 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import { AppLayout } from './components/layout';
-import { CalculatorPage, FAQPage, AuthPage, AccountPage } from './pages';
+import {
+  CalculatorPage,
+  FAQPage,
+  AuthPage,
+  AccountPage,
+  CatalogPage,
+  ScanReceiptPage,
+  DriftPage,
+} from './pages';
 import { AuthProvider } from './context/AuthContext';
 import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { ToastProvider } from './components/shared';
@@ -19,6 +27,30 @@ function App() {
               element={
                 <ProtectedRoute>
                   <AccountPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/catalog"
+              element={
+                <ProtectedRoute>
+                  <CatalogPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/scan-receipt"
+              element={
+                <ProtectedRoute>
+                  <ScanReceiptPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/drift"
+              element={
+                <ProtectedRoute>
+                  <DriftPage />
                 </ProtectedRoute>
               }
             />

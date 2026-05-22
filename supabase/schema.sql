@@ -36,3 +36,91 @@ create policy "Users can delete their own presets"
 
 -- Optional: Create an index on user_id for faster lookups
 create index if not exists presets_user_id_idx on public.presets (user_id);
+
+-- ============================================================================
+-- Catalog: personal ingredient library
+-- ============================================================================
+
+create table if not exists public.catalog_ingredients (
+  id uuid not null default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  name text not null,
+  normalized_name text not null,
+  purchase_quantity numeric not null,
+  purchase_unit text not null,
+  purchase_cost numeric not null,
+  current_price_per_base_unit numeric not null,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  last_synced_at timestamptz,
+  constraint catalog_ingredients_pkey primary key (id)
+);
+
+alter table public.catalog_ingredients enable row level security;
+
+create policy "Users can view their own catalog"
+  on public.catalog_ingredients for select using (auth.uid() = user_id);
+create policy "Users can insert their own catalog"
+  on public.catalog_ingredients for insert with check (auth.uid() = user_id);
+create policy "Users can update their own catalog"
+  on public.catalog_ingredients for update using (auth.uid() = user_id);
+create policy "Users can delete their own catalog"
+  on public.catalog_ingredients for delete using (auth.uid() = user_id);
+
+create index if not exists catalog_ingredients_user_id_idx on public.catalog_ingredients (user_id);
+create index if not exists catalog_ingredients_normalized_name_idx on public.catalog_ingredients (user_id, normalized_name);
+
+-- ============================================================================
+-- Receipts: scan history
+-- ============================================================================
+
+create table if not exists public.receipts (
+  id uuid not null default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  store_name text,
+  scanned_at timestamptz not null default now(),
+  raw_ocr_text text,
+  line_count int not null default 0,
+  accepted_count int not null default 0,
+  constraint receipts_pkey primary key (id)
+);
+
+alter table public.receipts enable row level security;
+
+create policy "Users can view their own receipts"
+  on public.receipts for select using (auth.uid() = user_id);
+create policy "Users can insert their own receipts"
+  on public.receipts for insert with check (auth.uid() = user_id);
+create policy "Users can delete their own receipts"
+  on public.receipts for delete using (auth.uid() = user_id);
+
+create index if not exists receipts_user_id_idx on public.receipts (user_id);
+
+-- ============================================================================
+-- Price history: append-only price log per catalog ingredient
+-- ============================================================================
+
+create table if not exists public.price_history (
+  id uuid not null default gen_random_uuid(),
+  catalog_ingredient_id uuid not null references public.catalog_ingredients(id) on delete cascade,
+  user_id uuid not null references auth.users(id) on delete cascade,
+  purchase_quantity numeric not null,
+  purchase_unit text not null,
+  purchase_cost numeric not null,
+  source text not null check (source in ('manual', 'receipt')),
+  receipt_id uuid references public.receipts(id) on delete set null,
+  recorded_at timestamptz not null default now(),
+  constraint price_history_pkey primary key (id)
+);
+
+alter table public.price_history enable row level security;
+
+create policy "Users can view their own price history"
+  on public.price_history for select using (auth.uid() = user_id);
+create policy "Users can insert their own price history"
+  on public.price_history for insert with check (auth.uid() = user_id);
+create policy "Users can delete their own price history"
+  on public.price_history for delete using (auth.uid() = user_id);
+
+create index if not exists price_history_ingredient_idx on public.price_history (catalog_ingredient_id, recorded_at desc);
+create index if not exists price_history_user_id_idx on public.price_history (user_id);

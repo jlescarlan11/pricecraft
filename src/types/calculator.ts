@@ -10,6 +10,7 @@ export interface Ingredient {
   recipeQuantity?: number;
   recipeUnit?: string;
   useFullQuantity?: boolean;
+  catalogIngredientId?: string;
 }
 
 export interface Variant {

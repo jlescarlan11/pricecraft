@@ -44,6 +44,8 @@ interface CalculatorFormProps {
   ) => void;
   onAddVariantIngredient: (variantId: string) => void;
   onRemoveVariantIngredient: (variantId: string, ingredientId: string) => void;
+
+  catalogItems?: import('../../types').CatalogIngredient[];
 }
 
 export const CalculatorForm: React.FC<CalculatorFormProps> = ({
@@ -67,6 +69,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   onUpdateVariantIngredient,
   onAddVariantIngredient,
   onRemoveVariantIngredient,
+  catalogItems = [],
 }) => {
   // --- Empty State Logic ---
   const isEmpty = useMemo(() => {
@@ -282,6 +285,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   onRemove={onRemoveIngredient}
                   onAdd={onAddIngredient}
                   autoFocus={index === (input?.ingredients?.length || 0) - 1 && index > 0}
+                  catalogItems={catalogItems}
                   errors={{
                     name: errors[`ingredients.${ing.id}.name`],
                     purchaseQuantity: errors[`ingredients.${ing.id}.purchaseQuantity`],
