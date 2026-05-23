@@ -5,3 +5,4 @@ export * from './ResultsDisplay';
 export * from './ShareResults';
 export * from './VariantResultsTable';
 export * from './StickySummary';
+export * from './CalculatorSidePanel';

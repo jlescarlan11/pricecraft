@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { Package } from 'lucide-react';
 import { CalculatorForm } from '../components/calculator';
-import { ResultsDisplay, StickySummary } from '../components/results';
+import { ResultsDisplay, StickySummary, CalculatorSidePanel } from '../components/results';
 import { PresetsList } from '../components/presets';
 import { Modal, useToast } from '../components/shared';
 import { DriftBanner } from '../components/drift';
@@ -204,11 +204,11 @@ export const CalculatorPage: React.FC = () => {
           </div>
         )}
 
-        {/* Results Section (Top Priority) */}
+        {/* Results Section (committed) — full width above the work area */}
         {showResults && (
           <div
             ref={resultsRef}
-            className="mb-4xl animate-in fade-in slide-in-from-top-8 duration-700"
+            className="mb-8 animate-in fade-in slide-in-from-top-4 duration-500"
           >
             <ResultsDisplay
               results={enrichedResults}
@@ -217,34 +217,45 @@ export const CalculatorPage: React.FC = () => {
               onEdit={handleScrollToForm}
             />
 
-            <div className="h-px bg-border-subtle my-3xl" role="separator" />
+            <div className="h-px bg-border-subtle my-8" role="separator" />
           </div>
         )}
 
-        {/* Input Form Section (Secondary Priority) */}
-        <div ref={formRef} id="calculator-form" className="min-h-[600px]">
-          <CalculatorForm
-            input={input}
-            config={config}
-            errors={errors}
+        {/* Two-column work area on xl+: form left, live side panel right */}
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-8">
+          <div ref={formRef} id="calculator-form" className="min-w-0">
+            <CalculatorForm
+              input={input}
+              config={config}
+              errors={errors}
+              isCalculating={isCalculating}
+              onUpdateInput={updateInput}
+              onUpdateIngredient={updateIngredient}
+              onAddIngredient={addIngredient}
+              onRemoveIngredient={removeIngredient}
+              onUpdateConfig={updateConfig}
+              onCalculate={handleCalculate}
+              onReset={handleReset}
+              onSetHasVariants={setHasVariants}
+              onAddVariant={addVariant}
+              onRemoveVariant={removeVariant}
+              onUpdateVariant={updateVariant}
+              onUpdateVariantIngredient={updateVariantIngredient}
+              onAddVariantIngredient={addVariantIngredient}
+              onRemoveVariantIngredient={removeVariantIngredient}
+              onOpenPresets={() => setIsPresetsModalOpen(true)}
+              onLoadSample={handleLoadSample}
+              catalogItems={catalog}
+            />
+          </div>
+
+          <CalculatorSidePanel
+            results={enrichedLiveResult}
+            hasCommittedResults={showResults}
+            isStale={isDirty}
             isCalculating={isCalculating}
-            onUpdateInput={updateInput}
-            onUpdateIngredient={updateIngredient}
-            onAddIngredient={addIngredient}
-            onRemoveIngredient={removeIngredient}
-            onUpdateConfig={updateConfig}
             onCalculate={handleCalculate}
-            onReset={handleReset}
-            onSetHasVariants={setHasVariants}
-            onAddVariant={addVariant}
-            onRemoveVariant={removeVariant}
-            onUpdateVariant={updateVariant}
-            onUpdateVariantIngredient={updateVariantIngredient}
-            onAddVariantIngredient={addVariantIngredient}
-            onRemoveVariantIngredient={removeVariantIngredient}
-            onOpenPresets={() => setIsPresetsModalOpen(true)}
-            onLoadSample={handleLoadSample}
-            catalogItems={catalog}
+            onScrollToResults={handleScrollToResults}
           />
         </div>
       </div>
