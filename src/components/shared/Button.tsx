@@ -1,6 +1,13 @@
 import React from 'react';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'success' | 'danger' | 'ghost' | 'soft' | 'dashed';
+export type ButtonVariant =
+  | 'primary'
+  | 'secondary'
+  | 'success'
+  | 'danger'
+  | 'ghost'
+  | 'soft'
+  | 'dashed';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -21,37 +28,33 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   ...props
 }) => {
-  // Updated base styles: rounded-xl (12px), transition-all duration-400 ease-in-out, min touch target
-  const baseStyles =
-    'inline-flex items-center justify-center rounded-xl font-medium transition-all duration-400 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 cursor-pointer sm:w-auto w-full sm:flex-none active:scale-95 min-h-[44px] min-w-[44px]';
+  // Business-grade button: tighter padding, subtle shadows, no scale-on-hover
+  // (that's a consumer pattern). Focus ring uses our shadow-focus token.
+  const baseStyles = [
+    'inline-flex items-center justify-center gap-1.5',
+    'rounded-md font-medium whitespace-nowrap',
+    'transition-colors duration-150 ease-out',
+    'focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
+    'disabled:pointer-events-none disabled:opacity-50',
+    'cursor-pointer select-none',
+  ].join(' ');
 
-  const variants = {
-    // Primary: Solid Clay background, white text. Use for 'Calculate', 'Save'.
-    primary:
-      'bg-clay text-white shadow-level-1 hover:bg-clay/90 hover:shadow-level-2 hover:scale-[1.02] focus-visible:ring-clay',
-    // Secondary: Surface background, subtle border. Use for 'Add Ingredient' or secondary actions.
+  const variants: Record<ButtonVariant, string> = {
+    primary: 'bg-clay text-white border border-clay hover:bg-clay-600',
     secondary:
-      'border border-border-base bg-surface text-ink-700 hover:bg-surface-hover hover:border-border-base hover:scale-[1.02] focus-visible:ring-border-base',
-    // Success: Solid Moss background, white text.
-    success:
-      'bg-moss text-white shadow-level-1 hover:bg-moss/90 hover:shadow-level-2 hover:scale-[1.02] focus-visible:ring-moss',
-    // Danger: Solid Rust background, white text. Use for 'Delete' or critical actions.
-    danger:
-      'bg-rust text-white shadow-level-1 hover:bg-rust/90 hover:shadow-level-2 hover:scale-[1.02] focus-visible:ring-rust',
-    // Ghost: maintained for backward compatibility but updated with transitions
-    ghost:
-      'hover:bg-surface-hover text-ink-700 hover:text-ink-900 focus-visible:ring-border-base hover:scale-[1.02]',
-    // Soft: maintained for backward compatibility
-    soft: 'bg-moss/10 text-moss hover:bg-moss/20 focus-visible:ring-moss hover:scale-[1.02]',
-    // Dashed: Wabi-sabi style for Add actions
+      'bg-bg-elevated text-ink-900 border border-border-base hover:bg-surface hover:border-border-strong',
+    success: 'bg-moss text-white border border-moss hover:bg-moss-700',
+    danger: 'bg-rust text-white border border-rust hover:bg-rust-700',
+    ghost: 'text-ink-700 hover:text-ink-900 hover:bg-surface border border-transparent',
+    soft: 'bg-moss-50 text-moss-700 border border-moss-100 hover:bg-moss-100',
     dashed:
-      'border-2 border-dashed border-border-base text-ink-700 bg-transparent hover:border-clay hover:text-clay hover:bg-clay/5 transition-all duration-300',
+      'bg-transparent text-ink-500 border-2 border-dashed border-border-base hover:border-clay hover:text-clay hover:bg-clay-50',
   };
 
-  const sizes = {
-    sm: 'px-4 py-2 text-xs', // adjusted for proportion
-    md: 'px-8 py-3 text-sm', // 12px vertical, 32px horizontal
-    lg: 'px-10 py-4 text-base',
+  const sizes: Record<ButtonSize, string> = {
+    sm: 'h-8 px-2.5 text-xs',
+    md: 'h-9 px-3 text-sm',
+    lg: 'h-11 px-4 text-sm',
   };
 
   const variantStyles = dashed ? variants.dashed : variants[variant];
@@ -68,7 +71,7 @@ export const Button: React.FC<ButtonProps> = ({
     >
       {isLoading && (
         <svg
-          className="mr-2 h-4 w-4 animate-spin"
+          className="-ml-0.5 mr-1 h-3.5 w-3.5 animate-spin"
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"

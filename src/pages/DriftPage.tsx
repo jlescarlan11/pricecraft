@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
-import { Button } from '../components/shared';
+import { Button, PageHeader } from '../components/shared';
 import { useCatalog } from '../hooks/use-catalog';
 import { usePresets } from '../hooks/use-presets';
 import { computeDriftFromPresets } from '../services/driftService';
@@ -81,19 +81,17 @@ export const DriftPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-xl max-w-4xl mx-auto">
-      <div className="border-b border-border-subtle pb-lg flex items-center justify-between flex-wrap gap-md">
-        <div>
-          <h1 className="font-serif text-3xl text-ink-900">Price drift</h1>
-          <p className="text-ink-500 mt-sm">
-            Recipes whose ingredient prices have moved 5% or more since the last
-            time you saved them.
-          </p>
-        </div>
-        <Button variant="ghost" onClick={() => navigate('/catalog')}>
-          Back to catalog
-        </Button>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Alerts"
+        title="Price drift"
+        description="Recipes whose ingredient prices have moved 5% or more since the last time you saved them."
+        actions={
+          <Button variant="ghost" onClick={() => navigate('/catalog')}>
+            Back to catalog
+          </Button>
+        }
+      />
 
       {entries.length === 0 ? (
         <div className="text-center py-2xl border border-dashed border-border-base rounded-xl">

@@ -8,3 +8,5 @@ export * from './Modal';
 export * from './Toast';
 export * from './Switch';
 export * from './ErrorBoundary';
+export * from './PageHeader';
+export * from './StatCard';

@@ -1,18 +1,18 @@
 import React from 'react';
-import { Button, Input, Select, Switch } from '../components/shared';
+import { Button, Input, Select, Switch, PageHeader } from '../components/shared';
 import { useSettings, CURRENCY_OPTIONS } from '../context/SettingsContext';
 
 export const SettingsPage: React.FC = () => {
   const { settings, updateSettings, resetSettings } = useSettings();
 
   return (
-    <div className="space-y-xl max-w-3xl mx-auto">
-      <div className="border-b border-border-subtle pb-lg">
-        <h1 className="font-serif text-3xl text-ink-900">Settings</h1>
-        <p className="text-ink-500 mt-sm">Tune defaults for the calculator.</p>
-      </div>
+    <div className="space-y-6 max-w-3xl">
+      <PageHeader
+        title="Settings"
+        description="Tune the defaults that apply across PriceCraft."
+      />
 
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm space-y-lg">
+      <section className="card p-6 space-y-lg">
         <h2 className="text-xl font-medium text-ink-900">General</h2>
         <Select
           label="Currency"
@@ -36,7 +36,7 @@ export const SettingsPage: React.FC = () => {
         />
       </section>
 
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm space-y-lg">
+      <section className="card p-6 space-y-lg">
         <h2 className="text-xl font-medium text-ink-900">Pricing defaults</h2>
         <Select
           label="Default pricing strategy"
@@ -62,7 +62,7 @@ export const SettingsPage: React.FC = () => {
         />
       </section>
 
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm space-y-lg">
+      <section className="card p-6 space-y-lg">
         <h2 className="text-xl font-medium text-ink-900">Tax (VAT)</h2>
         <Switch
           checked={settings.vatEnabled}
@@ -91,7 +91,7 @@ export const SettingsPage: React.FC = () => {
         )}
       </section>
 
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+      <section className="card p-6">
         <h2 className="text-xl font-medium text-ink-900 mb-md">Reset</h2>
         <p className="text-ink-500 text-sm mb-md">
           Restore all settings to their defaults. Doesn&apos;t touch your recipes or

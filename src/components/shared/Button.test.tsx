@@ -7,14 +7,14 @@ describe('Button', () => {
     render(<Button>Click me</Button>);
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
-    // Check for primary variant classes by default
+    // Default is primary variant
     expect(button).toHaveClass('bg-clay');
     expect(button).toHaveClass('text-white');
-    // Check for md size classes
-    expect(button).toHaveClass('px-8');
-    expect(button).toHaveClass('py-3');
-    // Check for base styles (rounded-xl)
-    expect(button).toHaveClass('rounded-xl');
+    // md size
+    expect(button).toHaveClass('h-9');
+    expect(button).toHaveClass('px-3');
+    // base styles
+    expect(button).toHaveClass('rounded-md');
   });
 
   it('renders primary variant correctly', () => {
@@ -22,14 +22,14 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: /primary/i });
     expect(button).toHaveClass('bg-clay');
     expect(button).toHaveClass('text-white');
-    expect(button).toHaveClass('hover:bg-clay/90');
+    expect(button).toHaveClass('hover:bg-clay-600');
   });
 
   it('renders secondary variant correctly', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button', { name: /secondary/i });
-    expect(button).toHaveClass('bg-surface');
-    expect(button).toHaveClass('text-ink-700');
+    expect(button).toHaveClass('bg-bg-elevated');
+    expect(button).toHaveClass('text-ink-900');
   });
 
   it('renders success variant correctly', () => {

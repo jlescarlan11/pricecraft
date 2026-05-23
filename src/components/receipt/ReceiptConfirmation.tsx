@@ -125,7 +125,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
 
   if (lines.length === 0) {
     return (
-      <div className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+      <div className="card p-6">
         <div className="flex items-start gap-md">
           <AlertTriangle className="w-5 h-5 text-rust mt-xs" aria-hidden="true" />
           <div className="flex-1">
@@ -156,7 +156,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
   const confidentCount = rows.filter((r) => r.confidence >= 0.8).length;
 
   return (
-    <div className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+    <div className="card p-6">
       <div className="flex items-center justify-between flex-wrap gap-md mb-md">
         <div>
           <h2 className="text-xl font-medium text-ink-900">Review items</h2>

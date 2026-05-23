@@ -41,12 +41,12 @@ export const Select: React.FC<SelectProps> = ({
     <div className={`flex flex-col gap-xs w-full ${className}`}>
       <label
         htmlFor={id}
-        className={`text-sm font-medium text-gray-700 dark:text-gray-200 flex items-center justify-between ${hideLabel ? 'sr-only' : ''}`}
+        className={`text-sm font-medium text-ink-700 flex items-center justify-between mb-1 ${hideLabel ? 'sr-only' : ''}`}
       >
         <span>
           {label}
           {required && (
-            <span className="text-red-500 ml-xs" aria-hidden="true">
+            <span className="text-rust ml-1" aria-hidden="true">
               *
             </span>
           )}
@@ -63,14 +63,14 @@ export const Select: React.FC<SelectProps> = ({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={`
-            block w-full rounded-sm border appearance-none
-            py-sm pl-sm pr-2xl sm:text-sm transition-colors duration-200
-            disabled:bg-gray-100 disabled:text-gray-500 disabled:cursor-not-allowed
-            focus:ring-2 focus:ring-offset-0 focus:outline-hidden
+            block w-full rounded-md border appearance-none
+            h-9 pl-3 pr-8 text-sm transition-colors duration-150
+            disabled:bg-surface disabled:text-ink-400 disabled:cursor-not-allowed
+            focus-visible:outline-none focus:shadow-[var(--shadow-focus)]
             ${
               error
-                ? 'border-red-300 text-red-900 focus:border-red-500 focus:ring-red-500'
-                : 'border-gray-300 focus:border-indigo-500 focus:ring-indigo-500'
+                ? 'border-rust text-rust focus:border-rust'
+                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-clay'
             }
           `}
           {...props}
@@ -87,9 +87,9 @@ export const Select: React.FC<SelectProps> = ({
           ))}
         </select>
 
-        <div className="absolute inset-y-0 right-0 flex items-center pr-sm pointer-events-none">
+        <div className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
           <ChevronDown
-            className={`h-5 w-5 ${error ? 'text-red-500' : 'text-gray-400'}`}
+            className={`h-4 w-4 ${error ? 'text-rust' : 'text-ink-400'}`}
             aria-hidden="true"
           />
         </div>
@@ -97,14 +97,14 @@ export const Select: React.FC<SelectProps> = ({
 
       {error ? (
         <p
-          className="mt-xs text-sm text-red-600 flex items-center gap-xs"
+          className="mt-1 text-xs text-rust flex items-center gap-1"
           id={errorId}
           role="alert"
         >
           {error}
         </p>
       ) : helperText ? (
-        <p className="mt-xs text-sm text-gray-500" id={helperId}>
+        <p className="mt-1 text-xs text-ink-500" id={helperId}>
           {helperText}
         </p>
       ) : null}

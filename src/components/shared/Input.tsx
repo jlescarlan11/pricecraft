@@ -81,8 +81,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
         <div className="relative">
           {currency && (
-            <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-              <span className="text-ink-500 sm:text-sm">₱</span>
+            <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none">
+              <span className="text-ink-400 text-sm">₱</span>
             </div>
           )}
 
@@ -101,17 +101,17 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             min={type === 'number' ? 0 : undefined}
             inputMode={type === 'number' ? 'decimal' : undefined}
             className={`
-            block w-full rounded-xl border tabular-nums
-            py-[14px] sm:text-sm transition-all duration-200
-            disabled:bg-surface-hover disabled:text-ink-500 disabled:cursor-not-allowed
-            focus:ring-2 focus:ring-offset-0 focus:outline-hidden
-            placeholder:text-ink-500 placeholder:italic
-            ${currency ? 'pl-10' : 'pl-4'}
-            ${suffix || error ? 'pr-10' : 'pr-4'}
+            block w-full rounded-md border tnum text-sm
+            h-9 transition-colors duration-150
+            disabled:bg-surface disabled:text-ink-400 disabled:cursor-not-allowed
+            focus-visible:outline-none focus:shadow-[var(--shadow-focus)]
+            placeholder:text-ink-400
+            ${currency ? 'pl-7' : 'pl-3'}
+            ${suffix || error ? 'pr-9' : 'pr-3'}
             ${
               error
-                ? 'border-rust text-rust placeholder-rust/30 focus:border-rust focus:ring-rust/20'
-                : 'border-border-subtle bg-bg-main focus:border-clay focus:ring-clay/20'
+                ? 'border-rust text-rust placeholder-rust/40 focus:border-rust'
+                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-clay'
             }
           `}
             {...props}

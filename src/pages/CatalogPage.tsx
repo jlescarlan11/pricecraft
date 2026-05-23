@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Plus, ScanLine } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { Button, Input } from '../components/shared';
+import { Button, Input, PageHeader } from '../components/shared';
 import {
   CatalogList,
   AddIngredientModal,
@@ -56,28 +56,27 @@ export const CatalogPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-xl max-w-4xl mx-auto">
-      <div className="flex items-end justify-between border-b border-border-subtle pb-lg gap-md flex-wrap">
-        <div>
-          <h1 className="font-serif text-3xl text-ink-900">Ingredient catalog</h1>
-          <p className="text-ink-500 mt-sm">
-            Your personal price library. Scan receipts to keep prices fresh.
-          </p>
-        </div>
-        <div className="flex gap-sm">
-          <Button variant="secondary" onClick={() => navigate('/scan-receipt')}>
-            <ScanLine className="w-4 h-4 mr-xs" aria-hidden="true" />
-            Scan a receipt
-          </Button>
-          <Button variant="primary" onClick={() => setAddOpen(true)}>
-            <Plus className="w-4 h-4 mr-xs" aria-hidden="true" />
-            Add ingredient
-          </Button>
-        </div>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Inventory"
+        title="Ingredient catalog"
+        description="Your personal price library. Scan receipts to keep prices fresh."
+        actions={
+          <>
+            <Button variant="secondary" onClick={() => navigate('/scan-receipt')}>
+              <ScanLine className="w-4 h-4" aria-hidden="true" />
+              Scan a receipt
+            </Button>
+            <Button variant="primary" onClick={() => setAddOpen(true)}>
+              <Plus className="w-4 h-4" aria-hidden="true" />
+              Add ingredient
+            </Button>
+          </>
+        }
+      />
 
-      <div className="flex items-center gap-md flex-wrap">
-        <div className="flex-1 min-w-[200px]">
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="flex-1 min-w-[200px] max-w-xs">
           <Input
             label="Search"
             hideLabel

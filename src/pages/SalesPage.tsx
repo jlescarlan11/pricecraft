@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, Input, Select, Modal } from '../components/shared';
+import { Button, Input, Select, Modal, PageHeader, StatCard } from '../components/shared';
 import { useSales } from '../hooks/use-sales';
 import { usePresets } from '../hooks/use-presets';
 import { useSettings, formatMoney } from '../context/SettingsContext';
@@ -112,35 +112,34 @@ export const SalesPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-xl max-w-4xl mx-auto">
-      <div className="flex items-end justify-between border-b border-border-subtle pb-lg flex-wrap gap-md">
-        <div>
-          <h1 className="font-serif text-3xl text-ink-900">Sales log</h1>
-          <p className="text-ink-500 mt-sm">
-            Track what you sold and what you actually earned.
-          </p>
-        </div>
-        <Button variant="primary" onClick={() => setOpen(true)}>
-          <Plus className="w-4 h-4 mr-xs" aria-hidden="true" />
-          Log a sale
-        </Button>
-      </div>
+    <div className="space-y-6">
+      <PageHeader
+        eyebrow="Performance"
+        title="Sales log"
+        description="Track what you sold and what you actually earned."
+        actions={
+          <Button variant="primary" onClick={() => setOpen(true)}>
+            <Plus className="w-4 h-4" aria-hidden="true" />
+            Log a sale
+          </Button>
+        }
+      />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
-        <SummaryCard
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+        <StatCard
           label="Units sold"
           value={summary.units.toLocaleString()}
         />
-        <SummaryCard
+        <StatCard
           label="Revenue"
           value={formatMoney(summary.revenue, settings.currency)}
         />
-        <SummaryCard
+        <StatCard
           label="Profit"
           value={formatMoney(summary.profit, settings.currency)}
           tone={summary.profit >= 0 ? 'positive' : 'negative'}
         />
-        <SummaryCard
+        <StatCard
           label="Margin"
           value={`${summary.margin.toFixed(1)}%`}
           tone={summary.margin >= 20 ? 'positive' : 'warn'}
@@ -275,23 +274,3 @@ export const SalesPage: React.FC = () => {
   );
 };
 
-const SummaryCard: React.FC<{
-  label: string;
-  value: string;
-  tone?: 'neutral' | 'positive' | 'warn' | 'negative';
-}> = ({ label, value, tone = 'neutral' }) => {
-  const color =
-    tone === 'positive'
-      ? 'text-moss'
-      : tone === 'negative'
-        ? 'text-rust'
-        : tone === 'warn'
-          ? 'text-clay'
-          : 'text-ink-900';
-  return (
-    <div className="bg-white p-md rounded-xl border border-border-base shadow-sm">
-      <p className="text-xs uppercase tracking-wide text-ink-500">{label}</p>
-      <p className={`text-xl font-medium font-mono mt-xs ${color}`}>{value}</p>
-    </div>
-  );
-};

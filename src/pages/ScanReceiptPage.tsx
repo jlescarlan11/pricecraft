@@ -7,7 +7,7 @@ import { ReceiptScanner, ReceiptConfirmation } from '../components/receipt';
 import type { AcceptedRow } from '../components/receipt';
 import { catalogService } from '../services/catalogService';
 import { useToast } from '../components/shared/Toast';
-import { Button } from '../components/shared';
+import { Button, PageHeader } from '../components/shared';
 
 export const ScanReceiptPage: React.FC = () => {
   const navigate = useNavigate();
@@ -64,19 +64,17 @@ export const ScanReceiptPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-xl max-w-3xl mx-auto">
-      <div className="border-b border-border-subtle pb-lg flex items-center justify-between flex-wrap gap-md">
-        <div>
-          <h1 className="font-serif text-3xl text-ink-900">Scan a receipt</h1>
-          <p className="text-ink-500 mt-sm">
-            We&apos;ll read items and prices. You confirm everything before it&apos;s
-            saved.
-          </p>
-        </div>
-        <Button variant="ghost" onClick={() => navigate('/catalog')}>
-          Back to catalog
-        </Button>
-      </div>
+    <div className="space-y-6 max-w-3xl">
+      <PageHeader
+        eyebrow="Capture"
+        title="Scan a receipt"
+        description="We'll read items and prices. You confirm everything before it's saved."
+        actions={
+          <Button variant="ghost" onClick={() => navigate('/catalog')}>
+            Back to catalog
+          </Button>
+        }
+      />
 
       {status === 'idle' && (
         <ReceiptScanner

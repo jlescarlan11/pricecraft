@@ -75,8 +75,15 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onCance
   }, []);
 
   useEffect(() => {
-    startStream();
-    return () => stopStream();
+    let cancelled = false;
+    const init = async () => {
+      if (!cancelled) await startStream();
+    };
+    init();
+    return () => {
+      cancelled = true;
+      stopStream();
+    };
   }, [startStream, stopStream]);
 
   const handleToggleTorch = async () => {

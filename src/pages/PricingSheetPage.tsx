@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Printer, ArrowLeft } from 'lucide-react';
-import { Button } from '../components/shared';
+import { Button, PageHeader } from '../components/shared';
 import { usePresets } from '../hooks/use-presets';
 import { useSettings, formatMoney } from '../context/SettingsContext';
 import { performFullCalculation, enrichWithVatAndWholesale } from '../utils/calculations';
@@ -57,16 +57,25 @@ export const PricingSheetPage: React.FC = () => {
   };
 
   return (
-    <div className="space-y-xl max-w-4xl mx-auto">
-      <div className="flex items-center justify-between flex-wrap gap-md print:hidden">
-        <Button variant="ghost" onClick={() => navigate(-1)}>
-          <ArrowLeft className="w-4 h-4 mr-xs" aria-hidden="true" />
-          Back
-        </Button>
-        <Button variant="primary" onClick={() => window.print()}>
-          <Printer className="w-4 h-4 mr-xs" aria-hidden="true" />
-          Print / Save as PDF
-        </Button>
+    <div className="space-y-6">
+      <div className="print:hidden">
+        <PageHeader
+          eyebrow="Output"
+          title="Pricing sheet"
+          description="Choose recipes, then print or save as PDF for customers and staff."
+          actions={
+            <>
+              <Button variant="ghost" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                Back
+              </Button>
+              <Button variant="primary" onClick={() => window.print()}>
+                <Printer className="w-4 h-4" aria-hidden="true" />
+                Print / Save as PDF
+              </Button>
+            </>
+          }
+        />
       </div>
 
       <div className="print:hidden bg-white p-lg rounded-xl border border-border-base shadow-sm space-y-md">

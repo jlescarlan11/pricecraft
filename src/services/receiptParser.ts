@@ -320,7 +320,7 @@ function preprocessReceiptText(ocrText: string): string {
   const lines = ocrText.split('\n');
   let pendingPrice: string | null = null;
 
-  for (let raw of lines) {
+  for (const raw of lines) {
     let line = raw.replace(/[*•·●○■□]+/g, ' ').replace(/\s+/g, ' ').trim();
     if (!line) {
       continue;
@@ -347,7 +347,6 @@ function preprocessReceiptText(ocrText: string): string {
       pendingPrice = null;
     }
     cleaned.push(line);
-    void raw;
   }
 
   return cleaned.join('\n');

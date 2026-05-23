@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Button } from '../components/shared';
+import { Button, PageHeader } from '../components/shared';
 import { ExportButton } from '../components/account/ExportButton';
 import { ImportButton } from '../components/account/ImportButton';
 import { DangerZone } from '../components/account/DangerZone';
@@ -11,14 +11,14 @@ export const AccountPage: React.FC = () => {
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
   return (
-    <div className="space-y-xl max-w-3xl mx-auto">
-      <div className="border-b border-border-subtle pb-lg">
-        <h1 className="font-serif text-3xl text-ink-900">Account Settings</h1>
-        <p className="text-ink-500 mt-sm">Manage your profile and data</p>
-      </div>
+    <div className="space-y-6 max-w-3xl">
+      <PageHeader
+        title="Account"
+        description="Manage your profile and data."
+      />
 
       {/* Profile Section */}
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+      <section className="card p-6">
         <h2 className="text-xl font-medium text-ink-900 mb-md">Profile</h2>
         <div className="mb-xl">
           <p className="text-ink-700">
@@ -41,7 +41,7 @@ export const AccountPage: React.FC = () => {
       </section>
 
       {/* Data Management Section */}
-      <section className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+      <section className="card p-6">
         <h2 className="text-xl font-medium text-ink-900 mb-md">Data Management</h2>
         <p className="text-ink-500 mb-xl">
           Export your data for safekeeping or transfer it to another device.

@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer, Calculator } from 'lucide-react';
-import { Button, Input, Select } from '../components/shared';
+import { Button, Input, Select, PageHeader } from '../components/shared';
 import { usePresets } from '../hooks/use-presets';
 import { useSettings, formatMoney } from '../context/SettingsContext';
 import type { Ingredient, Preset } from '../types';
@@ -76,30 +76,30 @@ export const BatchPlannerPage: React.FC = () => {
   const scaledTotal = totalShoppingCost + scaledLabor + scaledOverhead;
 
   return (
-    <div className="space-y-xl max-w-4xl mx-auto">
-      <div className="flex items-center justify-between flex-wrap gap-md print:hidden">
-        <div>
-          <h1 className="font-serif text-3xl text-ink-900">Batch planner</h1>
-          <p className="text-ink-500 mt-sm">
-            Scale a recipe for a planned production run. We&apos;ll add up the
-            ingredients you need to buy.
-          </p>
-        </div>
-        <div className="flex gap-sm">
-          <Button variant="ghost" onClick={() => navigate(-1)}>
-            <ArrowLeft className="w-4 h-4 mr-xs" aria-hidden="true" />
-            Back
-          </Button>
-          {shoppingList.length > 0 && (
-            <Button variant="secondary" onClick={() => window.print()}>
-              <Printer className="w-4 h-4 mr-xs" aria-hidden="true" />
-              Print
-            </Button>
-          )}
-        </div>
+    <div className="space-y-6">
+      <div className="print:hidden">
+        <PageHeader
+          eyebrow="Operations"
+          title="Batch planner"
+          description="Scale a recipe to a target unit count and get a deduplicated shopping list."
+          actions={
+            <>
+              <Button variant="ghost" onClick={() => navigate(-1)}>
+                <ArrowLeft className="w-4 h-4" aria-hidden="true" />
+                Back
+              </Button>
+              {shoppingList.length > 0 && (
+                <Button variant="secondary" onClick={() => window.print()}>
+                  <Printer className="w-4 h-4" aria-hidden="true" />
+                  Print
+                </Button>
+              )}
+            </>
+          }
+        />
       </div>
 
-      <div className="bg-white p-xl rounded-xl border border-border-base shadow-sm space-y-md print:hidden">
+      <div className="card p-6 space-y-md print:hidden">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
           <div className="md:col-span-2">
             <Select
@@ -136,7 +136,7 @@ export const BatchPlannerPage: React.FC = () => {
           Choose a recipe to see the shopping list.
         </div>
       ) : (
-        <div className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+        <div className="card p-6">
           <header className="border-b border-border-subtle pb-md mb-md print:text-center">
             <h2 className="font-serif text-2xl text-ink-900">
               {selected.baseRecipe.productName || selected.name}

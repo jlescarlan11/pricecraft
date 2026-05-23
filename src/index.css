@@ -1,233 +1,278 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Background & Surface */
-  --color-bg-main: #fafaf9;
-  --color-surface: #f8f7f5;
-  --color-surface-hover: #f0efed;
+  /* ============================================================
+   * COLOR SYSTEM
+   * ============================================================
+   * Refined for business-grade UI: warm neutrals (kept the brand
+   * warmth) + a brand accent + proper semantic colors. Each
+   * semantic color has a soft tint for backgrounds and a strong
+   * tone for text/borders so we get proper contrast on cards.
+   * ============================================================ */
 
-  /* Text Colors */
-  --color-ink-900: #3a3632; /* Soft Black */
-  --color-ink-700: #6b6761; /* Warm Gray */
-  --color-ink-500: #8b8680; /* Lighter Gray */
+  /* Surfaces */
+  --color-bg-main: #fbfaf8;       /* App background */
+  --color-bg-elevated: #ffffff;   /* Card / dialog */
+  --color-surface: #f5f3ef;       /* Subtle inset (input bg, hover) */
+  --color-surface-hover: #ecebe6;
+  --color-surface-strong: #e3e1db;
 
-  /* Accents */
-  --color-clay: #a67b5b; /* Primary Accent */
-  --color-moss: #7a8b73; /* Success */
-  --color-sakura: #e8c5c0; /* Warning / Soft Pink */
-  --color-rust: #b85c38; /* Error / Autumn Rust */
+  /* Neutral / ink scale — warm gray */
+  --color-ink-50:  #f7f6f3;
+  --color-ink-100: #ecebe7;
+  --color-ink-200: #dcdad4;
+  --color-ink-300: #b7b4ac;
+  --color-ink-400: #8b8780;       /* Muted text */
+  --color-ink-500: #6f6b64;       /* Secondary text */
+  --color-ink-600: #524e48;
+  --color-ink-700: #3d3a35;       /* Body text */
+  --color-ink-800: #2a2825;
+  --color-ink-900: #1a1815;       /* Headings, strong text */
 
-  /* Borders & Dividers */
-  --color-border-base: #d4d2cf;
-  --color-border-subtle: #e6e4e1; /* Divider */
+  /* Borders */
+  --color-border-subtle: #ecebe7;
+  --color-border-base:   #d8d5cf;
+  --color-border-strong: #b9b6af;
 
-  /* Spacing Scale (8px base) */
-  --spacing-xs: 0.25rem; /* 4px */
-  --spacing-sm: 0.5rem; /* 8px */
-  --spacing-md: 1rem; /* 16px */
-  --spacing-lg: 1.5rem; /* 24px */
-  --spacing-xl: 2rem; /* 32px */
-  --spacing-2xl: 3rem; /* 48px */
-  --spacing-3xl: 4rem; /* 64px */
-  --spacing-4xl: 6rem; /* 96px */
-  --spacing-5xl: 8rem; /* 128px */
+  /* Brand accent — clay (kept) */
+  --color-clay-50:  #faf0ea;
+  --color-clay-100: #f1ddd0;
+  --color-clay-200: #e5c4ad;
+  --color-clay-300: #d4a07e;
+  --color-clay-400: #b9805a;
+  --color-clay:     #9a6440;      /* Primary action */
+  --color-clay-600: #7e5234;
+  --color-clay-700: #5e3d27;
 
-  /* Max-Width overrides to prevent conflicts with the new spacing scale names.
-     Tailwind 4 maps max-w-* utilities to these --max-width-* variables. */
-  --max-width-xs: 20rem; /* 320px */
-  --max-width-sm: 24rem; /* 384px */
-  --max-width-md: 28rem; /* 448px */
-  --max-width-lg: 32rem; /* 512px */
-  --max-width-xl: 36rem; /* 576px */
-  --max-width-2xl: 42rem; /* 672px */
-  --max-width-3xl: 48rem; /* 768px */
-  --max-width-4xl: 56rem; /* 896px */
-  --max-width-5xl: 64rem; /* 1024px */
-  --max-width-6xl: 72rem; /* 1152px */
-  --max-width-7xl: 80rem; /* 1280px */
+  /* Semantic — Moss (success) */
+  --color-moss-50:  #f0f3ec;
+  --color-moss-100: #d6e0cc;
+  --color-moss-300: #91a583;
+  --color-moss:     #5d7a4f;      /* Strong success */
+  --color-moss-700: #3f5535;
 
-  /* Font Definitions */
-  --font-serif: 'Crimson Text', serif;
-  --font-sans: 'Inter', system-ui, sans-serif;
+  /* Semantic — Rust (danger) */
+  --color-rust-50:  #fbeee7;
+  --color-rust-100: #f3d2c1;
+  --color-rust-300: #d68663;
+  --color-rust:     #b85c38;
+  --color-rust-700: #813c22;
 
-  /* Type Scale (1.25 ratio) starting from 16px */
-  --font-size-xs: 0.875rem; /* 14px - Small */
-  --font-size-base: 1rem; /* 16px - Body */
-  --font-size-lg: 1.25rem; /* 20px - H6 */
-  --font-size-xl: 1.5625rem; /* 25px - H5 */
-  --font-size-2xl: 1.953rem; /* 31.25px - H4 */
-  --font-size-3xl: 2.441rem; /* 39.06px - H3 */
-  --font-size-4xl: 3.052rem; /* 48.83px - H2 */
-  --font-size-5xl: 3.815rem; /* 61.04px - H1 */
-  --font-size-display: 4rem; /* 64px */
+  /* Semantic — Amber (warning) */
+  --color-amber-50:  #fdf4e6;
+  --color-amber-100: #fae0b7;
+  --color-amber-300: #e5b261;
+  --color-amber:     #c98a1f;
+  --color-amber-700: #8a5d13;
 
-  /* Line Heights */
-  --leading-heading: 1.25; /* 1.2–1.3 for headings */
-  --leading-body: 1.65; /* 1.6–1.7 for body text */
-  --leading-ui: 1.5; /* 1.5 for UI elements */
+  /* Semantic — Slate (info / neutral chip) */
+  --color-slate-50:  #f1f3f5;
+  --color-slate-100: #dde2e6;
+  --color-slate-300: #98a2ac;
+  --color-slate:     #5d6770;
+  --color-slate-700: #383f46;
 
-  /* Letter Spacing */
-  --tracking-heading: 0.035em; /* 0.02em–0.05em for headings */
-  --tracking-body: 0.005em; /* 0em–0.01em for body text */
+  /* Legacy alias kept so older components compile */
+  --color-sakura: #e8c5c0;
 
-  /* Elevation & Shadows */
+  /* ============================================================
+   * SPACING SCALE (4px base, 8 steps)
+   * ============================================================ */
+  --spacing-xs:  0.25rem;  /* 4px */
+  --spacing-sm:  0.5rem;   /* 8px */
+  --spacing-md:  0.75rem;  /* 12px */
+  --spacing-lg:  1rem;     /* 16px */
+  --spacing-xl:  1.5rem;   /* 24px */
+  --spacing-2xl: 2rem;     /* 32px */
+  --spacing-3xl: 3rem;     /* 48px */
+  --spacing-4xl: 4rem;     /* 64px */
+  --spacing-5xl: 6rem;     /* 96px */
+
+  /* Tailwind 4 max-width mapping (untouched) */
+  --max-width-xs: 20rem;
+  --max-width-sm: 24rem;
+  --max-width-md: 28rem;
+  --max-width-lg: 32rem;
+  --max-width-xl: 36rem;
+  --max-width-2xl: 42rem;
+  --max-width-3xl: 48rem;
+  --max-width-4xl: 56rem;
+  --max-width-5xl: 64rem;
+  --max-width-6xl: 72rem;
+  --max-width-7xl: 80rem;
+
+  /* ============================================================
+   * TYPOGRAPHY
+   * ============================================================
+   * Headings: Crimson Text serif kept as brand differentiator,
+   * but used more sparingly (only h1/h2 displays). UI labels and
+   * smaller headings use Inter for clarity.
+   * Type scale tightened to 1.18 ratio (more confident, denser).
+   * ============================================================ */
+
+  --font-serif: 'Crimson Text', 'Source Serif Pro', serif;
+  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+  --font-size-2xs:    0.6875rem;  /* 11px — labels, chips */
+  --font-size-xs:     0.75rem;    /* 12px — captions */
+  --font-size-sm:     0.875rem;   /* 14px — secondary body */
+  --font-size-base:   0.9375rem;  /* 15px — primary body */
+  --font-size-lg:     1.0625rem;  /* 17px — emphasized body */
+  --font-size-xl:     1.25rem;    /* 20px — h5/h6 */
+  --font-size-2xl:    1.5rem;     /* 24px — h4 */
+  --font-size-3xl:    1.875rem;   /* 30px — h3 */
+  --font-size-4xl:    2.25rem;    /* 36px — h2 */
+  --font-size-5xl:    2.75rem;    /* 44px — h1 / hero */
+  --font-size-display: 3.5rem;    /* 56px — marketing */
+
+  --leading-heading: 1.2;
+  --leading-body:    1.55;
+  --leading-ui:      1.4;
+  --leading-tight:   1.1;
+
+  --tracking-tight:   -0.015em;
+  --tracking-heading: -0.01em;
+  --tracking-body:    0em;
+  --tracking-ui:      0.005em;
+  --tracking-caps:    0.06em;
+
+  /* ============================================================
+   * ELEVATION (subtle, layered, business-y)
+   * ============================================================ */
   --shadow-level-0: none;
-  --shadow-level-1: 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-level-2: 0 4px 16px rgba(0, 0, 0, 0.06);
-  --shadow-level-3: 0 8px 32px rgba(0, 0, 0, 0.08);
-  --shadow-level-4: 0 12px 48px rgba(0, 0, 0, 0.1);
+  --shadow-level-1: 0 1px 2px rgba(15, 14, 12, 0.04), 0 1px 1px rgba(15, 14, 12, 0.03);
+  --shadow-level-2: 0 2px 4px rgba(15, 14, 12, 0.05), 0 1px 2px rgba(15, 14, 12, 0.04);
+  --shadow-level-3: 0 8px 16px -4px rgba(15, 14, 12, 0.08), 0 2px 4px rgba(15, 14, 12, 0.04);
+  --shadow-level-4: 0 16px 32px -8px rgba(15, 14, 12, 0.12), 0 4px 8px rgba(15, 14, 12, 0.04);
+  --shadow-focus:   0 0 0 3px rgba(154, 100, 64, 0.22);
 
-  /* Border Radius */
+  /* ============================================================
+   * RADII (tighter / more confident)
+   * ============================================================ */
   --radius-none: 0px;
-  --radius-xs: 0.125rem; /* 2px */
-  --radius-sm: 0.25rem; /* 4px */
-  --radius-md: 0.5rem; /* 8px */
-  --radius-lg: 0.75rem; /* 12px */
-  --radius-xl: 0.75rem; /* 12px - Match UI Guide */
-  --radius-round: 50%;
-  /* Custom Keyframes */
+  --radius-xs:   3px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   10px;
+  --radius-2xl:  14px;
+  --radius-round: 999px;
+
+  /* Custom keyframes (kept) */
   @keyframes pulse-once {
-    0% {
-      transform: scale(1);
-      opacity: 1;
-    }
-    50% {
-      transform: scale(1.05);
-      opacity: 0.9;
-    }
-    100% {
-      transform: scale(1);
-      opacity: 1;
-    }
+    0%   { transform: scale(1); opacity: 1; }
+    50%  { transform: scale(1.05); opacity: 0.9; }
+    100% { transform: scale(1); opacity: 1; }
   }
   @keyframes shake {
-    0%,
-    100% {
-      transform: translateX(0);
-    }
-    10%,
-    30%,
-    50%,
-    70%,
-    90% {
-      transform: translateX(-4px);
-    }
-    20%,
-    40%,
-    60%,
-    80% {
-      transform: translateX(4px);
-    }
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
   }
 }
 
 @layer components {
-  .animate-pulse-once {
-    animation: pulse-once 0.8s cubic-bezier(0.4, 0, 0.6, 1);
-  }
-  .animate-shake {
-    animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
-  }
-  
+  .animate-pulse-once { animation: pulse-once 0.8s cubic-bezier(0.4, 0, 0.6, 1); }
+  .animate-shake { animation: shake 0.6s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
   .mask-fade-right {
     mask-image: linear-gradient(to right, black 90%, transparent 100%);
     -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
   }
 
-  /* Subtle paper/linen texture overlay */
+  /* Texture kept but disabled by default — too "lifestyle" for business UI.
+     Components that opted into .paper-texture still get nothing rendered. */
   .paper-texture {
-    @apply fixed inset-0 pointer-events-none z-[100];
-    opacity: 0.025;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-    background-repeat: repeat;
+    display: none;
+  }
+
+  /* Reusable surface tokens */
+  .card {
+    @apply bg-bg-elevated border border-border-subtle rounded-lg shadow-level-1;
+  }
+  .card-flat {
+    @apply bg-bg-elevated border border-border-subtle rounded-lg;
+  }
+  .surface-inset {
+    @apply bg-surface border border-border-subtle rounded-md;
+  }
+
+  /* Caps label used across the app */
+  .label-caps {
+    @apply font-semibold uppercase text-ink-500;
+    font-size: 0.6875rem;
+    letter-spacing: var(--tracking-caps);
+  }
+
+  /* Tabular numerals — for prices, stats */
+  .tnum {
+    font-variant-numeric: tabular-nums;
   }
 }
 
 @layer base {
   body {
-    @apply bg-bg-main text-ink-900 antialiased font-sans text-base leading-body tracking-body;
+    @apply bg-bg-main text-ink-700 antialiased font-sans text-base leading-body tracking-body;
     font-feature-settings: 'tnum', 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-serif text-ink-900 leading-heading tracking-heading;
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-ink-900 leading-heading tracking-heading font-sans;
+    font-weight: 600;
   }
 
+  /* h1 / h2 keep the serif brand identity for hero headers */
   h1 {
-    @apply text-5xl font-semibold;
+    @apply font-serif text-4xl;
+    letter-spacing: var(--tracking-tight);
   }
   h2 {
-    @apply text-4xl font-semibold;
+    @apply font-serif text-3xl;
+    letter-spacing: var(--tracking-tight);
   }
-  h3 {
-    @apply text-3xl font-semibold;
-  }
-  h4 {
-    @apply text-2xl font-semibold;
-  }
-  h5 {
-    @apply text-xl font-semibold;
-  }
-  h6 {
-    @apply text-lg font-semibold;
+  h3 { @apply text-2xl; }
+  h4 { @apply text-xl; }
+  h5 { @apply text-lg; }
+  h6 { @apply text-base font-semibold; }
+
+  button, input, select, textarea, label {
+    @apply leading-ui transition-all duration-200 ease-out;
   }
 
-  /* UI elements use UI leading */
-  button,
-  input,
-  select,
-  textarea,
-  label {
-    @apply leading-ui transition-all duration-300 ease-out;
-  }
-
-  /* Global Scrollbar styling to match aesthetic */
   ::-webkit-scrollbar {
-    width: 3px;
-    height: 3px;
+    width: 8px;
+    height: 8px;
   }
-  ::-webkit-scrollbar-track {
-    @apply bg-transparent;
-  }
+  ::-webkit-scrollbar-track { @apply bg-transparent; }
   ::-webkit-scrollbar-thumb {
-    @apply bg-border-base rounded-full hover:bg-ink-500;
+    @apply bg-border-base rounded-full;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-ink-300;
   }
 
-  /* Utility to hide scrollbar while preserving scroll functionality */
-  .no-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
   .no-scrollbar {
-    -ms-overflow-style: none; /* IE and Edge */
-    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 
-  /* Fix for browser autofill background color to match design system */
+  /* Autofill: match our surface */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
   input:-webkit-autofill:focus,
   textarea:-webkit-autofill,
-  textarea:-webkit-autofill:hover,
-  textarea:-webkit-autofill:focus,
-  select:-webkit-autofill,
-  select:-webkit-autofill:hover,
-  select:-webkit-autofill:focus {
+  select:-webkit-autofill {
     -webkit-text-fill-color: var(--color-ink-900);
-    -webkit-box-shadow: 0 0 0px 1000px var(--color-bg-main) inset;
+    -webkit-box-shadow: 0 0 0 1000px var(--color-bg-elevated) inset;
     transition: background-color 5000s ease-in-out 0s;
   }
 
   @media print {
-    /* ... existing print styles ... */
     button,
     .print\:hidden,
     [role='tooltip'],
-    [role='button'],
     .no-print {
       display: none !important;
     }
@@ -239,40 +284,22 @@
       line-height: 1.5;
     }
 
-    @page {
-      margin: 1.5cm;
-      size: auto;
-    }
+    @page { margin: 1.5cm; size: auto; }
 
     * {
       -webkit-print-color-adjust: exact !important;
       print-color-adjust: exact !important;
     }
 
-    .shadow-sm,
-    .shadow,
-    .shadow-md,
-    .shadow-lg,
-    .shadow-xl,
-    .shadow-2xl {
+    .shadow-sm, .shadow, .shadow-md, .shadow-lg, .shadow-xl, .shadow-2xl,
+    .shadow-level-1, .shadow-level-2, .shadow-level-3, .shadow-level-4 {
       box-shadow: none !important;
     }
 
-    .print\:break-inside-avoid,
-    tr,
-    img,
-    svg {
+    .print\:break-inside-avoid, tr, img, svg {
       break-inside: avoid !important;
     }
 
-    .bg-white,
-    .rounded-xl,
-    .rounded-2xl {
-      border: 1px solid #e5e7eb !important;
-    }
-
-    .hidden.print\:block {
-      display: block !important;
-    }
+    .hidden.print\:block { display: block !important; }
   }
 }

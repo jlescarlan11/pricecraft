@@ -22,7 +22,8 @@ describe('AppLayout', () => {
       </AppLayout>
     );
 
-    expect(screen.getByText('PriceCraft')).toBeInTheDocument();
+    // The brand appears in both the sidebar and the topbar breadcrumb.
+    expect(screen.getAllByText('PriceCraft').length).toBeGreaterThan(0);
     expect(screen.getByTestId('test-child')).toBeInTheDocument();
   });
 });

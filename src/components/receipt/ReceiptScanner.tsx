@@ -77,7 +77,7 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({
         onCancel={() => setCameraOpen(false)}
       />
     )}
-    <div className="bg-white p-xl rounded-xl border border-border-base shadow-sm">
+    <div className="card p-6">
       <div className="flex flex-col items-center text-center gap-md py-lg">
         <Camera className="w-10 h-10 text-clay" aria-hidden="true" />
         <div>

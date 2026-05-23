@@ -44,7 +44,7 @@ describe('Input Component', () => {
 
     expect(screen.getByText('₱')).toBeInTheDocument();
     const input = screen.getByLabelText(/Price/i);
-    expect(input).toHaveClass('pl-10'); // Extra padding for symbol
+    expect(input).toHaveClass('pl-7'); // Extra padding for symbol
   });
 
   it('prevents negative sign for number inputs', () => {
@@ -80,13 +80,12 @@ describe('Input Component', () => {
     const input = screen.getByLabelText(/Styled Input/i);
 
     // Check new styling requirements
-    expect(input).toHaveClass('py-[14px]'); // Vertical padding
-    expect(input).toHaveClass('pl-4'); // Horizontal padding (default)
-    expect(input).toHaveClass('rounded-xl'); // Border radius
-    expect(input).toHaveClass('border-border-subtle'); // Default border
-    expect(input).toHaveClass('bg-bg-main'); // Background
-    expect(input).toHaveClass('placeholder:italic'); // Placeholder style
-    expect(input).toHaveClass('tabular-nums'); // Tabular numerals
+    expect(input).toHaveClass('h-9'); // Height
+    expect(input).toHaveClass('pl-3'); // Horizontal padding (default)
+    expect(input).toHaveClass('rounded-md'); // Border radius
+    expect(input).toHaveClass('border-border-base'); // Default border
+    expect(input).toHaveClass('bg-bg-elevated'); // Background
+    expect(input).toHaveClass('tnum'); // Tabular numerals
   });
 
   it('applies focus styles correctly (via class check)', () => {

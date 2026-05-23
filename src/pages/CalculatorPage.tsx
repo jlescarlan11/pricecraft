@@ -190,15 +190,15 @@ export const CalculatorPage: React.FC = () => {
         )}
         {/* Intro Section (only when no results and form is empty) */}
         {!showResults && (
-          <div className="space-y-lg mb-lg md:mb-2xl">
-            <div className="p-md md:p-lg bg-clay/5 rounded-xl border border-clay/20 animate-in fade-in slide-in-from-top-4 duration-700">
-              <p className="text-ink-900 font-medium mb-xs text-sm md:text-base">
-                Welcome to your profit partner.
+          <div className="mb-6 flex items-start gap-3 p-4 rounded-lg border border-clay-100 bg-clay-50/60">
+            <div className="w-1 h-10 bg-clay rounded-full shrink-0 mt-0.5" />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-ink-900">
+                Find the right price for your product.
               </p>
-              <p className="text-ink-700 text-xs md:text-sm leading-relaxed">
-                Fill in your costs below. We&apos;ll help you find the perfect price to ensure your
-                business grows sustainably. Don&apos;t forget to include your labor—your time is
-                valuable.
+              <p className="text-sm text-ink-700 mt-1 leading-relaxed">
+                Fill in ingredients, labor, and overhead. We&apos;ll do the math
+                so your margin stays healthy.
               </p>
             </div>
           </div>
