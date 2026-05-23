@@ -1,6 +1,18 @@
 import React, { useState } from 'react';
 import { NavLink, Link } from 'react-router-dom';
-import { Calculator, Menu, X, Lightbulb, User, LogIn, BookOpen } from 'lucide-react';
+import {
+  Calculator,
+  Menu,
+  X,
+  Lightbulb,
+  User,
+  LogIn,
+  BookOpen,
+  ClipboardList,
+  Receipt,
+  Settings as SettingsIcon,
+  Printer,
+} from 'lucide-react';
 import { PricingExplainerModal } from '../help/PricingExplainerModal';
 import { FAQ } from '../help/FAQ';
 import { Modal } from '../shared/Modal';
@@ -47,11 +59,29 @@ export const Header: React.FC = () => {
                 <span>Pricing Tips</span>
               </NavLink>
               {user && (
-                <NavLink to="/catalog" className={navLinkClass}>
-                  <BookOpen size={18} />
-                  <span>Catalog</span>
-                </NavLink>
+                <>
+                  <NavLink to="/catalog" className={navLinkClass}>
+                    <BookOpen size={18} />
+                    <span>Catalog</span>
+                  </NavLink>
+                  <NavLink to="/planner" className={navLinkClass}>
+                    <ClipboardList size={18} />
+                    <span>Planner</span>
+                  </NavLink>
+                  <NavLink to="/sales" className={navLinkClass}>
+                    <Receipt size={18} />
+                    <span>Sales</span>
+                  </NavLink>
+                  <NavLink to="/pricing-sheet" className={navLinkClass}>
+                    <Printer size={18} />
+                    <span>Print</span>
+                  </NavLink>
+                </>
               )}
+              <NavLink to="/settings" className={navLinkClass}>
+                <SettingsIcon size={18} />
+                <span>Settings</span>
+              </NavLink>
               <div className="h-6 w-px bg-border-subtle mx-md" />
 
               {user ? (
@@ -94,15 +124,49 @@ export const Header: React.FC = () => {
               Pricing Tips
             </NavLink>
             {user && (
-              <NavLink
-                to="/catalog"
-                className={navLinkClass}
-                onClick={() => setIsMobileMenuOpen(false)}
-              >
-                <BookOpen size={18} />
-                Catalog
-              </NavLink>
+              <>
+                <NavLink
+                  to="/catalog"
+                  className={navLinkClass}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <BookOpen size={18} />
+                  Catalog
+                </NavLink>
+                <NavLink
+                  to="/planner"
+                  className={navLinkClass}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <ClipboardList size={18} />
+                  Planner
+                </NavLink>
+                <NavLink
+                  to="/sales"
+                  className={navLinkClass}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Receipt size={18} />
+                  Sales
+                </NavLink>
+                <NavLink
+                  to="/pricing-sheet"
+                  className={navLinkClass}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  <Printer size={18} />
+                  Print sheet
+                </NavLink>
+              </>
             )}
+            <NavLink
+              to="/settings"
+              className={navLinkClass}
+              onClick={() => setIsMobileMenuOpen(false)}
+            >
+              <SettingsIcon size={18} />
+              Settings
+            </NavLink>
 
             <div className="h-px bg-border-subtle my-md" />
 

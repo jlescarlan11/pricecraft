@@ -138,17 +138,28 @@ export const performFullCalculation = (
 ): import('../types/calculator').CalculationResult => {
   // 1. Base / Total Batch Calculation
   const ingredientCost = calculateTotalIngredientCost(input.ingredients);
-  const totalCost = round(ingredientCost + input.laborCost + input.overhead);
+  const packagingCost = Math.max(0, Number(input.packagingCost) || 0);
+  const platformFeePercent = Math.max(0, Number(input.platformFeePercent) || 0);
+  const totalCost = round(
+    ingredientCost + input.laborCost + input.overhead + packagingCost
+  );
 
   // Base Cost Per Unit (Assuming entire batch is base product)
   const baseCostPerUnit = calculateCostPerUnit(totalCost, input.batchSize);
 
   // Base Recommendation (for reference or if no variants)
-  const baseRecommendedPrice = calculateRecommendedPrice(
+  const rawBaseRecommendedPrice = calculateRecommendedPrice(
     baseCostPerUnit,
     config.strategy,
     config.value
   );
+  // If selling on a platform that takes a percentage, gross up the list price
+  // so the seller nets the same margin.
+  const platformDivisor = 1 - platformFeePercent / 100;
+  const baseRecommendedPrice =
+    platformFeePercent > 0 && platformDivisor > 0
+      ? round(rawBaseRecommendedPrice / platformDivisor)
+      : rawBaseRecommendedPrice;
 
   const baseProfitPerUnit = round(baseRecommendedPrice - baseCostPerUnit);
   const baseProfitMarginPercent = calculateProfitMargin(baseCostPerUnit, baseRecommendedPrice);
@@ -168,6 +179,11 @@ export const performFullCalculation = (
         ingredients: ingredientCost,
         labor: input.laborCost,
         overhead: input.overhead,
+        packaging: packagingCost,
+        platformFee:
+          platformFeePercent > 0
+            ? round(baseRecommendedPrice - rawBaseRecommendedPrice)
+            : 0,
       },
       variantResults: undefined,
     };
@@ -288,8 +304,60 @@ export const performFullCalculation = (
       ingredients: ingredientCost,
       labor: input.laborCost,
       overhead: input.overhead,
+      packaging: packagingCost,
+      platformFee:
+        platformFeePercent > 0
+          ? round(baseRecommendedPrice - rawBaseRecommendedPrice)
+          : 0,
     },
     variantResults,
+  };
+};
+
+// Apply VAT and wholesale pricing on top of an already-computed result.
+// Pure function — kept separate so the core calculation stays signature-stable.
+export const enrichWithVatAndWholesale = (
+  result: import('../types/calculator').CalculationResult,
+  input: import('../types/calculator').CalculationInput,
+  options: {
+    vatEnabled: boolean;
+    vatPercent: number;
+    vatInclusive: boolean;
+  }
+): import('../types/calculator').CalculationResult => {
+  let recommendedPrice = result.recommendedPrice;
+  let vatAmount: number | undefined;
+  let priceWithVat: number | undefined;
+
+  if (options.vatEnabled && options.vatPercent > 0) {
+    const v = options.vatPercent / 100;
+    if (options.vatInclusive) {
+      // Displayed price includes VAT; back out the VAT component.
+      const grossed = round(recommendedPrice * (1 + v));
+      priceWithVat = grossed;
+      vatAmount = round(grossed - recommendedPrice);
+      recommendedPrice = grossed;
+    } else {
+      vatAmount = round(recommendedPrice * v);
+      priceWithVat = round(recommendedPrice + vatAmount);
+    }
+  }
+
+  let wholesalePrice: number | undefined;
+  if (input.wholesale?.enabled) {
+    wholesalePrice = calculateRecommendedPrice(
+      result.costPerUnit,
+      input.wholesale.strategy,
+      input.wholesale.value
+    );
+  }
+
+  return {
+    ...result,
+    recommendedPrice,
+    vatAmount,
+    priceWithVat,
+    wholesalePrice,
   };
 };
 

@@ -126,6 +126,42 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
           </div>
         )}
 
+        {(results.vatAmount !== undefined || results.wholesalePrice !== undefined) && (
+          <div className="p-lg bg-white rounded-xl border border-border-base shadow-sm print:hidden">
+            <h4 className="text-sm font-bold text-ink-900 mb-md uppercase tracking-wide">
+              Tax &amp; tier
+            </h4>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-md text-sm">
+              {results.vatAmount !== undefined && (
+                <div>
+                  <p className="text-ink-500">VAT amount</p>
+                  <p className="font-mono text-ink-900 mt-xs">
+                    ₱{results.vatAmount.toFixed(2)}
+                    {results.priceWithVat !== undefined && (
+                      <span className="text-ink-500 ml-xs">
+                        (gross ₱{results.priceWithVat.toFixed(2)})
+                      </span>
+                    )}
+                  </p>
+                </div>
+              )}
+              {results.wholesalePrice !== undefined && (
+                <div>
+                  <p className="text-ink-500">Wholesale price</p>
+                  <p className="font-mono text-ink-900 mt-xs">
+                    ₱{results.wholesalePrice.toFixed(2)}
+                    {input.wholesale?.minUnits ? (
+                      <span className="text-ink-500 ml-xs">
+                        (min {input.wholesale.minUnits})
+                      </span>
+                    ) : null}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* Pro Tip - Low visual weight */}
         <div className="p-xl bg-surface/50 rounded-xl border border-border-subtle print:hidden flex items-start gap-md">
           <div className="p-sm bg-clay/10 rounded-round text-clay shrink-0">

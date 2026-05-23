@@ -12,7 +12,7 @@ import {
 import { AccordionSection } from './AccordionSection';
 import { VariantBlock } from './VariantBlock';
 import { SavePresetButton } from '../presets/SavePresetButton';
-import { Button, Card, Switch } from '../shared';
+import { Button, Card, Switch, Input } from '../shared';
 import { performFullCalculation } from '../../utils/calculations';
 import type { CalculationInput, PricingConfig, Ingredient, Variant } from '../../types/calculator';
 
@@ -349,6 +349,36 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 />
               </div>
             </div>
+            <div className="px-lg md:px-xl">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
+                <Input
+                  label="Packaging cost (per batch)"
+                  type="number"
+                  value={input?.packagingCost ?? ''}
+                  onChange={(e) =>
+                    onUpdateInput({ packagingCost: Number(e.target.value) || 0 })
+                  }
+                  currency
+                  min={0}
+                  step="0.01"
+                  helperText="Boxes, bags, stickers, etc."
+                />
+                <Input
+                  label="Platform / commission fee"
+                  type="number"
+                  value={input?.platformFeePercent ?? ''}
+                  onChange={(e) =>
+                    onUpdateInput({
+                      platformFeePercent: Number(e.target.value) || 0,
+                    })
+                  }
+                  suffix="%"
+                  min={0}
+                  step="0.1"
+                  helperText="GrabFood, Shopee, Lazada, etc."
+                />
+              </div>
+            </div>
             <div className="flex justify-end p-lg md:p-xl pt-0 md:pt-0">
                <Button 
                 variant="primary"
@@ -382,7 +412,59 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               <div className="h-px bg-border-subtle" role="separator" />
 
               <CurrentPrice value={input.currentSellingPrice} onChange={handleCurrentPriceChange} />
-              
+
+              <div className="h-px bg-border-subtle" role="separator" />
+
+              <div className="space-y-md">
+                <Switch
+                  checked={!!input.wholesale?.enabled}
+                  onChange={(checked) =>
+                    onUpdateInput({
+                      wholesale: {
+                        enabled: checked,
+                        minUnits: input.wholesale?.minUnits ?? 12,
+                        strategy: input.wholesale?.strategy ?? config.strategy,
+                        value: input.wholesale?.value ?? Math.max(0, config.value - 15),
+                      },
+                    })
+                  }
+                  label="Add a wholesale price tier"
+                />
+                {input.wholesale?.enabled && (
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-md">
+                    <Input
+                      label="Min units"
+                      type="number"
+                      value={input.wholesale.minUnits}
+                      onChange={(e) =>
+                        onUpdateInput({
+                          wholesale: {
+                            ...input.wholesale!,
+                            minUnits: Number(e.target.value) || 0,
+                          },
+                        })
+                      }
+                      min={1}
+                    />
+                    <Input
+                      label="Wholesale markup/margin"
+                      type="number"
+                      value={input.wholesale.value}
+                      onChange={(e) =>
+                        onUpdateInput({
+                          wholesale: {
+                            ...input.wholesale!,
+                            value: Number(e.target.value) || 0,
+                          },
+                        })
+                      }
+                      suffix="%"
+                      min={0}
+                    />
+                  </div>
+                )}
+              </div>
+
               <div className="flex justify-end">
                  <Button 
                   variant="primary"

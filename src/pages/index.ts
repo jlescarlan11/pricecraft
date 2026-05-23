@@ -5,3 +5,7 @@ export * from './AccountPage';
 export * from './CatalogPage';
 export * from './ScanReceiptPage';
 export * from './DriftPage';
+export * from './SettingsPage';
+export * from './BatchPlannerPage';
+export * from './SalesPage';
+export * from './PricingSheetPage';

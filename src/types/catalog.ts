@@ -44,6 +44,19 @@ export interface ParsedReceiptLine {
   catalogIngredientId?: string;
 }
 
+export interface SaleEntry {
+  id: string;
+  userId?: string;
+  presetId: string;
+  presetName: string;
+  unitsSold: number;
+  actualPricePerUnit: number;
+  actualCostPerUnit: number;
+  occurredAt: string;
+  notes?: string;
+  createdAt: string;
+}
+
 export interface DriftEntry {
   catalogIngredientId: string;
   ingredientName: string;

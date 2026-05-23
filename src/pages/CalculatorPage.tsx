@@ -10,6 +10,8 @@ import { useCalculatorState } from '../hooks';
 import { useCatalog } from '../hooks/use-catalog';
 import { usePresets } from '../hooks/use-presets';
 import { computeDriftFromPresets } from '../services/driftService';
+import { enrichWithVatAndWholesale } from '../utils/calculations';
+import { useSettings } from '../context/SettingsContext';
 import { triggerHapticFeedback } from '../utils/haptics';
 import type { Preset } from '../types';
 
@@ -48,9 +50,32 @@ export const CalculatorPage: React.FC = () => {
 
   const { items: catalog } = useCatalog();
   const { presets } = usePresets();
+  const { settings } = useSettings();
   const driftEntries = useMemo(
     () => computeDriftFromPresets(catalog, presets),
     [catalog, presets]
+  );
+  const enrichedResults = useMemo(
+    () =>
+      results
+        ? enrichWithVatAndWholesale(results, input, {
+            vatEnabled: settings.vatEnabled,
+            vatPercent: settings.vatPercent,
+            vatInclusive: settings.vatInclusive,
+          })
+        : results,
+    [results, input, settings]
+  );
+  const enrichedLiveResult = useMemo(
+    () =>
+      liveResult
+        ? enrichWithVatAndWholesale(liveResult, input, {
+            vatEnabled: settings.vatEnabled,
+            vatPercent: settings.vatPercent,
+            vatInclusive: settings.vatInclusive,
+          })
+        : liveResult,
+    [liveResult, input, settings]
   );
   const affectedPresetCount = useMemo(() => {
     const ids = new Set<string>();
@@ -186,7 +211,7 @@ export const CalculatorPage: React.FC = () => {
             className="mb-4xl animate-in fade-in slide-in-from-top-8 duration-700"
           >
             <ResultsDisplay
-              results={results}
+              results={enrichedResults}
               input={input}
               config={config}
               onEdit={handleScrollToForm}
@@ -225,7 +250,7 @@ export const CalculatorPage: React.FC = () => {
       </div>
 
       <StickySummary
-        results={liveResult}
+        results={enrichedLiveResult}
         hasCommittedResults={showResults}
         isStale={isDirty}
         onScrollToResults={handleScrollToResults}

@@ -31,7 +31,15 @@ export interface CalculationInput {
   ingredients: Ingredient[];
   laborCost: number;
   overhead: number;
+  packagingCost?: number;
+  platformFeePercent?: number;
   currentSellingPrice?: number;
+  wholesale?: {
+    enabled: boolean;
+    minUnits: number;
+    strategy: PricingStrategy;
+    value: number;
+  };
   hasVariants?: boolean;
   variants?: Variant[];
 }
@@ -75,7 +83,12 @@ export interface CalculationResult {
     ingredients: number;
     labor: number;
     overhead: number;
+    packaging?: number;
+    platformFee?: number;
   };
+  vatAmount?: number;
+  priceWithVat?: number;
+  wholesalePrice?: number;
   variantResults?: VariantResult[];
 }
 

@@ -124,3 +124,34 @@ create policy "Users can delete their own price history"
 
 create index if not exists price_history_ingredient_idx on public.price_history (catalog_ingredient_id, recorded_at desc);
 create index if not exists price_history_user_id_idx on public.price_history (user_id);
+
+-- ============================================================================
+-- Sales: planned vs actual reconciliation
+-- ============================================================================
+
+create table if not exists public.sales (
+  id uuid not null default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  preset_id uuid,
+  preset_name text,
+  units_sold numeric not null default 0,
+  actual_price_per_unit numeric not null default 0,
+  actual_cost_per_unit numeric not null default 0,
+  occurred_at timestamptz not null,
+  notes text,
+  created_at timestamptz not null default now(),
+  constraint sales_pkey primary key (id)
+);
+
+alter table public.sales enable row level security;
+
+create policy "Users can view their own sales"
+  on public.sales for select using (auth.uid() = user_id);
+create policy "Users can insert their own sales"
+  on public.sales for insert with check (auth.uid() = user_id);
+create policy "Users can update their own sales"
+  on public.sales for update using (auth.uid() = user_id);
+create policy "Users can delete their own sales"
+  on public.sales for delete using (auth.uid() = user_id);
+
+create index if not exists sales_user_idx on public.sales (user_id, occurred_at desc);
