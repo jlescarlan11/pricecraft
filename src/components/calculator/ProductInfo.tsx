@@ -22,26 +22,25 @@ export const ProductInfo: React.FC<ProductInfoProps> = ({
   errors = {},
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-xl">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Input
-        label="Business Name (Optional)"
+        label="Business name"
         value={businessName}
         onChange={(e) => onChange('businessName', e.target.value)}
         placeholder="e.g. Maria's Bakery"
         error={errors.businessName}
-        helperText="Your business name will appear on the printed report."
+        helperText="Appears on printed pricing sheets."
       />
       <Input
-        label="Product Name"
+        label="Product name"
         value={productName}
         onChange={(e) => onChange('productName', e.target.value)}
-        placeholder="e.g. Signature Chocolate Chip Cookies"
+        placeholder="e.g. Chocolate chip cookies"
         error={errors.productName}
-        helperText="Enter a descriptive name for your product."
         required
       />
       <Input
-        label="Batch Size"
+        label="Batch size"
         type="number"
         value={batchSize || ''}
         onChange={(e) => {

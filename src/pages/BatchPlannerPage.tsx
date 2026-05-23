@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Printer, Calculator } from 'lucide-react';
-import { Button, Input, Select, PageHeader } from '../components/shared';
+import { Button, Input, Select, PageHeader, EmptyState } from '../components/shared';
 import { usePresets } from '../hooks/use-presets';
 import { useSettings, formatMoney } from '../context/SettingsContext';
 import type { Ingredient, Preset } from '../types';
@@ -132,8 +132,12 @@ export const BatchPlannerPage: React.FC = () => {
       </div>
 
       {!selected ? (
-        <div className="text-center py-2xl border border-dashed border-border-base rounded-xl text-ink-500 print:hidden">
-          Choose a recipe to see the shopping list.
+        <div className="print:hidden">
+          <EmptyState
+            icon={<Calculator className="w-5 h-5" />}
+            title="Choose a recipe to see the shopping list"
+            description="The planner scales a saved recipe to your target unit count and adds up the ingredients you'll need to buy."
+          />
         </div>
       ) : (
         <div className="card p-6">

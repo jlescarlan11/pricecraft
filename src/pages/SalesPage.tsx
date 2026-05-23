@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { Button, Input, Select, Modal, PageHeader, StatCard } from '../components/shared';
+import { Button, Input, Select, Modal, PageHeader, StatCard, EmptyState } from '../components/shared';
+import { Receipt as ReceiptIcon } from 'lucide-react';
 import { useSales } from '../hooks/use-sales';
 import { usePresets } from '../hooks/use-presets';
 import { useSettings, formatMoney } from '../context/SettingsContext';
@@ -147,9 +148,16 @@ export const SalesPage: React.FC = () => {
       </div>
 
       {sales.length === 0 ? (
-        <div className="text-center py-12 border border-dashed border-border-base rounded-lg text-ink-500 bg-bg-elevated">
-          No sales logged yet. Log your first sale to see real margins.
-        </div>
+        <EmptyState
+          icon={<ReceiptIcon className="w-5 h-5" />}
+          title="No sales logged yet"
+          description="Log your first sale to see real margins next to planned ones."
+          action={
+            <Button variant="primary" size="sm" onClick={() => setOpen(true)}>
+              Log a sale
+            </Button>
+          }
+        />
       ) : (
         <div className="card-flat overflow-hidden">
           <div className="overflow-x-auto">

@@ -103,14 +103,14 @@ describe('PricingStrategy', () => {
 
     // Recommended Price: 100 + 10% = 110
     const priceDisplay = screen
-      .getByText(/Recommended Price/i)
-      .parentElement?.querySelector('.text-3xl');
+      .getByText(/Recommended price/i)
+      .parentElement?.querySelector('.text-2xl');
     expect(priceDisplay).toHaveTextContent('₱110.00');
 
     // Profit per unit: 10
     const profitDisplay = screen
-      .getByText(/Profit per Unit/i)
-      .parentElement?.querySelector('.text-moss');
+      .getByText(/Profit per unit/i)
+      .parentElement?.querySelector('.text-moss-700');
     expect(profitDisplay).toHaveTextContent('+₱10.00');
   });
 });

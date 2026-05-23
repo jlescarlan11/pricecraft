@@ -27,62 +27,52 @@ export const OverheadCost: React.FC<OverheadCostProps> = ({
   };
 
   return (
-    <div className="space-y-lg">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-xs">
-          <div className="flex items-center gap-sm">
-            <h3 className="text-lg font-bold text-ink-900 leading-tight">
-              {label || 'Overhead Cost'}
-            </h3>
-          </div>
-          <p className="text-xs text-ink-500">Rent, utilities, and packaging</p>
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-semibold text-ink-900 leading-tight">
+            {label || 'Overhead cost'}
+          </h3>
+          <p className="text-xs text-ink-500 mt-0.5">Rent, utilities, packaging.</p>
         </div>
-        <div className="flex items-center gap-xs">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsHelperOpen(true)}
-            className="text-ink-400 hover:text-clay hover:bg-clay/5 p-xs h-auto"
-            title="Overhead Guide"
+            aria-label="Overhead guide"
           >
-            <HelpCircle className="w-4.5 h-4.5" />
+            <HelpCircle className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsCalculatorOpen(true)}
-            className="text-clay hover:text-clay hover:bg-clay/10 py-xs px-md text-xs rounded-sm h-auto flex items-center gap-sm"
           >
-            <Calculator className="w-4 h-4 shrink-0" />
+            <Calculator className="w-4 h-4" />
             <span className="hidden sm:inline">Calculator</span>
           </Button>
         </div>
       </div>
 
-      <div className="space-y-sm">
-        <Input
-          label={label ? `Total ${label}` : 'Total Overhead Cost'}
-          type="number"
-          value={value === 0 ? '' : value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          currency
-          placeholder="0.00"
-          error={error}
-          min={0}
-          step="0.01"
-        />
-        {value === 0 && (
-          <div className="flex items-center gap-sm mt-sm">
-            <Badge
-              variant="warning"
-              className="flex items-center gap-xs text-[10px] py-xs px-sm uppercase tracking-wide"
-            >
-              <AlertCircle className="w-3.5 h-3.5" />
-              Zero overhead? Rare but possible.
-            </Badge>
-          </div>
-        )}
-      </div>
+      <Input
+        label={label ? `Total ${label}` : 'Total overhead cost'}
+        hideLabel
+        type="number"
+        value={value === 0 ? '' : value}
+        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        currency
+        placeholder="0.00"
+        error={error}
+        min={0}
+        step="0.01"
+      />
+      {value === 0 && (
+        <Badge variant="warning" className="inline-flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          Zero overhead? Rare but possible.
+        </Badge>
+      )}
 
       {/* Helper Modal */}
       <Modal

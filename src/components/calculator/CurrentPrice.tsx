@@ -32,23 +32,23 @@ export const CurrentPrice: React.FC<CurrentPriceProps> = ({
 
   if (embedded) {
     return (
-      <div className="space-y-sm" data-testid="current-price-section">
-        <div className="flex items-center justify-between mb-xs">
-          <h4 className="text-sm font-medium text-ink-900 uppercase tracking-wide">
-            Current Price
-          </h4>
-          <Button
-            variant="ghost"
-            onClick={toggleVisibility}
-            className="text-clay hover:text-clay hover:bg-clay/10 py-xs px-sm h-auto text-xs font-medium rounded transition-all duration-300 flex items-center gap-xs"
-          >
+      <div className="space-y-2" data-testid="current-price-section">
+        <div className="flex items-center justify-between">
+          <h4 className="label-caps">Current price</h4>
+          <Button variant="ghost" size="sm" onClick={toggleVisibility}>
             {isVisible ? 'Hide' : 'Compare'}
-            {isVisible ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            {isVisible ? (
+              <ChevronUp className="w-3 h-3" />
+            ) : (
+              <ChevronDown className="w-3 h-3" />
+            )}
           </Button>
         </div>
         {isVisible && (
-          <div className="animate-in fade-in slide-in-from-top-1 duration-300">
+          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
             <Input
+              label="Current selling price"
+              hideLabel
               type="number"
               value={value ?? ''}
               onChange={handleInputChange}
@@ -57,7 +57,6 @@ export const CurrentPrice: React.FC<CurrentPriceProps> = ({
               error={error}
               min={0}
               step="0.01"
-              className="w-full"
               autoFocus
             />
           </div>
@@ -68,39 +67,33 @@ export const CurrentPrice: React.FC<CurrentPriceProps> = ({
 
   return (
     <Card>
-      <div className="space-y-xl">
-        <div className="flex flex-wrap items-center justify-between gap-y-sm">
-          <div className="flex items-center gap-sm">
-            <Tag className="w-5 h-5 text-clay shrink-0" />
-            <h3 className="text-lg font-bold text-ink-900 tracking-tight leading-tight">
-              Current Price
-            </h3>
+      <div className="space-y-4">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <Tag className="w-4 h-4 text-clay shrink-0" />
+            <h3 className="text-sm font-semibold text-ink-900">Current price</h3>
           </div>
-          <Button
-            variant="ghost"
-            onClick={toggleVisibility}
-            className="text-clay hover:text-clay hover:bg-clay/10 py-xs px-md h-auto text-xs rounded-lg transition-all duration-300"
-          >
-            <span className="whitespace-nowrap">{isVisible ? 'Hide' : 'Compare'}</span>
+          <Button variant="ghost" size="sm" onClick={toggleVisibility}>
+            <span>{isVisible ? 'Hide' : 'Compare'}</span>
             {isVisible ? (
-              <ChevronUp className="w-4 h-4 ml-xs shrink-0" />
+              <ChevronUp className="w-4 h-4" />
             ) : (
-              <ChevronDown className="w-4 h-4 ml-xs shrink-0" />
+              <ChevronDown className="w-4 h-4" />
             )}
           </Button>
         </div>
 
         {isVisible && (
-          <div className="animate-in fade-in slide-in-from-top-2 duration-500">
+          <div className="animate-in fade-in slide-in-from-top-1 duration-200">
             <Input
-              label="Current Selling Price"
+              label="Current selling price"
               type="number"
               value={value ?? ''}
               onChange={handleInputChange}
               currency
               placeholder="0.00"
               error={error}
-              helperText="See how your current price compares to our recommendation."
+              helperText="See how your current price compares."
               min={0}
               step="0.01"
             />

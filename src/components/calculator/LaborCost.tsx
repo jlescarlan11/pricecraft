@@ -27,51 +27,47 @@ export const LaborCost: React.FC<LaborCostProps> = ({ value, onChange, error, la
   const calculatedTotal = (parseFloat(hours) || 0) * (parseFloat(rate) || 0);
 
   return (
-    <div className="space-y-lg">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-xs">
-          <div className="flex items-center gap-sm">
-            <h3 className="text-lg font-bold text-ink-900 leading-tight">
-              {label || 'Labor Cost'}
-            </h3>
-          </div>
-          <p className="text-xs text-ink-500">Pay yourself or your staff</p>
+    <div className="space-y-3">
+      <div className="flex items-start justify-between gap-2">
+        <div>
+          <h3 className="text-sm font-semibold text-ink-900 leading-tight">
+            {label || 'Labor cost'}
+          </h3>
+          <p className="text-xs text-ink-500 mt-0.5">Pay yourself or your staff.</p>
         </div>
-        <div className="flex items-center gap-xs">
+        <div className="flex items-center gap-1 shrink-0">
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsHelperOpen(true)}
-            className="text-ink-400 hover:text-clay hover:bg-clay/5 p-xs h-auto"
-            title="Labor Guide"
+            title="Labor guide"
+            aria-label="Labor guide"
           >
-            <HelpCircle className="w-4.5 h-4.5" />
+            <HelpCircle className="w-4 h-4" />
           </Button>
           <Button
             variant="ghost"
             size="sm"
             onClick={() => setIsCalculatorOpen(true)}
-            className="text-clay hover:bg-clay/10 py-xs px-md text-xs rounded-sm h-auto flex items-center gap-sm"
           >
-            <Calculator className="w-4 h-4 shrink-0" />
+            <Calculator className="w-4 h-4" />
             <span className="hidden sm:inline">Calculator</span>
           </Button>
         </div>
       </div>
 
-      <div className="space-y-sm">
-        <Input
-          label={label ? `Total ${label}` : 'Total Labor Cost'}
-          type="number"
-          value={value === 0 ? '' : value}
-          onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          currency
-          placeholder="0.00"
-          error={error}
-          min={0}
-          step="0.01"
-        />
-      </div>
+      <Input
+        label={label ? `Total ${label}` : 'Total labor cost'}
+        hideLabel
+        type="number"
+        value={value === 0 ? '' : value}
+        onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
+        currency
+        placeholder="0.00"
+        error={error}
+        min={0}
+        step="0.01"
+      />
 
       {/* Helper Modal */}
       <Modal
@@ -141,18 +137,14 @@ export const LaborCost: React.FC<LaborCostProps> = ({ value, onChange, error, la
             />
           </div>
 
-          <div className="bg-clay/5 rounded-xl p-lg border border-clay/20 space-y-md shadow-sm">
-            <div className="flex flex-col">
-              <span className="text-xs font-bold text-ink-500 uppercase tracking-wider">
-                Calculated Labor
-              </span>
-              <div className="font-bold text-clay text-3xl tracking-tight">
-                ₱
-                {calculatedTotal.toLocaleString('en-PH', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </div>
+          <div className="bg-clay-50 rounded-md p-4 border border-clay-100">
+            <p className="label-caps">Calculated labor</p>
+            <div className="text-2xl font-semibold text-clay-700 tnum mt-1">
+              ₱
+              {calculatedTotal.toLocaleString('en-PH', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
 
@@ -161,9 +153,10 @@ export const LaborCost: React.FC<LaborCostProps> = ({ value, onChange, error, la
             onClick={calculateAndApply}
             disabled={!hours || !rate}
             type="button"
-            className="w-full h-14 font-bold"
+            className="w-full"
+            size="lg"
           >
-            Apply to Labor Cost
+            Apply
           </Button>
         </div>
       </Modal>

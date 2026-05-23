@@ -43,6 +43,6 @@ describe('ProductInfo', () => {
 
   it('displays helper text', () => {
     render(<ProductInfo {...defaultProps} />);
-    expect(screen.getByText(/Enter a descriptive name/i)).toBeInTheDocument();
+    expect(screen.getByText(/Appears on printed pricing sheets/i)).toBeInTheDocument();
   });
 });

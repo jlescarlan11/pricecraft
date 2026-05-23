@@ -147,19 +147,19 @@ export const PricingStrategy: React.FC<PricingStrategyProps> = ({
 
       {/* Real-time Result - Hide if no cost per unit calculated */}
       {(!embedded || costPerUnit > 0) && (
-        <div className="pt-lg border-t border-border-subtle">
-          <div className="flex justify-between items-end">
+        <div className="pt-4 border-t border-border-subtle">
+          <div className="flex justify-between items-end gap-3">
             <div>
-              <p className="text-[10px] text-ink-500 uppercase tracking-widest font-bold mb-xs">
-                Recommended Price
-              </p>
-              <p className="text-3xl font-bold text-ink-900 tracking-tight">
+              <p className="label-caps">Recommended price</p>
+              <p className="text-2xl font-semibold text-ink-900 tracking-tight tnum mt-1">
                 {formatCurrency(recommendedPrice)}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-xs text-ink-500 font-medium mb-xs">Profit per Unit</p>
-              <p className="text-lg font-bold text-moss">+{formatCurrency(profit)}</p>
+              <p className="label-caps">Profit per unit</p>
+              <p className="text-base font-semibold text-moss-700 tnum mt-1">
+                +{formatCurrency(profit)}
+              </p>
             </div>
           </div>
         </div>
@@ -169,12 +169,8 @@ export const PricingStrategy: React.FC<PricingStrategyProps> = ({
 
   if (embedded) {
     return (
-      <div className="space-y-md">
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-medium text-ink-900 uppercase tracking-wide">
-            Pricing Strategy
-          </h4>
-        </div>
+      <div className="space-y-3">
+        <h4 className="label-caps">Pricing strategy</h4>
         {content}
       </div>
     );

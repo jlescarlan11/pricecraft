@@ -105,8 +105,8 @@ describe('CostBreakdown', () => {
 
     render(<CostBreakdown results={variantResultsMock} />);
 
-    expect(screen.getByText('Batch Summary')).toBeDefined();
-    expect(screen.getByText('Cost Analysis per Variant')).toBeDefined();
+    expect(screen.getByText(/Batch summary/i)).toBeDefined();
+    expect(screen.getByText(/Cost per variant/i)).toBeDefined();
     expect(screen.getByText('Variant A')).toBeDefined();
     expect(screen.getByText('Variant B')).toBeDefined();
     // Check for specific cost values

@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil, Trash2, BookOpen } from 'lucide-react';
 import type { CatalogIngredient, PriceHistoryEntry } from '../../types';
 import { catalogService } from '../../services/catalogService';
 import { useAuth } from '../../context/AuthContext';
-import { Button } from '../shared';
+import { Button, EmptyState } from '../shared';
 import { PriceSparkline } from './PriceSparkline';
 
 interface CatalogListProps {
@@ -52,11 +52,11 @@ export const CatalogList: React.FC<CatalogListProps> = ({ items, onEdit, onDelet
 
   if (items.length === 0) {
     return (
-      <div className="text-center py-2xl border border-dashed border-border-base rounded-xl">
-        <p className="text-ink-500">
-          Your catalog is empty. Add an ingredient or scan a receipt to start.
-        </p>
-      </div>
+      <EmptyState
+        icon={<BookOpen className="w-5 h-5" />}
+        title="No ingredients yet"
+        description="Add an ingredient manually or scan a grocery receipt to populate your catalog."
+      />
     );
   }
 

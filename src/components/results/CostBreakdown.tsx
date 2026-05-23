@@ -21,37 +21,33 @@ export const CostBreakdown: React.FC<CostBreakdownProps> = ({ results, className
     ];
 
     return (
-      <Card title="Cost Analysis" className={className}>
-        <div className="space-y-md">
+      <Card title="Cost analysis" className={className}>
+        <ul className="divide-y divide-border-subtle text-sm">
           {categories.map((category) => (
-            <div
+            <li
               key={category.label}
-              className="flex items-center justify-between py-xs border-b border-border-subtle last:border-0"
+              className="flex items-center justify-between py-2"
             >
-              <span className="text-sm font-medium text-ink-700">{category.label}</span>
-              <span className="text-base font-bold text-ink-900 tabular-nums">
+              <span className="text-ink-700">{category.label}</span>
+              <span className="font-medium text-ink-900 tnum">
                 {formatCurrency(category.value)}
               </span>
-            </div>
+            </li>
           ))}
+        </ul>
 
-          <div className="pt-md mt-md bg-surface rounded-lg p-md">
-            <div className="flex items-center justify-between mb-sm">
-              <span className="text-sm font-bold text-ink-900 uppercase tracking-widest">
-                Total Batch Cost
-              </span>
-              <span className="text-xl font-bold text-ink-900 tabular-nums">
-                {formatCurrency(totalCost)}
-              </span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-medium text-ink-500 uppercase tracking-widest">
-                Cost Per Unit
-              </span>
-              <span className="text-lg font-bold text-clay tabular-nums">
-                {formatCurrency(costPerUnit)}
-              </span>
-            </div>
+        <div className="mt-4 rounded-md surface-inset p-3">
+          <div className="flex items-center justify-between">
+            <span className="label-caps">Total batch cost</span>
+            <span className="text-lg font-semibold text-ink-900 tnum">
+              {formatCurrency(totalCost)}
+            </span>
+          </div>
+          <div className="flex items-center justify-between mt-2 pt-2 border-t border-border-subtle">
+            <span className="label-caps">Cost per unit</span>
+            <span className="text-base font-semibold text-clay tnum">
+              {formatCurrency(costPerUnit)}
+            </span>
           </div>
         </div>
       </Card>
@@ -60,43 +56,35 @@ export const CostBreakdown: React.FC<CostBreakdownProps> = ({ results, className
 
   // 2. Variant View (Detailed Breakdown)
   return (
-    <div className={`space-y-lg ${className}`}>
-      {/* Batch Level Summary */}
-      <Card title="Batch Summary" className="bg-surface">
-        <div className="grid grid-cols-2 gap-md">
+    <div className={`space-y-4 ${className}`}>
+      <Card title="Batch summary">
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <p className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-1">
-              Total Batch Cost
-            </p>
-            <p className="text-2xl font-bold text-ink-900 tabular-nums">
+            <p className="label-caps">Total batch cost</p>
+            <p className="text-xl font-semibold text-ink-900 tnum mt-1">
               {formatCurrency(totalCost)}
             </p>
           </div>
           <div>
-            <p className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-1">
-              Total Expected Profit
-            </p>
-            <p className="text-2xl font-bold text-moss tabular-nums">
+            <p className="label-caps">Total expected profit</p>
+            <p className="text-xl font-semibold text-moss-700 tnum mt-1">
               {formatCurrency(profitPerBatch)}
             </p>
           </div>
         </div>
       </Card>
 
-      {/* Per-Variant Breakdown */}
-      <Card title="Cost Analysis per Variant">
+      <Card title="Cost per variant" noPadding>
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left whitespace-nowrap">
-            <thead className="text-xs text-ink-500 uppercase bg-surface border-b border-border-subtle">
-              <tr>
-                <th className="px-md py-sm font-medium">Variant</th>
-                <th className="px-md py-sm font-medium text-right">Base Alloc.</th>
-                <th className="px-md py-sm font-medium text-right text-ink-400">+</th>
-                <th className="px-md py-sm font-medium text-right">Add-ons</th>
-                <th className="px-md py-sm font-medium text-right text-ink-400">=</th>
-                <th className="px-md py-sm font-medium text-right">Total Batch</th>
-                <th className="px-md py-sm font-medium text-right border-l border-border-subtle">
-                  Unit Cost
+            <thead>
+              <tr className="bg-surface/60 border-b border-border-subtle text-left">
+                <th className="px-4 py-2.5 label-caps">Variant</th>
+                <th className="px-4 py-2.5 label-caps text-right">Base alloc.</th>
+                <th className="px-4 py-2.5 label-caps text-right">Add-ons</th>
+                <th className="px-4 py-2.5 label-caps text-right">Total</th>
+                <th className="px-4 py-2.5 label-caps text-right border-l border-border-subtle">
+                  Unit
                 </th>
               </tr>
             </thead>
@@ -108,26 +96,25 @@ export const CostBreakdown: React.FC<CostBreakdownProps> = ({ results, className
                   specificLabor: 0,
                   specificOverhead: 0,
                 };
-                const totalAddons = bd.specificIngredients + bd.specificLabor + bd.specificOverhead;
+                const totalAddons =
+                  bd.specificIngredients + bd.specificLabor + bd.specificOverhead;
 
                 return (
-                  <tr key={variant.id} className="hover:bg-surface-hover transition-colors">
-                    <td className="px-md py-md font-medium text-ink-900">{variant.name}</td>
-                    <td className="px-md py-md text-right tabular-nums text-ink-500">
+                  <tr key={variant.id} className="hover:bg-surface/50 transition-colors">
+                    <td className="px-4 py-3 text-ink-900 font-medium">{variant.name}</td>
+                    <td className="px-4 py-3 text-right tnum text-ink-500">
                       {formatCurrency(bd.baseAllocation)}
                     </td>
-                    <td className="px-md py-md text-right tabular-nums text-ink-300">+</td>
                     <td
-                      className="px-md py-md text-right tabular-nums text-ink-700"
+                      className="px-4 py-3 text-right tnum text-ink-700"
                       title={`Ing: ${formatCurrency(bd.specificIngredients)}, Lab: ${formatCurrency(bd.specificLabor)}, Ov: ${formatCurrency(bd.specificOverhead)}`}
                     >
                       {formatCurrency(totalAddons)}
                     </td>
-                    <td className="px-md py-md text-right tabular-nums text-ink-300">=</td>
-                    <td className="px-md py-md text-right tabular-nums font-semibold text-ink-900">
+                    <td className="px-4 py-3 text-right tnum font-medium text-ink-900">
                       {formatCurrency(variant.totalCost)}
                     </td>
-                    <td className="px-md py-md text-right tabular-nums font-bold text-clay border-l border-border-subtle">
+                    <td className="px-4 py-3 text-right tnum font-semibold text-clay border-l border-border-subtle">
                       {formatCurrency(variant.costPerUnit)}
                     </td>
                   </tr>

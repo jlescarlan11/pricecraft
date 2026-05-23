@@ -49,16 +49,16 @@ export const PresetListItem: React.FC<PresetListItemProps> = ({
 
   if (viewMode === 'list') {
     return (
-      <div className="group relative flex items-center justify-between p-md bg-surface hover:bg-surface-hover rounded-xl border border-border-subtle transition-all duration-300">
-        <div className="flex-1 min-w-0 flex items-center gap-md">
-          <div className="p-xs bg-clay/10 rounded-md text-clay">
-            <Package size={16} />
+      <div className="group relative flex items-center justify-between gap-3 px-3 py-2.5 bg-bg-elevated hover:bg-surface rounded-md border border-border-subtle transition-colors">
+        <div className="flex-1 min-w-0 flex items-center gap-3">
+          <div className="p-1.5 bg-clay-50 rounded-md text-clay-700">
+            <Package size={14} />
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-sm font-bold text-ink-900 truncate tracking-tight" title={name}>
+            <h4 className="text-sm font-medium text-ink-900 truncate" title={name}>
               {name}
             </h4>
-            <p className="text-[10px] text-ink-500 font-medium">{formatDate(updatedAt)}</p>
+            <p className="text-xs text-ink-500 mt-0.5">{formatDate(updatedAt)}</p>
           </div>
         </div>
 
@@ -67,36 +67,35 @@ export const PresetListItem: React.FC<PresetListItemProps> = ({
             variant="ghost"
             size="sm"
             onClick={() => setIsActionsOpen(!isActionsOpen)}
-            className="w-8 h-8 p-0 text-ink-500 hover:text-clay"
             aria-label="Actions"
           >
-            <MoreVertical size={18} />
+            <MoreVertical size={16} />
           </Button>
 
           {isActionsOpen && (
-            <div className="absolute right-0 mt-xs w-48 origin-top-right bg-bg-main border border-border-base rounded-xl shadow-level-4 z-50 animate-in fade-in zoom-in-95 duration-200 overflow-hidden">
-              <div className="py-xs">
+            <div className="absolute right-0 mt-1 w-48 origin-top-right bg-bg-elevated border border-border-base rounded-md shadow-level-3 z-50 animate-in fade-in zoom-in-95 duration-150 overflow-hidden">
+              <div className="py-1">
                 <button
                   onClick={() => {
                     onLoad(preset);
                     setIsActionsOpen(false);
                   }}
-                  className="flex items-center w-full px-lg py-md text-xs font-bold text-ink-700 hover:bg-surface-hover transition-colors text-left gap-md cursor-pointer"
+                  className="flex items-center w-full px-3 py-1.5 text-sm text-ink-700 hover:bg-surface text-left gap-2 cursor-pointer"
                 >
                   <Play size={14} className="fill-current text-clay" />
-                  Load into Calculator
+                  Load into calculator
                 </button>
                 <button
                   onClick={() => {
                     onEdit(preset);
                     setIsActionsOpen(false);
                   }}
-                  className="flex items-center w-full px-lg py-md text-xs font-bold text-ink-700 hover:bg-surface-hover transition-colors text-left gap-md cursor-pointer"
+                  className="flex items-center w-full px-3 py-1.5 text-sm text-ink-700 hover:bg-surface text-left gap-2 cursor-pointer"
                 >
-                  <FileEdit size={14} className="text-ink-500" />
-                  Edit Name
+                  <FileEdit size={14} className="text-ink-400" />
+                  Edit name
                 </button>
-                <div className="border-t border-border-subtle my-xs" />
+                <div className="border-t border-border-subtle my-1" />
                 <button
                   onClick={() => {
                     if (window.confirm(`Are you sure you want to delete "${name}"?`)) {
@@ -104,10 +103,10 @@ export const PresetListItem: React.FC<PresetListItemProps> = ({
                     }
                     setIsActionsOpen(false);
                   }}
-                  className="flex items-center w-full px-lg py-md text-xs font-bold text-rust hover:bg-rust/5 transition-colors text-left gap-md cursor-pointer"
+                  className="flex items-center w-full px-3 py-1.5 text-sm text-rust-700 hover:bg-rust-50 text-left gap-2 cursor-pointer"
                 >
                   <Trash2 size={14} />
-                  Delete Preset
+                  Delete preset
                 </button>
               </div>
             </div>

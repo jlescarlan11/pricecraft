@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { Search, LayoutGrid, List } from 'lucide-react';
 import { usePresets } from '../../hooks/use-presets';
-import { Input, Button } from '../shared';
+import { Input, Button, EmptyState, SkeletonList } from '../shared';
+import { Package } from 'lucide-react';
 import { PresetListItem } from './PresetListItem';
 import type { Preset } from '../../types';
 
@@ -34,24 +35,16 @@ export const PresetsList: React.FC<PresetsListProps> = ({ onLoad, onEdit }) => {
   }, [presets, searchQuery]);
 
   if (isLoading) {
-    return (
-      <div className="py-3xl flex flex-col items-center justify-center space-y-md animate-in fade-in duration-500">
-        <div className="w-10 h-10 border-4 border-clay/20 border-t-clay rounded-full animate-spin" />
-        <p className="text-sm text-ink-500 font-medium italic">Fetching your products...</p>
-      </div>
-    );
+    return <SkeletonList count={3} />;
   }
 
   if (presets.length === 0) {
     return (
-      <div className="text-center py-3xl bg-surface rounded-lg border border-border-subtle">
-        <div className="max-w-xs mx-auto">
-          <p className="text-ink-900 font-bold mb-sm tracking-tight">A clean slate</p>
-          <p className="text-sm text-ink-500 font-medium leading-relaxed">
-            Your saved calculations will appear here for easy access.
-          </p>
-        </div>
-      </div>
+      <EmptyState
+        icon={<Package className="w-5 h-5" />}
+        title="A clean slate"
+        description="Your saved recipes will appear here for easy access."
+      />
     );
   }
 

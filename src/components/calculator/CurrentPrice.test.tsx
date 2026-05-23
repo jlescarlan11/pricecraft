@@ -45,7 +45,7 @@ describe('CurrentPrice', () => {
   it('displays helper text when visible', () => {
     render(<CurrentPrice value={100} onChange={mockOnChange} />);
     expect(
-      screen.getByText(/See how your current price compares to our recommendation/i)
+      screen.getByText(/See how your current price compares/i)
     ).toBeInTheDocument();
   });
 
@@ -60,7 +60,7 @@ describe('CurrentPrice', () => {
     render(<CurrentPrice value={undefined} onChange={mockOnChange} embedded />);
 
     // Header should be present
-    expect(screen.getByText('Current Price')).toBeInTheDocument();
+    expect(screen.getByText(/Current price/i)).toBeInTheDocument();
 
     // Toggle button should be present
     const toggleBtn = screen.getByRole('button', { name: /Compare/i });

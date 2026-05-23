@@ -31,7 +31,7 @@ describe('OverheadCost', () => {
 
     expect(screen.queryByText(/Overhead includes all indirect costs/i)).not.toBeInTheDocument();
 
-    const toggleBtn = screen.getByTitle(/Overhead Guide/i);
+    const toggleBtn = screen.getByLabelText(/Overhead guide/i);
     fireEvent.click(toggleBtn);
 
     expect(screen.getByText(/Overhead includes all indirect costs/i)).toBeInTheDocument();

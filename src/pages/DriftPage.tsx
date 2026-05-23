@@ -1,7 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowDownRight, ArrowUpRight } from 'lucide-react';
-import { Button, PageHeader } from '../components/shared';
+import { Button, PageHeader, EmptyState } from '../components/shared';
+import { CheckCircle2 } from 'lucide-react';
 import { useCatalog } from '../hooks/use-catalog';
 import { usePresets } from '../hooks/use-presets';
 import { computeDriftFromPresets } from '../services/driftService';
@@ -94,11 +95,11 @@ export const DriftPage: React.FC = () => {
       />
 
       {entries.length === 0 ? (
-        <div className="text-center py-2xl border border-dashed border-border-base rounded-xl">
-          <p className="text-ink-500">
-            No significant price drift detected. Your recipes are up to date.
-          </p>
-        </div>
+        <EmptyState
+          icon={<CheckCircle2 className="w-5 h-5 text-moss-700" />}
+          title="All recipes are up to date"
+          description="No significant price drift detected. We'll let you know when ingredient prices move 5% or more."
+        />
       ) : (
         <div className="space-y-lg">
           {entries.map((entry) => (
