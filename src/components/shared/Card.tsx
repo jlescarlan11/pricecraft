@@ -18,9 +18,9 @@ export const Card: React.FC<CardProps> = ({
   interactive = false,
 }) => {
   const baseClasses =
-    'bg-surface rounded-xl border border-border-subtle shadow-level-1 overflow-hidden relative transition-all duration-[400ms] ease-in-out';
+    'bg-bg-elevated rounded-lg border border-border-subtle shadow-level-1 overflow-hidden relative transition-shadow duration-150';
   const interactiveClasses = interactive
-    ? 'hover:shadow-level-2 hover:-translate-y-0.5 cursor-pointer'
+    ? 'hover:shadow-level-2 hover:border-border-base cursor-pointer'
     : '';
 
   return (
@@ -28,9 +28,9 @@ export const Card: React.FC<CardProps> = ({
       {noPadding ? (
         <>
           {title && (
-            <div className="p-md sm:p-lg md:p-xl pb-0">
+            <div className="p-4 sm:p-5 pb-0">
               {typeof title === 'string' ? (
-                <h3 className="font-serif text-xl font-semibold text-ink-900 mb-lg">{title}</h3>
+                <h3 className="text-sm font-semibold text-ink-900 mb-3">{title}</h3>
               ) : (
                 title
               )}
@@ -38,15 +38,17 @@ export const Card: React.FC<CardProps> = ({
           )}
           {children}
           {footer && (
-            <div className="border-t border-border-subtle bg-bg-main/50 p-md sm:p-lg md:p-xl">{footer}</div>
+            <div className="border-t border-border-subtle bg-surface/40 px-4 sm:px-5 py-3 text-sm">
+              {footer}
+            </div>
           )}
         </>
       ) : (
-        <div className="p-md sm:p-lg md:p-xl">
+        <div className="p-4 sm:p-5">
           {title && (
-            <div className="mb-lg">
+            <div className="mb-4">
               {typeof title === 'string' ? (
-                <h3 className="font-serif text-xl font-semibold text-ink-900">{title}</h3>
+                <h3 className="text-sm font-semibold text-ink-900">{title}</h3>
               ) : (
                 title
               )}
@@ -55,7 +57,11 @@ export const Card: React.FC<CardProps> = ({
 
           {children}
 
-          {footer && <div className="mt-lg pt-lg border-t border-border-subtle">{footer}</div>}
+          {footer && (
+            <div className="mt-4 pt-4 border-t border-border-subtle text-sm text-ink-500">
+              {footer}
+            </div>
+          )}
         </div>
       )}
     </div>

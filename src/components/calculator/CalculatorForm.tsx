@@ -160,18 +160,20 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const strategySummary = `${config.strategy === 'markup' ? 'Markup' : 'Margin'}: ${config.value}%`;
 
   return (
-    <div className="flex flex-col gap-xl w-full pb-4xl">
+    <div className="flex flex-col gap-5 w-full pb-24">
       {/* Header with Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-y-xs md:gap-y-0 items-center">
+      <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-y-2 md:gap-y-0 items-center">
         {/* Title */}
         <div className="flex flex-col">
-           <h2 className="text-2xl text-ink-900 font-serif tracking-tight">Calculator</h2>
-           <p className="text-sm text-ink-500">Step {Math.min(expandedSection || 1, 5)} of 5</p>
+          <h2 className="text-lg text-ink-900 font-semibold">Build your recipe</h2>
+          <p className="text-xs text-ink-500 mt-0.5">
+            Step {Math.min(expandedSection || 1, 5)} of 5
+          </p>
         </div>
 
         {/* Action Bar */}
-        <div className="md:col-start-2 md:justify-self-end mt-sm md:mt-0 w-full md:w-auto">
-          <div className="flex items-center justify-between md:justify-start gap-xs sm:gap-sm bg-surface p-1 rounded-lg border border-border-subtle shadow-sm w-full md:w-fit">
+        <div className="md:col-start-2 md:justify-self-end mt-2 md:mt-0 w-full md:w-auto">
+          <div className="flex items-center gap-1 bg-surface p-0.5 rounded-md border border-border-subtle w-full md:w-fit">
             <Button
               variant="ghost"
               onClick={onOpenPresets}

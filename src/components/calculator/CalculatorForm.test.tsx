@@ -327,7 +327,7 @@ describe('CalculatorForm', () => {
       </ToastProvider>
     );
 
-    expect(screen.getByRole('heading', { name: /Calculator/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Build your recipe/i })).toBeInTheDocument();
   });
 
   it('renders Load Sample Data when form is empty', () => {

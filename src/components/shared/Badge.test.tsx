@@ -11,29 +11,29 @@ describe('Badge', () => {
   it('applies default info variant classes', () => {
     render(<Badge>Info Badge</Badge>);
     const badge = screen.getByText('Info Badge');
-    expect(badge).toHaveClass('bg-clay/10');
-    expect(badge).toHaveClass('text-clay');
+    expect(badge).toHaveClass('bg-clay-50');
+    expect(badge).toHaveClass('text-clay-700');
   });
 
   it('applies success variant classes', () => {
     render(<Badge variant="success">Success Badge</Badge>);
     const badge = screen.getByText('Success Badge');
-    expect(badge).toHaveClass('bg-moss/10');
-    expect(badge).toHaveClass('text-moss');
+    expect(badge).toHaveClass('bg-moss-50');
+    expect(badge).toHaveClass('text-moss-700');
   });
 
   it('applies warning variant classes', () => {
     render(<Badge variant="warning">Warning Badge</Badge>);
     const badge = screen.getByText('Warning Badge');
-    expect(badge).toHaveClass('bg-sakura/20');
-    expect(badge).toHaveClass('text-ink-700');
+    expect(badge).toHaveClass('bg-amber-50');
+    expect(badge).toHaveClass('text-amber-700');
   });
 
   it('applies error variant classes', () => {
     render(<Badge variant="error">Error Badge</Badge>);
     const badge = screen.getByText('Error Badge');
-    expect(badge).toHaveClass('bg-rust/10');
-    expect(badge).toHaveClass('text-rust');
+    expect(badge).toHaveClass('bg-rust-50');
+    expect(badge).toHaveClass('text-rust-700');
   });
 
   it('applies custom className', () => {

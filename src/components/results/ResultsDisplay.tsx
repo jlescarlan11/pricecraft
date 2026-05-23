@@ -69,13 +69,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       </div>
 
       {/* Action Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-lg print:hidden">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
         <div>
-          <h2 className="text-3xl font-serif text-ink-900">Results</h2>
-          <p className="text-sm text-ink-500 mt-xs font-medium">
-            Analysis for{' '}
-            <span className="text-ink-900">{input.productName || 'Unnamed Product'}</span>
-          </p>
+          <p className="label-caps mb-1">Results</p>
+          <h2 className="font-serif text-2xl text-ink-900">
+            {input.productName || 'Unnamed product'}
+          </h2>
         </div>
         <div className="flex items-center gap-sm w-full sm:w-auto">
           <SavePresetButton

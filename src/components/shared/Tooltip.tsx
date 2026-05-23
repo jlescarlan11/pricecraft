@@ -210,34 +210,35 @@ export const Tooltip: React.FC<TooltipProps> = ({
       borderStyle: 'solid',
     };
 
+    const arrowColor = '#1a1815'; // matches --color-ink-900
     switch (coords.position) {
       case 'top':
         styles.bottom = `-${arrowSize}px`;
         styles.left = '50%';
         styles.transform = 'translateX(-50%)';
         styles.borderWidth = `${arrowSize}px ${arrowSize}px 0 ${arrowSize}px`;
-        styles.borderColor = '#3A3632 transparent transparent transparent';
+        styles.borderColor = `${arrowColor} transparent transparent transparent`;
         break;
       case 'bottom':
         styles.top = `-${arrowSize}px`;
         styles.left = '50%';
         styles.transform = 'translateX(-50%)';
         styles.borderWidth = `0 ${arrowSize}px ${arrowSize}px ${arrowSize}px`;
-        styles.borderColor = 'transparent transparent #3A3632 transparent';
+        styles.borderColor = `transparent transparent ${arrowColor} transparent`;
         break;
       case 'left':
         styles.right = `-${arrowSize}px`;
         styles.top = '50%';
         styles.transform = 'translateY(-50%)';
         styles.borderWidth = `${arrowSize}px 0 ${arrowSize}px ${arrowSize}px`;
-        styles.borderColor = 'transparent transparent transparent #3A3632';
+        styles.borderColor = `transparent transparent transparent ${arrowColor}`;
         break;
       case 'right':
         styles.left = `-${arrowSize}px`;
         styles.top = '50%';
         styles.transform = 'translateY(-50%)';
         styles.borderWidth = `${arrowSize}px ${arrowSize}px ${arrowSize}px 0`;
-        styles.borderColor = 'transparent #3A3632 transparent transparent';
+        styles.borderColor = `transparent ${arrowColor} transparent transparent`;
         break;
     }
 
@@ -269,7 +270,7 @@ export const Tooltip: React.FC<TooltipProps> = ({
             ref={tooltipRef}
             id={tooltipId}
             role="tooltip"
-            className="pointer-events-none z-[9999] w-max max-w-[280px] whitespace-normal break-words rounded-[6px] bg-[#3A3632] px-[12px] py-[8px] text-[13px] font-sans leading-[1.4] text-[#FAFAF9] shadow-[0_4px_12px_rgba(0,0,0,0.15)]"
+            className="pointer-events-none z-[9999] w-max max-w-[240px] whitespace-normal break-words rounded-md bg-ink-900 px-2.5 py-1.5 text-xs font-sans leading-snug text-bg-elevated shadow-level-3"
             style={getTooltipStyles()}
           >
             {content}

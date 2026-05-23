@@ -52,16 +52,16 @@ export const PricingRecommendations: React.FC<PricingRecommendationsProps> = ({
   return (
     <div className={`space-y-2xl ${className}`}>
       {/* Recommended Selling Price - Primary Focus */}
-      <div className="flex flex-col items-center px-2xl py-3xl bg-surface rounded-2xl border border-border-subtle shadow-sm relative overflow-hidden group">
+      <div className="flex flex-col items-center px-6 py-8 bg-bg-elevated rounded-xl border border-border-subtle shadow-level-1 relative overflow-hidden">
         <div className="relative z-10 w-full text-center">
-          <p className="text-sm font-semibold text-ink-500 uppercase tracking-widest mb-sm">Recommended Selling Price</p>
+          <p className="label-caps mb-2">Recommended selling price</p>
           <p
             key={recommendedPrice}
-            className="font-serif text-6xl sm:text-7xl text-ink-900 tracking-tighter transition-transform duration-700 group-hover:scale-105 animate-pulse-once"
+            className="font-serif text-5xl sm:text-6xl text-ink-900 tracking-tight tnum animate-pulse-once"
           >
             {formatCurrency(recommendedPrice)}
           </p>
-          <div className="flex justify-center mt-xl">
+          <div className="flex justify-center mt-4">
             <Badge
               variant={badgeDetails.variant}
               className="py-1.5 px-4 text-sm flex items-center justify-center shadow-sm"

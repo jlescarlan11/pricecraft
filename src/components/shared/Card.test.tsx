@@ -21,9 +21,9 @@ describe('Card', () => {
   it('applies default classes', () => {
     const { container } = render(<Card>Content</Card>);
     const card = container.firstChild;
-    expect(card).toHaveClass('bg-surface');
-    expect(card).toHaveClass('rounded-xl'); // Updated expectation
-    expect(card).toHaveClass('shadow-level-1'); // Updated expectation
+    expect(card).toHaveClass('bg-bg-elevated');
+    expect(card).toHaveClass('rounded-lg');
+    expect(card).toHaveClass('shadow-level-1');
   });
 
   it('applies interactive classes when interactive prop is true', () => {

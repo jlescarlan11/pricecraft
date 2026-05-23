@@ -147,64 +147,70 @@ export const SalesPage: React.FC = () => {
       </div>
 
       {sales.length === 0 ? (
-        <div className="text-center py-2xl border border-dashed border-border-base rounded-xl text-ink-500">
+        <div className="text-center py-12 border border-dashed border-border-base rounded-lg text-ink-500 bg-bg-elevated">
           No sales logged yet. Log your first sale to see real margins.
         </div>
       ) : (
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-ink-500 border-b border-border-subtle">
-                <th className="py-sm pr-md font-medium">Date</th>
-                <th className="py-sm pr-md font-medium">Recipe</th>
-                <th className="py-sm pr-md font-medium text-right">Units</th>
-                <th className="py-sm pr-md font-medium text-right">Price</th>
-                <th className="py-sm pr-md font-medium text-right">Profit</th>
-                <th className="py-sm font-medium" />
-              </tr>
-            </thead>
-            <tbody>
-              {sales.map((s: SaleEntry) => {
-                const revenue = s.unitsSold * s.actualPricePerUnit;
-                const cost = s.unitsSold * s.actualCostPerUnit;
-                const profit = revenue - cost;
-                return (
-                  <tr key={s.id} className="border-b border-border-subtle">
-                    <td className="py-md pr-md text-ink-700">
-                      {new Date(s.occurredAt).toLocaleDateString('en-PH', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                      })}
-                    </td>
-                    <td className="py-md pr-md text-ink-900">{s.presetName}</td>
-                    <td className="py-md pr-md text-right font-mono">{s.unitsSold}</td>
-                    <td className="py-md pr-md text-right font-mono">
-                      {formatMoney(s.actualPricePerUnit, settings.currency)}
-                    </td>
-                    <td
-                      className={`py-md pr-md text-right font-mono ${
-                        profit >= 0 ? 'text-moss' : 'text-rust'
-                      }`}
-                    >
-                      {formatMoney(profit, settings.currency)}
-                    </td>
-                    <td className="py-md text-right">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDelete(s.id)}
-                        aria-label="Delete sale"
-                        className="text-rust hover:bg-rust/5"
+        <div className="card-flat overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="bg-surface/60 border-b border-border-subtle text-left">
+                  <th className="px-4 py-2.5 label-caps">Date</th>
+                  <th className="px-4 py-2.5 label-caps">Recipe</th>
+                  <th className="px-4 py-2.5 label-caps text-right">Units</th>
+                  <th className="px-4 py-2.5 label-caps text-right">Price</th>
+                  <th className="px-4 py-2.5 label-caps text-right">Profit</th>
+                  <th className="px-4 py-2.5" />
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-border-subtle">
+                {sales.map((s: SaleEntry) => {
+                  const revenue = s.unitsSold * s.actualPricePerUnit;
+                  const cost = s.unitsSold * s.actualCostPerUnit;
+                  const profit = revenue - cost;
+                  return (
+                    <tr key={s.id} className="hover:bg-surface/50 transition-colors">
+                      <td className="px-4 py-3 text-ink-700 text-xs">
+                        {new Date(s.occurredAt).toLocaleDateString('en-PH', {
+                          year: 'numeric',
+                          month: 'short',
+                          day: 'numeric',
+                        })}
+                      </td>
+                      <td className="px-4 py-3 text-ink-900 font-medium">
+                        {s.presetName}
+                      </td>
+                      <td className="px-4 py-3 text-right tnum text-ink-700">
+                        {s.unitsSold}
+                      </td>
+                      <td className="px-4 py-3 text-right tnum text-ink-700">
+                        {formatMoney(s.actualPricePerUnit, settings.currency)}
+                      </td>
+                      <td
+                        className={`px-4 py-3 text-right tnum font-medium ${
+                          profit >= 0 ? 'text-moss-700' : 'text-rust-700'
+                        }`}
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+                        {formatMoney(profit, settings.currency)}
+                      </td>
+                      <td className="px-4 py-3 text-right">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDelete(s.id)}
+                          aria-label="Delete sale"
+                          className="text-rust-700 hover:bg-rust-50"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 

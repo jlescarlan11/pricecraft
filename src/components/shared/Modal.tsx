@@ -112,14 +112,14 @@ export const Modal: React.FC<ModalProps> = ({
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-50 flex items-center justify-center p-md max-[480px]:p-0`}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 max-[480px]:p-0"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-ink-900/40 backdrop-blur-sm transition-opacity duration-300 ease-out ${
+        className={`absolute inset-0 bg-ink-900/50 backdrop-blur-[2px] transition-opacity duration-200 ease-out ${
           isOpen ? 'opacity-100' : 'opacity-0'
         }`}
         onClick={onClose}
@@ -130,41 +130,43 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={`
-          relative z-10 flex flex-col bg-bg-main shadow-level-3 rounded-xl
-          transition-[opacity,transform] duration-400 [transition-timing-function:cubic-bezier(0.175,0.885,0.32,1.275)]
+          relative z-10 flex flex-col bg-bg-elevated shadow-level-4 rounded-xl
+          border border-border-subtle
+          transition-[opacity,transform] duration-200 ease-out
           w-full shrink-0 max-h-[90vh]
-          max-[480px]:h-full max-[480px]:max-h-none max-[480px]:rounded-none
-          p-[40px] max-[480px]:p-lg
+          max-[480px]:h-full max-[480px]:max-h-none max-[480px]:rounded-none max-[480px]:border-0
           ${maxWidth} ${className}
-          ${isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 translate-y-8 scale-95'}
+          ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}
           focus:outline-none
         `}
         tabIndex={-1}
       >
-        {/* Close Button (Ghost Style) */}
-        <button
-          onClick={onClose}
-          className="absolute top-md right-md rounded-round p-sm text-ink-500 hover:bg-surface-hover hover:text-ink-900 focus:outline-none focus:ring-2 focus:ring-clay/20 transition-all z-20"
-          aria-label="Close modal"
-        >
-          <X className="h-6 w-6" />
-        </button>
-
         {/* Header */}
-        <div className="mb-lg pr-[60px]">
+        <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-border-subtle">
           <h2
             id="modal-title"
-            className="text-[28px] font-serif font-semibold text-ink-900 leading-heading"
+            className="text-base font-semibold text-ink-900 leading-tight"
           >
             {title}
           </h2>
+          <button
+            onClick={onClose}
+            className="-mr-1 -mt-1 p-1.5 rounded-md text-ink-400 hover:bg-surface hover:text-ink-900 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] transition-colors"
+            aria-label="Close modal"
+          >
+            <X className="h-4 w-4" />
+          </button>
         </div>
 
         {/* Body */}
-        <div className="flex-1 overflow-y-auto no-scrollbar">{children}</div>
+        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
 
         {/* Footer */}
-        {footer && <div className="mt-xl pt-lg border-t border-border-subtle">{footer}</div>}
+        {footer && (
+          <div className="px-6 py-4 border-t border-border-subtle bg-surface/30">
+            {footer}
+          </div>
+        )}
       </div>
     </div>,
     document.body

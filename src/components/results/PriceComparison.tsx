@@ -54,7 +54,7 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
 
   return (
     <div className={`space-y-xl ${className}`}>
-      <h3 className="text-xl font-serif text-ink-900">Comparison</h3>
+      <h3 className="text-base font-semibold text-ink-900">Comparison</h3>
 
       <div className="space-y-lg">
         {/* Visual Comparison */}

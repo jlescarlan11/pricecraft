@@ -61,7 +61,7 @@ export const VariantBlock: React.FC<VariantBlockProps> = ({
             value={variant.name}
             onChange={(e) => onUpdate(variant.id, { name: e.target.value })}
             placeholder={`Variant ${index + 1} Name`}
-            className="font-serif text-lg font-bold bg-transparent border-none p-0 focus:ring-0 w-full"
+            className="text-base font-semibold bg-transparent border-none p-0 focus:ring-0 w-full"
             error={errors[`variants.${variant.id}.name`]}
             aria-label={`Variant ${index + 1} Name`}
           />

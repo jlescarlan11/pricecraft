@@ -2,14 +2,14 @@ import React, { useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { usePresets } from '../hooks/use-presets';
-import { Card, Input, Button } from '../components/shared';
+import { Input, Button } from '../components/shared';
 import { AlertCircle, CheckCircle2, ArrowRight, Save } from 'lucide-react';
 
 type AuthMode = 'login' | 'signup' | 'forgot-password';
 
 export const AuthPage: React.FC = () => {
   const { signIn, signUp, resetPasswordForEmail, user } = useAuth();
-  const { presets } = usePresets(); // Load local presets
+  const { presets } = usePresets();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
@@ -21,14 +21,10 @@ export const AuthPage: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  // Redirect if already logged in
   if (user) {
     return <Navigate to={from} replace />;
   }
 
-  // Count strictly local presets (guest mode)
-  // Actually usePresets returns all presets. If user is null, it's just local.
-  // We can filter by !p.userId to be sure, or just rely on the fact we are logged out.
   const guestPresetsCount = presets.length;
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -50,11 +46,13 @@ export const AuthPage: React.FC = () => {
         }
         const { error } = await signUp(email, password);
         if (error) throw error;
-        setSuccessMessage('Account created! Please check your email to confirm your account.');
+        setSuccessMessage(
+          'Account created. Check your email to confirm and finish signing in.'
+        );
       } else if (mode === 'forgot-password') {
         const { error } = await resetPasswordForEmail(email);
         if (error) throw error;
-        setSuccessMessage('Password reset email sent! Check your inbox.');
+        setSuccessMessage('Reset link sent. Check your inbox.');
       }
     } catch (err: unknown) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred';
@@ -73,120 +71,117 @@ export const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[80vh] py-2xl px-lg">
-      <div className="w-full max-w-[440px] animate-in fade-in duration-700">
+    <div className="flex flex-col items-center min-h-[calc(100vh-7rem)] py-10 px-4">
+      <div className="w-full max-w-sm">
         {guestPresetsCount > 0 && (
-          <div className="mb-xl p-lg bg-moss/5 border border-moss/10 rounded-2xl flex items-center gap-lg shadow-sm animate-in slide-in-from-top-4 duration-500">
-            <div className="p-2.5 bg-white rounded-full shadow-sm shrink-0">
-              <Save className="w-5 h-5 text-moss" />
-            </div>
-            <div className="flex-1">
-              <h3 className="font-semibold text-ink-900 text-sm">
-                We found {guestPresetsCount} unsaved recipe{guestPresetsCount !== 1 ? 's' : ''}
-              </h3>
-              <p className="text-sm text-ink-700 mt-0.5 leading-relaxed">
+          <div className="mb-6 p-3 bg-moss-50 border border-moss-100 rounded-lg flex items-start gap-3">
+            <Save className="w-4 h-4 text-moss-700 mt-0.5 shrink-0" />
+            <div className="flex-1 text-sm">
+              <p className="text-ink-900 font-medium">
+                {guestPresetsCount} unsaved recipe
+                {guestPresetsCount !== 1 ? 's' : ''} on this device
+              </p>
+              <p className="text-ink-500 mt-0.5 leading-relaxed">
                 {mode === 'signup'
-                  ? 'Create an account to save them to the cloud.'
-                  : 'Sign in to sync them and access them anywhere.'}
+                  ? "We'll sync them to your account on sign-up."
+                  : 'Sign in to sync them across devices.'}
               </p>
             </div>
           </div>
         )}
 
-        <div className="text-center mb-xl">
-          <h1 className="font-serif text-3xl md:text-4xl text-ink-900 mb-md tracking-tight">
-            {mode === 'login' && 'Welcome Back'}
-            {mode === 'signup' && 'Create Account'}
-            {mode === 'forgot-password' && 'Reset Password'}
+        <div className="text-center mb-6">
+          <h1 className="text-2xl text-ink-900 mb-1 font-serif">
+            {mode === 'login' && 'Welcome back'}
+            {mode === 'signup' && 'Create your account'}
+            {mode === 'forgot-password' && 'Reset your password'}
           </h1>
-          <p className="text-ink-500 max-w-[320px] mx-auto leading-relaxed">
-            {mode === 'login' && 'Sign in to access your saved recipes and pricing calculations'}
-            {mode === 'signup' && 'Join to save your products and manage your pricing securely'}
-            {mode === 'forgot-password' && 'Enter your email to receive a secure reset link'}
+          <p className="text-sm text-ink-500 max-w-xs mx-auto">
+            {mode === 'login' &&
+              'Sign in to sync your recipes, catalog, and sales.'}
+            {mode === 'signup' &&
+              'Save your work to the cloud and access it from any device.'}
+            {mode === 'forgot-password' &&
+              "We'll send you a secure link to reset your password."}
           </p>
         </div>
 
-        <Card className="shadow-xl border-border-subtle/50 overflow-visible">
-          <form onSubmit={handleSubmit} className="space-y-xl">
+        <div className="card p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="p-md bg-rust/5 border border-rust/10 rounded-xl flex items-start space-x-sm animate-shake">
-                <AlertCircle className="w-5 h-5 text-rust shrink-0 mt-0.5" />
-                <p className="text-sm text-rust font-medium">{error}</p>
+              <div className="p-3 bg-rust-50 border border-rust-100 rounded-md flex items-start gap-2 animate-shake">
+                <AlertCircle className="w-4 h-4 text-rust-700 shrink-0 mt-0.5" />
+                <p className="text-sm text-rust-700">{error}</p>
               </div>
             )}
 
             {successMessage && (
-              <div className="p-md bg-moss/5 border border-moss/10 rounded-xl flex items-start space-x-sm animate-in fade-in duration-500">
-                <CheckCircle2 className="w-5 h-5 text-moss shrink-0 mt-0.5" />
-                <p className="text-sm text-moss font-medium">{successMessage}</p>
+              <div className="p-3 bg-moss-50 border border-moss-100 rounded-md flex items-start gap-2">
+                <CheckCircle2 className="w-4 h-4 text-moss-700 shrink-0 mt-0.5" />
+                <p className="text-sm text-moss-700">{successMessage}</p>
               </div>
             )}
 
-            <div className="space-y-lg">
+            <Input
+              label="Email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+              autoComplete="email"
+            />
+
+            {mode !== 'forgot-password' && (
               <Input
-                label="Email Address"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
+                label="Password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
                 required
-                autoComplete="email"
+                autoComplete={
+                  mode === 'login' ? 'current-password' : 'new-password'
+                }
               />
+            )}
 
-              {mode !== 'forgot-password' && (
-                <Input
-                  label="Password"
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
-                />
-              )}
-
-              {mode === 'signup' && (
-                <Input
-                  label="Confirm Password"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  placeholder="••••••••"
-                  required
-                  autoComplete="new-password"
-                />
-              )}
-            </div>
+            {mode === 'signup' && (
+              <Input
+                label="Confirm password"
+                type="password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="new-password"
+              />
+            )}
 
             <Button
               type="submit"
               variant="primary"
-              disabled={loading}
-              className="w-full h-12 shadow-level-2"
+              size="lg"
+              isLoading={loading}
+              className="w-full"
             >
-              {loading ? (
-                'Processing...'
-              ) : (
-                <>
-                  {mode === 'login' && 'Sign In'}
-                  {mode === 'signup' && 'Create Account'}
-                  {mode === 'forgot-password' && 'Send Reset Link'}
-                  {!loading && <ArrowRight className="ml-sm w-4 h-4" />}
-                </>
-              )}
+              {mode === 'login' && 'Sign in'}
+              {mode === 'signup' && 'Create account'}
+              {mode === 'forgot-password' && 'Send reset link'}
+              {!loading && <ArrowRight className="w-4 h-4" aria-hidden="true" />}
             </Button>
           </form>
 
-          <div className="mt-xl pt-xl border-t border-border-subtle/50 flex flex-col gap-lg text-center">
+          <div className="mt-6 pt-5 border-t border-border-subtle flex flex-col gap-3 text-center text-sm">
             {mode === 'login' && (
               <>
-                <p className="text-sm text-ink-700">
+                <p className="text-ink-500">
                   Don&apos;t have an account?{' '}
                   <button
                     onClick={() => toggleMode('signup')}
-                    className="text-clay font-semibold hover:text-clay/80 transition-colors focus:outline-none focus:underline"
+                    className="text-clay font-medium hover:text-clay-600 transition-colors focus:outline-none focus:underline"
                   >
-                    Sign Up
+                    Sign up
                   </button>
                 </p>
                 <button
@@ -199,13 +194,13 @@ export const AuthPage: React.FC = () => {
             )}
 
             {mode === 'signup' && (
-              <p className="text-sm text-ink-700">
+              <p className="text-ink-500">
                 Already have an account?{' '}
                 <button
                   onClick={() => toggleMode('login')}
-                  className="text-clay font-semibold hover:text-clay/80 transition-colors focus:outline-none focus:underline"
+                  className="text-clay font-medium hover:text-clay-600 transition-colors focus:outline-none focus:underline"
                 >
-                  Sign In
+                  Sign in
                 </button>
               </p>
             )}
@@ -213,13 +208,13 @@ export const AuthPage: React.FC = () => {
             {mode === 'forgot-password' && (
               <button
                 onClick={() => toggleMode('login')}
-                className="text-sm text-ink-700 hover:text-clay font-semibold transition-colors focus:outline-none focus:underline"
+                className="text-clay font-medium hover:text-clay-600 transition-colors focus:outline-none focus:underline"
               >
-                Back to Sign In
+                Back to sign in
               </button>
             )}
           </div>
-        </Card>
+        </div>
       </div>
     </div>
   );

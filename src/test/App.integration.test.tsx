@@ -44,12 +44,14 @@ describe('App Integration', () => {
     const calculateBtn = screen.getByRole('button', { name: /^Calculate Price$/ });
     fireEvent.click(calculateBtn);
 
-    // Should show results
-    expect(await screen.findByRole('heading', { name: /^Results$/ }, { timeout: 10000 })).toBeInTheDocument();
-    expect(screen.getByText(/Analysis for/i)).toHaveTextContent('Test Product');
+    // Should show results — header is the product name with a "Results" eyebrow.
+    expect(
+      await screen.findByText(/^Results$/, { selector: 'p' }, { timeout: 10000 })
+    ).toBeInTheDocument();
+    expect(screen.getAllByText('Test Product').length).toBeGreaterThan(0);
 
     // Check if results are displayed
-    expect(screen.getAllByText(/Recommended Price/i).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Recommended (Selling )?Price/i).length).toBeGreaterThan(0);
   }, 15000);
 
   it('can edit results to go back to form', async () => {
@@ -62,7 +64,9 @@ describe('App Integration', () => {
     const calculateBtn = screen.getByRole('button', { name: /^Calculate Price$/ });
     fireEvent.click(calculateBtn);
 
-    expect(await screen.findByRole('heading', { name: /^Results$/ }, { timeout: 10000 })).toBeInTheDocument();
+    expect(
+      await screen.findByText(/^Results$/, { selector: 'p' }, { timeout: 10000 })
+    ).toBeInTheDocument();
 
     // Form is visible below results, so we can access inputs directly
     expect(screen.getByText(/Product Details/i)).toBeInTheDocument();

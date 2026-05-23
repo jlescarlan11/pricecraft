@@ -27,7 +27,7 @@ export const SampleDemo: React.FC<SampleDemoProps> = ({ onLoadSample }) => {
             <span className="bg-clay text-white text-[10px] font-bold px-sm py-[2px] rounded-full uppercase tracking-wider shadow-sm">
               New to pricing?
             </span>
-            <h3 className="text-xl md:text-2xl font-bold text-ink-900 tracking-tight font-serif">
+            <h3 className="text-lg text-ink-900 font-semibold">
               See how it works
             </h3>
           </div>
