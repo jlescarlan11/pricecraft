@@ -1,5 +1,10 @@
 import React from 'react';
-import { Calculator, RefreshCw, ChevronRight } from 'lucide-react';
+import {
+  Calculator,
+  RefreshCw,
+  ChevronRight,
+  Lightbulb,
+} from 'lucide-react';
 import { Button } from '../shared/Button';
 import type { CalculationResult } from '../../types/calculator';
 import { formatCurrency, getMarginColor } from '../../utils/formatters';
@@ -29,7 +34,7 @@ export const CalculatorSidePanel: React.FC<CalculatorSidePanelProps> = ({
 
   return (
     <aside
-      className="hidden xl:block sticky top-20 self-start"
+      className="hidden xl:flex flex-col gap-4 sticky top-20 self-start"
       aria-label="Live calculation summary"
     >
       <div className="card overflow-hidden">
@@ -130,6 +135,21 @@ export const CalculatorSidePanel: React.FC<CalculatorSidePanelProps> = ({
               <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </Button>
           )}
+        </div>
+      </div>
+
+      {/* Quick tip card — fills the right column when the form is short. */}
+      <div className="card p-4 bg-clay-50/60 border-clay-100">
+        <div className="flex items-start gap-2.5">
+          <Lightbulb
+            className="w-4 h-4 text-clay-700 mt-0.5 shrink-0"
+            aria-hidden="true"
+          />
+          <div className="text-xs text-ink-700 leading-relaxed">
+            <p className="font-semibold text-ink-900 mb-1">Quick tip</p>
+            Aim for a 30%+ profit margin to keep your business healthy. A
+            healthy margin lets you absorb cost spikes and reinvest in growth.
+          </div>
         </div>
       </div>
     </aside>

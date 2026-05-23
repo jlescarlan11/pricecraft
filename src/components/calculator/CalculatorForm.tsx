@@ -628,16 +628,18 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
       </div>
 
-      {/* Main Calculate Action - Bottom of Form (Desktop Only) */}
-      <div className="hidden sm:block mt-xl">
+      {/* Main Calculate Action — shown below the form on sm-xl. At xl+ the
+          side panel's Calculate button takes over so we don't duplicate. */}
+      <div className="hidden sm:block xl:hidden mt-6">
         <Button
           variant="primary"
+          size="lg"
           onClick={onCalculate}
           isLoading={isCalculating}
-          className="w-full h-14 text-lg font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all"
+          className="w-full"
         >
-          <Calculator className="w-5 h-5 mr-2" />
-          Calculate Price
+          <Calculator className="w-4 h-4" />
+          Calculate price
         </Button>
       </div>
     </div>

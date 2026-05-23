@@ -78,17 +78,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
 
   return (
     <aside className="h-full flex flex-col bg-bg-elevated border-r border-border-subtle">
-      {/* Logo + brand */}
-      <div className="px-4 py-4 border-b border-border-subtle">
-        <Link to="/" className="flex items-center gap-2.5 group" onClick={onItemClick}>
-          <div className="w-8 h-8 rounded-md bg-clay text-white flex items-center justify-center shadow-level-1 transition-transform group-hover:scale-105">
-            <LayoutDashboard className="w-4 h-4" />
+      {/* Logo + brand — matches topbar height (h-14 = 56px) */}
+      <div className="h-14 px-4 border-b border-border-subtle flex items-center">
+        <Link
+          to="/"
+          className="flex items-center gap-2.5 group min-w-0"
+          onClick={onItemClick}
+        >
+          <div className="w-7 h-7 rounded-md bg-clay text-white flex items-center justify-center shrink-0">
+            <LayoutDashboard className="w-3.5 h-3.5" />
           </div>
-          <div className="flex flex-col leading-none">
-            <span className="font-serif text-lg text-ink-900 font-semibold">
+          <div className="flex flex-col leading-none min-w-0">
+            <span className="font-serif text-base text-ink-900 font-semibold truncate">
               PriceCraft
             </span>
-            <span className="text-2xs uppercase tracking-caps text-ink-400 mt-0.5">
+            <span className="text-2xs uppercase tracking-caps text-ink-400 mt-0.5 truncate">
               Mindful pricing
             </span>
           </div>

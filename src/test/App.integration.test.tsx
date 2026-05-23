@@ -41,7 +41,7 @@ describe('App Integration', () => {
       }
     }
 
-    const calculateBtn = screen.getByRole('button', { name: /^Calculate Price$/ });
+    const calculateBtn = screen.getByRole('button', { name: /^Calculate price$/i });
     fireEvent.click(calculateBtn);
 
     // Should show results — header is the product name with a "Results" eyebrow.
@@ -61,7 +61,7 @@ describe('App Integration', () => {
     const loadSampleBtn = screen.getByText(/Load Sample Data/i);
     fireEvent.click(loadSampleBtn);
 
-    const calculateBtn = screen.getByRole('button', { name: /^Calculate Price$/ });
+    const calculateBtn = screen.getByRole('button', { name: /^Calculate price$/i });
     fireEvent.click(calculateBtn);
 
     expect(

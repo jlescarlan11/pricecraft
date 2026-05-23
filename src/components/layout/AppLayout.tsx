@@ -72,7 +72,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({ children }) => {
       <div className="lg:pl-64">
         <Topbar onMenu={() => setMobileOpen(true)} />
 
-        <main className="focus:outline-none">
+        <main className="focus:outline-none min-h-[calc(100vh-3.5rem)]">
           <div className="px-4 sm:px-6 lg:px-8 py-6 lg:py-8 pb-24 lg:pb-12 max-w-[1440px] mx-auto">
             {children}
           </div>
