@@ -69,7 +69,8 @@ export const ScanReceiptPage: React.FC = () => {
         <div>
           <h1 className="font-serif text-3xl text-ink-900">Scan a receipt</h1>
           <p className="text-ink-500 mt-sm">
-            OCR runs in your browser. The photo never leaves your device.
+            We&apos;ll read items and prices. You confirm everything before it&apos;s
+            saved.
           </p>
         </div>
         <Button variant="ghost" onClick={() => navigate('/catalog')}>
@@ -86,7 +87,8 @@ export const ScanReceiptPage: React.FC = () => {
           onReset={reset}
         />
       )}
-      {(status === 'preprocessing' ||
+      {(status === 'converting' ||
+        status === 'preprocessing' ||
         status === 'loading-worker' ||
         status === 'recognizing' ||
         status === 'parsing' ||

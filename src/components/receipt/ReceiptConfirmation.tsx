@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { CheckCircle2, Circle, AlertTriangle } from 'lucide-react';
+import { CheckCircle2, Circle, AlertTriangle, Plus } from 'lucide-react';
 import { Button, Input, Select } from '../shared';
 import type { CatalogIngredient, ParsedReceiptLine } from '../../types';
 import { findClosestCatalogMatch } from '../../services/receiptParser';
@@ -85,6 +85,25 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
     setRows((rs) => rs.map((r) => ({ ...r, checked: !allChecked })));
   };
 
+  const addEmptyRow = () => {
+    setRows((rs) => [
+      ...rs,
+      {
+        id: `row-manual-${Date.now()}`,
+        itemName: '',
+        quantity: '1',
+        unit: 'kg',
+        price: '',
+        confidence: 1,
+        checked: true,
+      },
+    ]);
+  };
+
+  const removeRow = (id: string) => {
+    setRows((rs) => rs.filter((r) => r.id !== id));
+  };
+
   const handleAccept = async () => {
     setSaving(true);
     try {
@@ -156,6 +175,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
           const matched = row.catalogIngredientId
             ? catalog.find((c) => c.id === row.catalogIngredientId)
             : null;
+          const isManual = row.id.startsWith('row-manual-');
           return (
             <div
               key={row.id}
@@ -209,7 +229,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
                   options={UNIT_OPTIONS}
                 />
               </div>
-              <div className="col-span-2">
+              <div className="col-span-2 flex items-end gap-xs">
                 <Input
                   label="Price"
                   hideLabel
@@ -219,10 +239,28 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
                   currency
                   min={0}
                 />
+                {isManual && (
+                  <button
+                    type="button"
+                    onClick={() => removeRow(row.id)}
+                    aria-label="Remove this row"
+                    className="text-ink-400 hover:text-rust px-xs pb-sm"
+                  >
+                    ×
+                  </button>
+                )}
               </div>
             </div>
           );
         })}
+        <button
+          type="button"
+          onClick={addEmptyRow}
+          className="w-full border border-dashed border-border-base rounded-md py-sm text-sm text-ink-500 hover:bg-surface-hover hover:text-clay flex items-center justify-center gap-xs"
+        >
+          <Plus className="w-4 h-4" aria-hidden="true" />
+          Add another item (manually)
+        </button>
       </div>
 
       <div className="mt-md">
