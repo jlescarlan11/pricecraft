@@ -4,7 +4,7 @@ import { PageHeader } from '../components/shared';
 
 export const FAQPage: React.FC = () => {
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6">
       <PageHeader
         eyebrow="Learn"
         title="Pricing tips & FAQ"

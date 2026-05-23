@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Camera, Sun, Crop, FileImage, Wand2, BookOpen } from 'lucide-react';
 import { useReceiptScan } from '../hooks/use-receipt-scan';
 import { useCatalog } from '../hooks/use-catalog';
 import { useAuth } from '../context/AuthContext';
@@ -63,8 +64,17 @@ export const ScanReceiptPage: React.FC = () => {
     navigate('/catalog');
   };
 
+  const scannerActive =
+    status === 'idle' ||
+    status === 'converting' ||
+    status === 'preprocessing' ||
+    status === 'loading-worker' ||
+    status === 'recognizing' ||
+    status === 'parsing' ||
+    status === 'error';
+
   return (
-    <div className="space-y-6 max-w-3xl">
+    <div className="space-y-6">
       <PageHeader
         eyebrow="Capture"
         title="Scan a receipt"
@@ -76,30 +86,8 @@ export const ScanReceiptPage: React.FC = () => {
         }
       />
 
-      {status === 'idle' && (
-        <ReceiptScanner
-          status={status}
-          progress={progress}
-          error={error}
-          onFile={scan}
-          onReset={reset}
-        />
-      )}
-      {(status === 'converting' ||
-        status === 'preprocessing' ||
-        status === 'loading-worker' ||
-        status === 'recognizing' ||
-        status === 'parsing' ||
-        status === 'error') && (
-        <ReceiptScanner
-          status={status}
-          progress={progress}
-          error={error}
-          onFile={scan}
-          onReset={reset}
-        />
-      )}
-      {status === 'done' && result && (
+      {status === 'done' && result ? (
+        // Confirmation gets the full width — there's a lot to review.
         <ReceiptConfirmation
           lines={result.lines}
           rawText={rawText}
@@ -107,7 +95,89 @@ export const ScanReceiptPage: React.FC = () => {
           onAccept={handleAccept}
           onCancel={reset}
         />
+      ) : (
+        // Scanner + tips side panel.
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_320px] gap-6 max-w-5xl">
+          <div className="min-w-0">
+            {scannerActive && (
+              <ReceiptScanner
+                status={status}
+                progress={progress}
+                error={error}
+                onFile={scan}
+                onReset={reset}
+              />
+            )}
+          </div>
+
+          <aside className="space-y-4">
+            <div className="card p-5">
+              <h3 className="text-sm font-semibold text-ink-900 mb-3 flex items-center gap-2">
+                <Wand2 className="w-4 h-4 text-clay" aria-hidden="true" />
+                Tips for a great scan
+              </h3>
+              <ul className="space-y-3 text-sm text-ink-700">
+                <Tip
+                  icon={<Crop className="w-4 h-4" />}
+                  title="Fill the frame"
+                  body="Crop tight so the receipt fills the viewfinder rectangle. Background clutter confuses the OCR."
+                />
+                <Tip
+                  icon={<FileImage className="w-4 h-4" />}
+                  title="Lay it flat"
+                  body="Smooth out creases. Curved or wrinkled paper distorts characters."
+                />
+                <Tip
+                  icon={<Sun className="w-4 h-4" />}
+                  title="Use good light"
+                  body="Even, bright light without glare works best. Natural daylight is great."
+                />
+                <Tip
+                  icon={<Camera className="w-4 h-4" />}
+                  title="Shoot straight on"
+                  body="Hold the camera parallel to the paper, not at an angle."
+                />
+              </ul>
+            </div>
+
+            <div className="card p-5">
+              <h3 className="text-sm font-semibold text-ink-900 mb-2 flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-clay" aria-hidden="true" />
+                Catalog status
+              </h3>
+              <p className="text-sm text-ink-500">
+                {catalog.length === 0
+                  ? 'Your catalog is empty. Scanned items will start filling it up.'
+                  : `${catalog.length} ingredient${
+                      catalog.length === 1 ? '' : 's'
+                    } in your catalog.`}
+              </p>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => navigate('/catalog')}
+                className="mt-3 -ml-2"
+              >
+                Go to catalog
+              </Button>
+            </div>
+          </aside>
+        </div>
       )}
     </div>
   );
 };
+
+const Tip: React.FC<{
+  icon: React.ReactNode;
+  title: string;
+  body: string;
+}> = ({ icon, title, body }) => (
+  <li className="flex gap-3">
+    <span className="shrink-0 mt-0.5 text-clay">{icon}</span>
+    <span className="min-w-0">
+      <span className="block font-medium text-ink-900">{title}</span>
+      <span className="block text-ink-500 leading-snug mt-0.5">{body}</span>
+    </span>
+  </li>
+);
