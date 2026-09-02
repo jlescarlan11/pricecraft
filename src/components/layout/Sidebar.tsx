@@ -1,7 +1,7 @@
 import React from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import {
-  LayoutDashboard,
+  Boxes,
   Calculator,
   BookOpen,
   ScanLine,
@@ -47,11 +47,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
 
   const linkClass = ({ isActive }: { isActive: boolean }): string =>
     [
-      'group flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors',
+      'group flex items-center gap-3 px-3 py-2.5 rounded-none text-[13px] transition-colors border-l-2',
       'hover:bg-surface',
       isActive
-        ? 'bg-surface text-ink-900 font-medium'
-        : 'text-ink-500 hover:text-ink-900',
+        ? 'bg-surface text-ink-900 font-medium border-nav-active'
+        : 'text-ink-500 hover:text-ink-900 border-transparent',
     ].join(' ');
 
   const renderItem = (item: NavItem) => {
@@ -65,7 +65,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
               <Icon
                 className={[
                   'w-4 h-4 shrink-0',
-                  isActive ? 'text-clay' : 'text-ink-400 group-hover:text-ink-700',
+                  isActive
+                    ? 'text-nav-active'
+                    : 'text-ink-400 group-hover:text-ink-700',
                 ].join(' ')}
               />
               <span>{item.label}</span>
@@ -77,7 +79,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
   };
 
   return (
-    <aside className="h-full flex flex-col bg-bg-elevated border-r border-border-subtle">
+    <aside className="h-full flex flex-col bg-bg-main text-ink-900 border-r border-border-subtle">
       {/* Logo + brand — matches topbar height (h-14 = 56px) */}
       <div className="h-14 px-4 border-b border-border-subtle flex items-center">
         <Link
@@ -85,15 +87,15 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
           className="flex items-center gap-2.5 group min-w-0"
           onClick={onItemClick}
         >
-          <div className="w-7 h-7 rounded-md bg-clay text-white flex items-center justify-center shrink-0">
-            <LayoutDashboard className="w-3.5 h-3.5" />
+          <div className="w-7 h-7 rounded-none bg-ink-900 text-bg-main flex items-center justify-center shrink-0">
+            <Boxes className="w-3.5 h-3.5" />
           </div>
           <div className="flex flex-col leading-none min-w-0">
-            <span className="font-serif text-base text-ink-900 font-semibold truncate">
+            <span className="font-sans text-base text-ink-900 font-semibold tracking-[-0.02em] truncate">
               PriceCraft
             </span>
-            <span className="text-2xs uppercase tracking-caps text-ink-400 mt-0.5 truncate">
-              Mindful pricing
+            <span className="font-mono text-[8px] uppercase tracking-[0.16em] text-ink-400 mt-0.5 truncate">
+              Pricing workspace
             </span>
           </div>
         </Link>
@@ -101,10 +103,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ onItemClick }) => {
 
       {/* Primary nav */}
       <nav className="flex-1 px-2 py-4 overflow-y-auto">
-        <p className="label-caps px-3 mb-2">Workspace</p>
+        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink-400 px-3 mb-2">Workspace</p>
         <ul className="space-y-0.5">{PRIMARY.map(renderItem)}</ul>
 
-        <p className="label-caps px-3 mt-6 mb-2">More</p>
+        <p className="font-mono text-[9px] uppercase tracking-[0.16em] text-ink-400 px-3 mt-6 mb-2">System</p>
         <ul className="space-y-0.5">{SECONDARY.map(renderItem)}</ul>
       </nav>
 

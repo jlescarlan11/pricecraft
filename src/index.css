@@ -4,45 +4,48 @@
   /* ============================================================
    * COLOR SYSTEM
    * ============================================================
-   * Refined for business-grade UI: warm neutrals (kept the brand
-   * warmth) + a brand accent + proper semantic colors. Each
-   * semantic color has a soft tint for backgrounds and a strong
-   * tone for text/borders so we get proper contrast on cards.
+   * Avant-garde product UI: near-monochrome warm neutrals, a dark
+   * workspace rail, and one high-visibility decision signal.
    * ============================================================ */
 
   /* Surfaces */
-  --color-bg-main: #fbfaf8;       /* App background */
-  --color-bg-elevated: #ffffff;   /* Card / dialog */
-  --color-surface: #f5f3ef;       /* Subtle inset (input bg, hover) */
-  --color-surface-hover: #ecebe6;
-  --color-surface-strong: #e3e1db;
+  --color-bg-main: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-surface: #f3f3ef;
+  --color-surface-hover: #e9e9e4;
+  --color-surface-strong: #dcdcd5;
+  --color-sidebar: #0b0b0b;
+  --color-graphite: #161616;
+  --color-signal: #ecff35;
+  --color-signal-strong: #dcf20e;
+  --color-nav-active: #0f0f0f;
 
   /* Neutral / ink scale — warm gray */
-  --color-ink-50:  #f7f6f3;
-  --color-ink-100: #ecebe7;
-  --color-ink-200: #dcdad4;
-  --color-ink-300: #b7b4ac;
-  --color-ink-400: #8b8780;       /* Muted text */
-  --color-ink-500: #6f6b64;       /* Secondary text */
-  --color-ink-600: #524e48;
-  --color-ink-700: #3d3a35;       /* Body text */
-  --color-ink-800: #2a2825;
-  --color-ink-900: #1a1815;       /* Headings, strong text */
+  --color-ink-50:  #f7f7f4;
+  --color-ink-100: #ecece7;
+  --color-ink-200: #d9d9d2;
+  --color-ink-300: #b8b8b0;
+  --color-ink-400: #8d8d86;
+  --color-ink-500: #686862;
+  --color-ink-600: #50504b;
+  --color-ink-700: #343432;
+  --color-ink-800: #20201f;
+  --color-ink-900: #0f0f0f;
 
   /* Borders */
-  --color-border-subtle: #ecebe7;
-  --color-border-base:   #d8d5cf;
-  --color-border-strong: #b9b6af;
+  --color-border-subtle: #deded8;
+  --color-border-base:   #c9c9c1;
+  --color-border-strong: #9f9f97;
 
-  /* Brand accent — clay (kept) */
-  --color-clay-50:  #faf0ea;
-  --color-clay-100: #f1ddd0;
-  --color-clay-200: #e5c4ad;
-  --color-clay-300: #d4a07e;
-  --color-clay-400: #b9805a;
-  --color-clay:     #9a6440;      /* Primary action */
-  --color-clay-600: #7e5234;
-  --color-clay-700: #5e3d27;
+  /* Legacy clay aliases map old call sites into the monochrome system. */
+  --color-clay-50:  #f1f1ed;
+  --color-clay-100: #ddddD6;
+  --color-clay-200: #bcbcb4;
+  --color-clay-300: #85857e;
+  --color-clay-400: #4a4a46;
+  --color-clay:     #111111;
+  --color-clay-600: #070707;
+  --color-clay-700: #000000;
 
   /* Semantic — Moss (success) */
   --color-moss-50:  #f0f3ec;
@@ -104,15 +107,13 @@
   /* ============================================================
    * TYPOGRAPHY
    * ============================================================
-   * Headings: Crimson Text serif kept as brand differentiator,
-   * but used more sparingly (only h1/h2 displays). UI labels and
-   * smaller headings use Inter for clarity.
-   * Type scale tightened to 1.18 ratio (more confident, denser).
+   * Editorial display type is paired with a disciplined grotesk and
+   * tabular mono for financial data.
    * ============================================================ */
 
-  --font-serif: 'Crimson Text', 'Source Serif Pro', serif;
-  --font-sans:  'Inter', system-ui, -apple-system, sans-serif;
-  --font-mono:  'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  --font-serif: 'Newsreader', Georgia, serif;
+  --font-sans:  'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+  --font-mono:  'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
 
   --font-size-2xs:    0.6875rem;  /* 11px — labels, chips */
   --font-size-xs:     0.75rem;    /* 12px — captions */
@@ -138,25 +139,25 @@
   --tracking-caps:    0.06em;
 
   /* ============================================================
-   * ELEVATION (subtle, layered, business-y)
+   * ELEVATION
    * ============================================================ */
   --shadow-level-0: none;
-  --shadow-level-1: 0 1px 2px rgba(15, 14, 12, 0.04), 0 1px 1px rgba(15, 14, 12, 0.03);
-  --shadow-level-2: 0 2px 4px rgba(15, 14, 12, 0.05), 0 1px 2px rgba(15, 14, 12, 0.04);
-  --shadow-level-3: 0 8px 16px -4px rgba(15, 14, 12, 0.08), 0 2px 4px rgba(15, 14, 12, 0.04);
-  --shadow-level-4: 0 16px 32px -8px rgba(15, 14, 12, 0.12), 0 4px 8px rgba(15, 14, 12, 0.04);
-  --shadow-focus:   0 0 0 3px rgba(154, 100, 64, 0.22);
+  --shadow-level-1: none;
+  --shadow-level-2: none;
+  --shadow-level-3: 0 14px 40px rgba(0, 0, 0, 0.14);
+  --shadow-level-4: 0 24px 70px rgba(0, 0, 0, 0.22);
+  --shadow-focus:   0 0 0 2px #fdfdfb, 0 0 0 4px #111111;
 
   /* ============================================================
-   * RADII (tighter / more confident)
+   * RADII
    * ============================================================ */
   --radius-none: 0px;
-  --radius-xs:   3px;
-  --radius-sm:   4px;
-  --radius-md:   6px;
-  --radius-lg:   8px;
-  --radius-xl:   10px;
-  --radius-2xl:  14px;
+  --radius-xs:   0px;
+  --radius-sm:   1px;
+  --radius-md:   2px;
+  --radius-lg:   2px;
+  --radius-xl:   3px;
+  --radius-2xl:  4px;
   --radius-round: 999px;
 
   /* Custom keyframes (kept) */
@@ -181,28 +182,27 @@
     -webkit-mask-image: linear-gradient(to right, black 90%, transparent 100%);
   }
 
-  /* Texture kept but disabled by default — too "lifestyle" for business UI.
-     Components that opted into .paper-texture still get nothing rendered. */
+  /* Previous paper texture is intentionally retired. */
   .paper-texture {
     display: none;
   }
 
   /* Reusable surface tokens */
   .card {
-    @apply bg-bg-elevated border border-border-subtle rounded-lg shadow-level-1;
+    @apply bg-bg-elevated border border-border-base rounded-none shadow-none;
   }
   .card-flat {
-    @apply bg-bg-elevated border border-border-subtle rounded-lg;
+    @apply bg-bg-elevated border border-border-base rounded-none;
   }
   .surface-inset {
-    @apply bg-surface border border-border-subtle rounded-md;
+    @apply bg-surface border border-border-subtle rounded-none;
   }
 
   /* Caps label used across the app */
   .label-caps {
-    @apply font-semibold uppercase text-ink-500;
-    font-size: 0.6875rem;
-    letter-spacing: var(--tracking-caps);
+    @apply font-mono font-medium uppercase text-ink-500;
+    font-size: 0.625rem;
+    letter-spacing: 0.12em;
   }
 
   /* Tabular numerals — for prices, stats */
@@ -212,6 +212,55 @@
 }
 
 @layer base {
+  html,
+  body,
+  #root {
+    min-height: 100%;
+    background-color: var(--color-bg-main);
+  }
+
+  html {
+    color-scheme: light;
+  }
+
+  html.dark {
+    color-scheme: dark;
+    --color-bg-main: #050505;
+    --color-bg-elevated: #0b0b0b;
+    --color-surface: #131313;
+    --color-surface-hover: #1b1b1b;
+    --color-surface-strong: #262626;
+    --color-sidebar: #050505;
+    --color-graphite: #121212;
+    --color-nav-active: #ecff35;
+
+    --color-ink-50: #0d0d0d;
+    --color-ink-100: #171717;
+    --color-ink-200: #282828;
+    --color-ink-300: #4b4b4b;
+    --color-ink-400: #777773;
+    --color-ink-500: #a0a09a;
+    --color-ink-600: #bdbdb6;
+    --color-ink-700: #d7d7d0;
+    --color-ink-800: #e9e9e3;
+    --color-ink-900: #f8f8f3;
+
+    --color-border-subtle: #222222;
+    --color-border-base: #343434;
+    --color-border-strong: #565656;
+
+    --color-clay-50: #141414;
+    --color-clay-100: #242424;
+    --color-clay-200: #3a3a3a;
+    --color-clay-300: #777773;
+    --color-clay-400: #b3b3ad;
+    --color-clay: #f0f0eb;
+    --color-clay-600: #f7f7f3;
+    --color-clay-700: #ffffff;
+
+    --shadow-focus: 0 0 0 2px #050505, 0 0 0 4px #f8f8f3;
+  }
+
   body {
     @apply bg-bg-main text-ink-700 antialiased font-sans text-base leading-body tracking-body;
     font-feature-settings: 'tnum', 'cv02', 'cv03', 'cv04', 'cv11';
@@ -225,11 +274,12 @@
   /* h1 / h2 keep the serif brand identity for hero headers */
   h1 {
     @apply font-serif text-4xl;
-    letter-spacing: var(--tracking-tight);
+    font-weight: 400;
+    letter-spacing: -0.035em;
   }
   h2 {
-    @apply font-serif text-3xl;
-    letter-spacing: var(--tracking-tight);
+    @apply font-sans text-3xl;
+    letter-spacing: -0.025em;
   }
   h3 { @apply text-2xl; }
   h4 { @apply text-xl; }
@@ -237,7 +287,20 @@
   h6 { @apply text-base font-semibold; }
 
   button, input, select, textarea, label {
-    @apply leading-ui transition-all duration-200 ease-out;
+    @apply leading-ui transition-colors duration-150 ease-out;
+  }
+
+  button, [role='button'] {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  table {
+    font-variant-numeric: tabular-nums;
+  }
+
+  th {
+    font-family: var(--font-mono);
+    font-weight: 500;
   }
 
   ::-webkit-scrollbar {
@@ -258,6 +321,11 @@
     scrollbar-width: none;
   }
 
+  ::selection {
+    color: #0b0b0b;
+    background: var(--color-signal);
+  }
+
   /* Autofill: match our surface */
   input:-webkit-autofill,
   input:-webkit-autofill:hover,
@@ -267,6 +335,15 @@
     -webkit-text-fill-color: var(--color-ink-900);
     -webkit-box-shadow: 0 0 0 1000px var(--color-bg-elevated) inset;
     transition: background-color 5000s ease-in-out 0s;
+  }
+
+  .dark input:-webkit-autofill,
+  .dark input:-webkit-autofill:hover,
+  .dark input:-webkit-autofill:focus,
+  .dark textarea:-webkit-autofill,
+  .dark select:-webkit-autofill {
+    -webkit-text-fill-color: var(--color-ink-900);
+    -webkit-box-shadow: 0 0 0 1000px var(--color-bg-elevated) inset;
   }
 
   @media print {

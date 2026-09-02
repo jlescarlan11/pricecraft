@@ -24,7 +24,7 @@ export const PricingGuide: React.FC<PricingGuideProps> = ({
           onClick={() => setActiveTab('markup')}
           className={`flex-1 flex items-center justify-center gap-sm py-md text-sm font-bold rounded-sm transition-all duration-300 ${
             activeTab === 'markup'
-              ? 'bg-clay text-white shadow-level-1'
+              ? 'bg-sidebar text-white shadow-level-1'
               : 'text-ink-500 hover:text-ink-900'
           }`}
         >
@@ -35,7 +35,7 @@ export const PricingGuide: React.FC<PricingGuideProps> = ({
           onClick={() => setActiveTab('margin')}
           className={`flex-1 flex items-center justify-center gap-sm py-md text-sm font-bold rounded-sm transition-all duration-300 ${
             activeTab === 'margin'
-              ? 'bg-clay text-white shadow-level-1'
+              ? 'bg-sidebar text-white shadow-level-1'
               : 'text-ink-500 hover:text-ink-900'
           }`}
         >
@@ -75,7 +75,7 @@ export const PricingGuide: React.FC<PricingGuideProps> = ({
                 <p className="text-[10px] font-bold text-clay uppercase mb-xs">+ 50% Profit</p>
                 <ArrowRight className="h-6 w-6 text-border-base rotate-90 md:rotate-0" />
               </div>
-              <div className="text-center p-md bg-clay rounded-md shadow-level-1 border border-clay/10">
+              <div className="text-center p-md bg-sidebar rounded-md shadow-level-1 border border-white/10">
                 <p className="text-[10px] text-white/70 font-bold uppercase tracking-wider mb-xs">
                   You sell for
                 </p>

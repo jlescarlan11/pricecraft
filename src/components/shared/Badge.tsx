@@ -19,7 +19,7 @@ export const Badge: React.FC<BadgeProps> = ({
   className = '',
 }) => {
   const baseStyles =
-    'inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium leading-tight transition-colors';
+    'inline-flex items-center rounded-none px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.08em] font-medium leading-tight transition-colors';
 
   const variants: Record<BadgeVariant, string> = {
     success: 'bg-moss-50 text-moss-700 border border-moss-100',

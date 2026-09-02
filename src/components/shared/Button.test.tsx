@@ -8,41 +8,41 @@ describe('Button', () => {
     const button = screen.getByRole('button', { name: /click me/i });
     expect(button).toBeInTheDocument();
     // Default is primary variant
-    expect(button).toHaveClass('bg-clay');
+    expect(button).toHaveClass('bg-sidebar');
     expect(button).toHaveClass('text-white');
     // md size
-    expect(button).toHaveClass('h-9');
-    expect(button).toHaveClass('px-3');
+    expect(button).toHaveClass('h-10');
+    expect(button).toHaveClass('px-4');
     // base styles
-    expect(button).toHaveClass('rounded-md');
+    expect(button).toHaveClass('rounded-none');
   });
 
   it('renders primary variant correctly', () => {
     render(<Button variant="primary">Primary</Button>);
     const button = screen.getByRole('button', { name: /primary/i });
-    expect(button).toHaveClass('bg-clay');
+    expect(button).toHaveClass('bg-sidebar');
     expect(button).toHaveClass('text-white');
-    expect(button).toHaveClass('hover:bg-clay-600');
+    expect(button).toHaveClass('hover:bg-graphite');
   });
 
   it('renders secondary variant correctly', () => {
     render(<Button variant="secondary">Secondary</Button>);
     const button = screen.getByRole('button', { name: /secondary/i });
-    expect(button).toHaveClass('bg-bg-elevated');
+    expect(button).toHaveClass('bg-transparent');
     expect(button).toHaveClass('text-ink-900');
   });
 
   it('renders success variant correctly', () => {
     render(<Button variant="success">Success</Button>);
     const button = screen.getByRole('button', { name: /success/i });
-    expect(button).toHaveClass('bg-moss');
+    expect(button).toHaveClass('bg-ink-900');
     expect(button).toHaveClass('text-white');
   });
 
   it('renders danger variant correctly', () => {
     render(<Button variant="danger">Danger</Button>);
     const button = screen.getByRole('button', { name: /danger/i });
-    expect(button).toHaveClass('bg-rust');
+    expect(button).toHaveClass('bg-rust-700');
     expect(button).toHaveClass('text-white');
   });
 

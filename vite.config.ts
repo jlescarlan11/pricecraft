@@ -18,8 +18,8 @@ export default defineConfig({
         short_name: 'PriceCraft',
         description:
           'A calm, intentional tool for small food businesses to calculate profitable selling prices.',
-        theme_color: '#b85450',
-        background_color: '#fbf9f6',
+        theme_color: '#0c0c0c',
+        background_color: '#f3f2ee',
         display: 'standalone',
         orientation: 'portrait',
         start_url: '/',
@@ -50,6 +50,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     css: true,
+    // Keep DOM-heavy component suites responsive on modest local/CI runners.
+    maxWorkers: 2,
   },
   resolve: {
     alias: {

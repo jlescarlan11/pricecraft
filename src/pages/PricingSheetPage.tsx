@@ -78,7 +78,7 @@ export const PricingSheetPage: React.FC = () => {
         />
       </div>
 
-      <div className="print:hidden bg-white p-lg rounded-xl border border-border-base shadow-sm space-y-md">
+      <div className="print:hidden bg-bg-elevated p-lg rounded-none border border-border-base shadow-none space-y-md">
         <h2 className="text-lg font-medium text-ink-900">Choose recipes</h2>
         {presets.length === 0 ? (
           <p className="text-ink-500 text-sm">
@@ -112,7 +112,7 @@ export const PricingSheetPage: React.FC = () => {
       </div>
 
       {/* Printable Sheet */}
-      <div className="bg-white p-2xl rounded-xl border border-border-base shadow-sm print:border-0 print:shadow-none print:p-0 print:rounded-none print-sheet">
+      <div className="bg-bg-elevated p-2xl rounded-none border border-border-base shadow-none print:border-0 print:shadow-none print:p-0 print:rounded-none print-sheet">
         <header className="text-center border-b border-border-subtle pb-md mb-lg">
           <h1 className="font-serif text-3xl text-ink-900">
             {businessName || 'Pricing sheet'}

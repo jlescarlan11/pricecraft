@@ -1,4 +1,5 @@
 import React from 'react';
+import { LoaderCircle } from 'lucide-react';
 
 export type ButtonVariant =
   | 'primary'
@@ -28,11 +29,10 @@ export const Button: React.FC<ButtonProps> = ({
   type = 'button',
   ...props
 }) => {
-  // Business-grade button: tighter padding, subtle shadows, no scale-on-hover
-  // (that's a consumer pattern). Focus ring uses our shadow-focus token.
+  // Editorial controls stay square and rely on contrast instead of decoration.
   const baseStyles = [
     'inline-flex items-center justify-center gap-1.5',
-    'rounded-md font-medium whitespace-nowrap',
+    'rounded-none font-medium whitespace-nowrap',
     'transition-colors duration-150 ease-out',
     'focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)]',
     'disabled:pointer-events-none disabled:opacity-50',
@@ -40,21 +40,21 @@ export const Button: React.FC<ButtonProps> = ({
   ].join(' ');
 
   const variants: Record<ButtonVariant, string> = {
-    primary: 'bg-clay text-white border border-clay hover:bg-clay-600',
+    primary: 'bg-sidebar text-white border border-sidebar hover:bg-graphite',
     secondary:
-      'bg-bg-elevated text-ink-900 border border-border-base hover:bg-surface hover:border-border-strong',
-    success: 'bg-moss text-white border border-moss hover:bg-moss-700',
-    danger: 'bg-rust text-white border border-rust hover:bg-rust-700',
-    ghost: 'text-ink-700 hover:text-ink-900 hover:bg-surface border border-transparent',
-    soft: 'bg-moss-50 text-moss-700 border border-moss-100 hover:bg-moss-100',
+      'bg-transparent text-ink-900 border border-border-strong hover:bg-ink-900 hover:text-white hover:border-ink-900',
+    success: 'bg-ink-900 text-white border border-ink-900 hover:bg-moss-700',
+    danger: 'bg-rust-700 text-white border border-rust-700 hover:bg-rust',
+    ghost: 'text-ink-600 hover:text-ink-900 hover:bg-surface border border-transparent',
+    soft: 'bg-surface text-ink-900 border border-border-base hover:bg-surface-hover',
     dashed:
-      'bg-transparent text-ink-500 border-2 border-dashed border-border-base hover:border-clay hover:text-clay hover:bg-clay-50',
+      'bg-transparent text-ink-600 border border-dashed border-border-strong hover:border-ink-900 hover:text-ink-900 hover:bg-surface',
   };
 
   const sizes: Record<ButtonSize, string> = {
-    sm: 'h-8 px-2.5 text-xs',
-    md: 'h-9 px-3 text-sm',
-    lg: 'h-11 px-4 text-sm',
+    sm: 'h-8 px-3 text-xs',
+    md: 'h-10 px-4 text-sm',
+    lg: 'h-12 px-5 text-sm',
   };
 
   const variantStyles = dashed ? variants.dashed : variants[variant];
@@ -70,26 +70,7 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {isLoading && (
-        <svg
-          className="-ml-0.5 mr-1 h-3.5 w-3.5 animate-spin"
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          viewBox="0 0 24 24"
-        >
-          <circle
-            className="opacity-25"
-            cx="12"
-            cy="12"
-            r="10"
-            stroke="currentColor"
-            strokeWidth="4"
-          />
-          <path
-            className="opacity-75"
-            fill="currentColor"
-            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-          />
-        </svg>
+        <LoaderCircle className="-ml-0.5 mr-1 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
       )}
       {children}
     </button>

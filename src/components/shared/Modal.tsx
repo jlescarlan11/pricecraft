@@ -130,8 +130,8 @@ export const Modal: React.FC<ModalProps> = ({
       <div
         ref={modalRef}
         className={`
-          relative z-10 flex flex-col bg-bg-elevated shadow-level-4 rounded-xl
-          border border-border-subtle
+          relative z-10 flex flex-col bg-bg-elevated shadow-level-4 rounded-none
+          border border-border-strong
           transition-[opacity,transform] duration-200 ease-out
           w-full shrink-0 max-h-[90vh]
           max-[480px]:h-full max-[480px]:max-h-none max-[480px]:rounded-none max-[480px]:border-0
@@ -142,16 +142,16 @@ export const Modal: React.FC<ModalProps> = ({
         tabIndex={-1}
       >
         {/* Header */}
-        <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-border-subtle">
+        <div className="flex items-start justify-between gap-4 px-6 py-4 border-b border-border-base bg-sidebar text-white">
           <h2
             id="modal-title"
-            className="text-base font-semibold text-ink-900 leading-tight"
+            className="font-mono text-xs uppercase tracking-[0.12em] font-medium text-white leading-tight"
           >
             {title}
           </h2>
           <button
             onClick={onClose}
-            className="-mr-1 -mt-1 p-1.5 rounded-md text-ink-400 hover:bg-surface hover:text-ink-900 focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] transition-colors"
+            className="-mr-1 -mt-1 p-1.5 rounded-none text-white/50 hover:bg-white/10 hover:text-signal focus-visible:outline-none focus-visible:shadow-[var(--shadow-focus)] transition-colors"
             aria-label="Close modal"
           >
             <X className="h-4 w-4" />
@@ -163,7 +163,7 @@ export const Modal: React.FC<ModalProps> = ({
 
         {/* Footer */}
         {footer && (
-          <div className="px-6 py-4 border-t border-border-subtle bg-surface/30">
+          <div className="px-6 py-4 border-t border-border-base bg-surface/60">
             {footer}
           </div>
         )}

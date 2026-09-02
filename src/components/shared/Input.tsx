@@ -54,7 +54,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div className={`flex items-center justify-between mb-2 ${hideLabel ? 'sr-only' : ''}`}>
             <label
               htmlFor={id}
-              className="text-sm font-medium text-ink-700 flex items-center gap-xs tracking-[0.01em]"
+              className="font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-ink-600 flex items-center gap-xs"
             >
               <span>
                 {label}
@@ -101,8 +101,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             min={type === 'number' ? 0 : undefined}
             inputMode={type === 'number' ? 'decimal' : undefined}
             className={`
-            block w-full rounded-md border tnum text-sm
-            h-9 transition-colors duration-150
+            block w-full rounded-none border tnum text-sm font-mono
+            h-10 transition-colors duration-150
             disabled:bg-surface disabled:text-ink-400 disabled:cursor-not-allowed
             focus-visible:outline-none focus:shadow-[var(--shadow-focus)]
             placeholder:text-ink-400
@@ -111,7 +111,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             ${
               error
                 ? 'border-rust text-rust placeholder-rust/40 focus:border-rust'
-                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-clay'
+                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-ink-900'
             }
           `}
             {...props}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
+import { LoaderCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
 interface ProtectedRouteProps {
@@ -11,10 +12,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   if (loading) {
-    // You could render a loading spinner here
     return (
-      <div className="flex min-h-screen items-center justify-center bg-main">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-clay border-t-transparent"></div>
+      <div className="flex min-h-[60vh] items-center justify-center bg-bg-main">
+        <div className="flex items-center gap-3 border-y border-border-base px-5 py-4">
+          <LoaderCircle className="w-4 h-4 animate-spin text-ink-900" aria-hidden="true" />
+          <p className="label-caps">Opening workspace</p>
+        </div>
       </div>
     );
   }

@@ -71,10 +71,30 @@ export const AuthPage: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col items-center min-h-[calc(100vh-7rem)] py-10 px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex items-start min-h-[calc(100vh-7rem)] py-8 lg:py-12">
+      <div className="w-full max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_440px] border border-ink-900 bg-bg-elevated">
+        <section className="hidden lg:flex bg-sidebar text-white p-10 xl:p-12 flex-col justify-between min-h-[620px]">
+          <div>
+            <p className="font-mono text-[10px] uppercase tracking-[0.14em] text-white/40">
+              PriceCraft account
+            </p>
+            <h1 className="font-serif text-5xl xl:text-6xl leading-[0.95] tracking-[-0.04em] text-white mt-6 max-w-md">
+              Keep the thinking behind every price.
+            </h1>
+            <p className="text-sm text-white/50 leading-relaxed mt-6 max-w-sm">
+              Sync recipes, ingredient prices and sales history without changing how the workspace calculates.
+            </p>
+          </div>
+          <dl className="border-t border-white/15 divide-y divide-white/10">
+            <AuthBenefit index="01" text="Pricing recipes across devices" />
+            <AuthBenefit index="02" text="Ingredient price history and drift" />
+            <AuthBenefit index="03" text="Sales and production planning" />
+          </dl>
+        </section>
+
+        <div className="p-6 sm:p-8 lg:p-10 self-center">
         {guestPresetsCount > 0 && (
-          <div className="mb-6 p-3 bg-moss-50 border border-moss-100 rounded-lg flex items-start gap-3">
+          <div className="mb-6 p-3 bg-moss-50 border-l-2 border-moss rounded-none flex items-start gap-3">
             <Save className="w-4 h-4 text-moss-700 mt-0.5 shrink-0" />
             <div className="flex-1 text-sm">
               <p className="text-ink-900 font-medium">
@@ -90,13 +110,14 @@ export const AuthPage: React.FC = () => {
           </div>
         )}
 
-        <div className="text-center mb-6">
-          <h1 className="text-2xl text-ink-900 mb-1 font-serif">
+        <div className="mb-7">
+          <p className="label-caps mb-2">Secure workspace</p>
+          <h1 className="text-4xl text-ink-900 mb-2 font-serif leading-none">
             {mode === 'login' && 'Welcome back'}
             {mode === 'signup' && 'Create your account'}
             {mode === 'forgot-password' && 'Reset your password'}
           </h1>
-          <p className="text-sm text-ink-500 max-w-xs mx-auto">
+          <p className="text-sm text-ink-500 max-w-sm">
             {mode === 'login' &&
               'Sign in to sync your recipes, catalog, and sales.'}
             {mode === 'signup' &&
@@ -106,7 +127,7 @@ export const AuthPage: React.FC = () => {
           </p>
         </div>
 
-        <div className="card p-6">
+        <div>
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
               <div className="p-3 bg-rust-50 border border-rust-100 rounded-md flex items-start gap-2 animate-shake">
@@ -172,7 +193,7 @@ export const AuthPage: React.FC = () => {
             </Button>
           </form>
 
-          <div className="mt-6 pt-5 border-t border-border-subtle flex flex-col gap-3 text-center text-sm">
+          <div className="mt-7 pt-5 border-t border-border-base flex flex-col gap-3 text-left text-sm">
             {mode === 'login' && (
               <>
                 <p className="text-ink-500">
@@ -215,7 +236,15 @@ export const AuthPage: React.FC = () => {
             )}
           </div>
         </div>
+        </div>
       </div>
     </div>
   );
 };
+
+const AuthBenefit: React.FC<{ index: string; text: string }> = ({ index, text }) => (
+  <div className="flex items-center gap-4 py-4">
+    <dt className="font-mono text-[9px] text-signal">{index}</dt>
+    <dd className="text-sm text-white/70">{text}</dd>
+  </div>
+);

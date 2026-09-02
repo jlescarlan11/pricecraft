@@ -80,11 +80,11 @@ describe('CalculatorForm', () => {
   it('renders all sub-components', () => {
     render(<TestWrapper onCalculate={mockOnCalculate} />);
 
-    expect(screen.getByText('Product Details')).toBeInTheDocument();
-    expect(screen.getByText('Ingredients')).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Labor Cost/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Overhead Cost/i })).toBeInTheDocument();
-    expect(screen.getByRole('heading', { name: /Pricing Strategy/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Product Details/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Ingredients/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Labor & Overhead/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Pricing Strategy/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /Variants \(Optional\)/i })).toBeInTheDocument();
   });
 
   it('updates product name and saves to session storage', async () => {
@@ -327,7 +327,7 @@ describe('CalculatorForm', () => {
       </ToastProvider>
     );
 
-    expect(screen.getByRole('heading', { name: /Build your recipe/i })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Recipe inputs/i })).toBeInTheDocument();
   });
 
   it('renders Load Sample Data when form is empty', () => {

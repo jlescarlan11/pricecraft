@@ -80,9 +80,9 @@ describe('Input Component', () => {
     const input = screen.getByLabelText(/Styled Input/i);
 
     // Check new styling requirements
-    expect(input).toHaveClass('h-9'); // Height
+    expect(input).toHaveClass('h-10'); // Height
     expect(input).toHaveClass('pl-3'); // Horizontal padding (default)
-    expect(input).toHaveClass('rounded-md'); // Border radius
+    expect(input).toHaveClass('rounded-none'); // Border radius
     expect(input).toHaveClass('border-border-base'); // Default border
     expect(input).toHaveClass('bg-bg-elevated'); // Background
     expect(input).toHaveClass('tnum'); // Tabular numerals
@@ -92,6 +92,6 @@ describe('Input Component', () => {
     render(<Input label="Focus Input" value="" onChange={() => {}} />);
     const input = screen.getByLabelText(/Focus Input/i);
     // Note: checking classes that are applied on focus pseudo-class
-    expect(input.className).toContain('focus:border-clay');
+    expect(input.className).toContain('focus:border-ink-900');
   });
 });

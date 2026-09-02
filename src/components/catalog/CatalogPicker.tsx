@@ -57,7 +57,7 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
 
   return (
     <div className="relative inline-block">
-      <div className="inline-flex items-center gap-xs border border-border-base rounded-md px-sm py-xs bg-white text-xs">
+      <div className="inline-flex items-center gap-xs border border-border-base rounded-md px-sm py-xs bg-bg-elevated text-xs">
         <Search className="w-3 h-3 text-ink-400" aria-hidden="true" />
         <input
           value={query}
@@ -69,7 +69,7 @@ export const CatalogPicker: React.FC<CatalogPickerProps> = ({
         />
       </div>
       {open && matches.length > 0 && (
-        <ul className="absolute z-10 mt-xs w-56 bg-white border border-border-base rounded-md shadow-level-2 max-h-56 overflow-y-auto">
+        <ul className="absolute z-10 mt-xs w-56 bg-bg-elevated border border-border-base rounded-md shadow-level-2 max-h-56 overflow-y-auto">
           {matches.map((item) => (
             <li key={item.id}>
               <button

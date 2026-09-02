@@ -105,7 +105,7 @@ export const DriftPage: React.FC = () => {
           {entries.map((entry) => (
             <div
               key={entry.catalogIngredientId}
-              className="bg-white p-lg rounded-xl border border-border-base shadow-sm"
+              className="bg-bg-elevated p-lg rounded-none border border-border-base shadow-none"
             >
               <div className="flex items-start justify-between flex-wrap gap-sm">
                 <div>

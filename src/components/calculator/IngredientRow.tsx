@@ -186,8 +186,8 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
       className={`
         relative transition-all duration-300
         ${isDeleting ? 'opacity-0 -translate-y-4' : 'opacity-100'}
-        /* Mobile: Card Layout */
-        flex flex-col gap-4 p-4 mb-4 rounded-xl border border-border-subtle bg-surface shadow-sm
+        /* Mobile: ledger block */
+        flex flex-col gap-4 p-4 mb-4 rounded-none border border-border-base bg-bg-elevated shadow-none
         /* Desktop: Row Layout */
         md:flex-col md:gap-0 md:p-0 md:mb-0 md:rounded-none md:border-0 md:bg-transparent md:shadow-none md:py-md
       `}
@@ -232,7 +232,7 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
       </div>
 
       {/* Input Area */}
-      <div className="rounded-lg transition-all duration-300 overflow-hidden md:bg-surface/50 md:border md:border-border-subtle md:p-md">
+      <div className="rounded-none transition-all duration-300 overflow-hidden md:bg-surface/45 md:border-y md:border-border-subtle md:px-3 md:py-3">
         <div className="grid grid-cols-1 gap-6 md:gap-md animate-in fade-in slide-in-from-top-2">
             {/* Purchase Row */}
             <div className="grid grid-cols-2 md:grid-cols-12 gap-sm items-center">
@@ -332,9 +332,9 @@ export const IngredientRow: React.FC<IngredientRowProps> = ({
               </div>
 
               <div className="col-span-2 md:col-span-4 md:pl-xs mt-2 md:mt-0">
-                  <div className="flex items-center gap-xs px-3 py-2 bg-surface md:bg-white rounded border border-border-subtle shadow-sm">
-                      <span className="text-xs text-ink-500 font-medium uppercase">Cost:</span>
-                      <span className="font-mono font-medium text-ink-900 ml-auto">
+                  <div className="flex items-center gap-xs px-3 py-2 bg-sidebar rounded-none border border-sidebar shadow-none">
+                      <span className="font-mono text-[9px] text-white/45 font-medium uppercase tracking-[0.1em]">Line cost</span>
+                      <span className="font-mono font-medium text-signal ml-auto">
                           {ingredient.cost ? `₱${Number(ingredient.cost).toFixed(2)}` : '---'}
                       </span>
                   </div>

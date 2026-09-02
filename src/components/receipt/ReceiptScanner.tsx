@@ -127,7 +127,7 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({
           <div className="w-full max-w-md">
             <div className="h-2 bg-surface rounded-full overflow-hidden">
               <div
-                className="h-full bg-clay transition-all duration-300"
+                className="h-full bg-signal transition-all duration-300"
                 style={{ width: `${Math.round(progress * 100)}%` }}
               />
             </div>

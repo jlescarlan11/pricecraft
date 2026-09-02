@@ -18,9 +18,9 @@ export const Card: React.FC<CardProps> = ({
   interactive = false,
 }) => {
   const baseClasses =
-    'bg-bg-elevated rounded-lg border border-border-subtle shadow-level-1 overflow-hidden relative transition-shadow duration-150';
+    'bg-bg-elevated rounded-none border border-border-base shadow-none overflow-hidden relative transition-colors duration-150';
   const interactiveClasses = interactive
-    ? 'hover:shadow-level-2 hover:border-border-base cursor-pointer'
+    ? 'hover:bg-surface hover:border-ink-900 cursor-pointer'
     : '';
 
   return (
@@ -38,7 +38,7 @@ export const Card: React.FC<CardProps> = ({
           )}
           {children}
           {footer && (
-            <div className="border-t border-border-subtle bg-surface/40 px-4 sm:px-5 py-3 text-sm">
+            <div className="border-t border-border-base bg-surface/60 px-4 sm:px-5 py-3 text-sm">
               {footer}
             </div>
           )}

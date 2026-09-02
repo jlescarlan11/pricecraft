@@ -51,7 +51,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   const hasVariants = results.variantResults && results.variantResults.length > 0;
 
   return (
-    <div className="space-y-2xl animate-in fade-in slide-in-from-bottom-lg duration-1000 ease-out">
+    <div className="space-y-7 animate-in fade-in slide-in-from-bottom-4 duration-300 ease-out">
       {/* Print-only Header */}
       <div className="hidden print:block border-b border-ink-900 pb-xl mb-3xl">
         <div className="flex justify-between items-start">
@@ -71,8 +71,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       {/* Action Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 print:hidden">
         <div>
-          <p className="label-caps mb-1">Results</p>
-          <h2 className="font-serif text-2xl text-ink-900">
+          <p className="label-caps mb-1">Decision report</p>
+          <h2 className="font-serif text-4xl text-ink-900 leading-none">
             {input.productName || 'Unnamed product'}
           </h2>
         </div>
@@ -88,9 +88,9 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-2xl max-w-4xl mx-auto">
+      <div className="flex flex-col gap-7 max-w-6xl">
         {/* Priority 1: Results Table (Variants) or Recommendations (Single) */}
-        <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-700 delay-100">
+        <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-300">
           {hasVariants ? (
             <VariantResultsTable results={results} />
           ) : (
@@ -99,8 +99,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         </div>
 
         {/* Priority 2: Cost Breakdown - De-emphasized */}
-        <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200 opacity-80 hover:opacity-100 transition-opacity">
-          <div className="flex items-center gap-sm mb-md px-md">
+        <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-300">
+          <div className="flex items-center gap-sm mb-md">
             <div className="h-px flex-1 bg-border-subtle" />
             <span className="text-[10px] font-bold text-ink-300 uppercase tracking-[0.2em]">Detailed Cost Breakdown</span>
             <div className="h-px flex-1 bg-border-subtle" />
@@ -110,8 +110,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 
         {/* Priority 3: Price Comparison (Single Only) - De-emphasized */}
         {!hasVariants && (
-          <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300 opacity-80 hover:opacity-100 transition-opacity">
-            <div className="flex items-center gap-sm mb-md px-md">
+          <div className="print:break-inside-avoid animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="flex items-center gap-sm mb-md">
               <div className="h-px flex-1 bg-border-subtle" />
               <span className="text-[10px] font-bold text-ink-300 uppercase tracking-[0.2em]">Current vs Recommended</span>
               <div className="h-px flex-1 bg-border-subtle" />
@@ -126,7 +126,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         )}
 
         {(results.vatAmount !== undefined || results.wholesalePrice !== undefined) && (
-          <div className="p-lg bg-white rounded-xl border border-border-base shadow-sm print:hidden">
+          <div className="p-lg bg-bg-elevated rounded-none border border-border-base shadow-none print:hidden">
             <h4 className="text-sm font-bold text-ink-900 mb-md uppercase tracking-wide">
               Tax &amp; tier
             </h4>
@@ -162,8 +162,8 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         )}
 
         {/* Pro Tip - Low visual weight */}
-        <div className="p-xl bg-surface/50 rounded-xl border border-border-subtle print:hidden flex items-start gap-md">
-          <div className="p-sm bg-clay/10 rounded-round text-clay shrink-0">
+        <div className="p-xl bg-surface/60 rounded-none border-l-2 border-ink-900 print:hidden flex items-start gap-md">
+          <div className="p-sm bg-sidebar rounded-none text-signal shrink-0">
             <Share2 className="w-5 h-5" />
           </div>
           <div>

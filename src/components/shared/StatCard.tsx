@@ -29,12 +29,12 @@ export const StatCard: React.FC<StatCardProps> = ({
   icon,
 }) => {
   return (
-    <div className="card p-4 lg:p-5">
+    <div className="bg-bg-elevated border-y border-r border-border-base first:border-l p-4 lg:p-5 min-w-0">
       <div className="flex items-center justify-between gap-3">
         <p className="label-caps text-ink-500">{label}</p>
         {icon && <div className="text-ink-300">{icon}</div>}
       </div>
-      <p className={`mt-2 text-2xl font-semibold tnum ${toneText[tone]}`}>
+      <p className={`mt-3 text-2xl font-mono font-medium tnum ${toneText[tone]}`}>
         {value}
       </p>
       {(hint || delta !== undefined) && (

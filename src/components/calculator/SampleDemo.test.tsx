@@ -8,10 +8,10 @@ describe('SampleDemo', () => {
   it('renders correctly', () => {
     render(<SampleDemo onLoadSample={onLoadSample} />);
 
-    expect(screen.getByText(/Artisan Cookie Case Study/i)).toBeInTheDocument();
+    expect(screen.getByText(/Chocolate chip cookies/i)).toBeInTheDocument();
     expect(screen.getByText(/Load Sample Data/i)).toBeInTheDocument();
-    expect(screen.getByText(/Total Cost/i)).toBeInTheDocument();
-    expect(screen.getByText(/Cost\/Unit/i)).toBeInTheDocument();
+    expect(screen.getByText(/Batch cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/Cost \/ unit/i)).toBeInTheDocument();
   });
 
   it('calls onLoadSample when button is clicked', () => {

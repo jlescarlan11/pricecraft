@@ -18,10 +18,11 @@ describe('AccordionSection', () => {
 
     const stepIndicator = screen.getByText('1');
     expect(stepIndicator).toBeInTheDocument();
+    expect(screen.getByRole('button')).toHaveAttribute('aria-controls');
+    expect(screen.getByRole('region', { name: /Test Section section/i })).toBeVisible();
 
-    // Check for active classes (clay background)
-    expect(stepIndicator).toHaveClass('bg-clay');
-    expect(stepIndicator).toHaveClass('text-white');
+    expect(stepIndicator).toHaveClass('bg-ink-900');
+    expect(stepIndicator).toHaveClass('text-signal');
   });
 
   it('renders correctly in completed state (isComplete: true, isOpen: false)', () => {
@@ -40,10 +41,10 @@ describe('AccordionSection', () => {
     // Should show checkmark instead of number
     const checkmark = container.querySelector('svg');
     expect(checkmark).toBeInTheDocument();
+    expect(screen.getByRole('region', { hidden: true })).toHaveAttribute('hidden');
     
-    // Check for muted green classes - checkmark is inside the indicator div
-    expect(checkmark?.parentElement).toHaveClass('bg-moss-50');
-    expect(checkmark?.parentElement).toHaveClass('text-moss-700');
+    expect(checkmark?.parentElement).toHaveClass('bg-surface');
+    expect(checkmark?.parentElement).toHaveClass('text-ink-900');
   });
 
   it('renders correctly in incomplete state (isOpen: false, isComplete: false)', () => {
@@ -61,9 +62,10 @@ describe('AccordionSection', () => {
 
     const stepIndicator = screen.getByText('1');
     expect(stepIndicator).toBeInTheDocument();
+    expect(screen.getByRole('region', { hidden: true })).toHaveAttribute('hidden');
     
     // Check for default classes
-    expect(stepIndicator).toHaveClass('bg-surface');
+    expect(stepIndicator).toHaveClass('bg-transparent');
     expect(stepIndicator).toHaveClass('text-ink-500');
   });
 });

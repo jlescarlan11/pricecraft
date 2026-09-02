@@ -25,9 +25,9 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
 }) => {
   const hasVariants = results?.variantResults && results.variantResults.length > 0;
 
-  const containerClasses = `fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-border-subtle pb-[env(safe-area-inset-bottom)] sm:hidden transition-opacity duration-300 ${
+  const containerClasses = `fixed bottom-0 left-0 right-0 z-40 bg-sidebar text-white border-white/15 pb-[env(safe-area-inset-bottom)] sm:hidden transition-opacity duration-200 ${
     isVisible 
-      ? 'opacity-100 border-t shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]' 
+      ? 'opacity-100 border-t shadow-[0_-10px_40px_rgba(0,0,0,0.2)]'
       : 'opacity-0 pointer-events-none border-t-transparent shadow-none'
   }`;
 
@@ -37,15 +37,15 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
       <div className={containerClasses}>
         <div className="p-md flex items-center justify-between gap-md">
           <div className="flex flex-col">
-            <span className="text-sm font-bold text-ink-900">Ready?</span>
-            <span className="text-xs text-ink-500">Calculate your profit</span>
+            <span className="font-mono text-[9px] uppercase tracking-[0.12em] text-white/45">Price runway</span>
+            <span className="text-sm text-white">Ready to calculate</span>
           </div>
           <Button
             variant="primary"
             size="sm"
             onClick={onCalculate}
             isLoading={isCalculating}
-            className="rounded-full px-lg"
+            className="rounded-none px-lg bg-signal text-black border-signal hover:bg-signal-strong"
           >
             Calculate
           </Button>
@@ -73,7 +73,7 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
                       </span>
                    </div>
                    <div className="flex items-baseline gap-xs">
-                      <span className={`text-sm font-bold tabular-nums ${isStale ? 'text-clay' : 'text-ink-900'}`}>
+                    <span className={`text-sm font-bold tabular-nums ${isStale ? 'text-signal' : 'text-white'}`}>
                          {formatCurrency(vr.recommendedPrice)}
                       </span>
                    </div>
@@ -92,24 +92,24 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
             <div className="flex flex-col gap-1.5 w-full">
               <div className="flex items-baseline justify-between w-full text-sm">
                  <div className="flex flex-col">
-                    <span className="text-[10px] text-ink-500 font-medium uppercase tracking-wide">Total Cost</span>
-                    <span className="font-semibold text-ink-700 tabular-nums">
+                    <span className="text-[9px] text-white/40 font-mono uppercase tracking-[0.1em]">Cost / unit</span>
+                    <span className="font-mono text-white/80 tabular-nums">
                       {formatCurrency(results.costPerUnit)}
                     </span>
                  </div>
                  
                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] text-ink-500 font-medium uppercase tracking-wide">
+                    <span className="text-[9px] text-white/40 font-mono uppercase tracking-[0.1em]">
                        {isStale ? 'Est. Price' : 'Sugg. Price'}
                     </span>
-                    <span className={`font-bold tabular-nums text-lg leading-none ${isStale ? 'text-clay animate-pulse' : 'text-ink-900'}`}>
+                    <span className="font-mono tabular-nums text-lg leading-none text-signal">
                       {formatCurrency(results.recommendedPrice)}
                     </span>
                  </div>
               </div>
 
               {/* Progress Bar */}
-              <div className="relative w-full h-1.5 bg-surface-hover rounded-full overflow-hidden">
+              <div className="relative w-full h-px bg-white/20 overflow-hidden">
                 <div 
                   className={`absolute left-0 top-0 h-full transition-all duration-500 bg-${getMarginColor(results.profitMarginPercent)}`}
                   style={{ width: `${Math.min(Math.max(results.profitMarginPercent, 0), 100)}%` }}
@@ -126,7 +126,7 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
               variant="secondary"
               size="sm"
               onClick={onScrollToResults}
-              className="w-10 h-10 p-0 rounded-full bg-surface-hover hover:bg-border-subtle text-ink-900"
+              className="w-10 h-10 p-0 rounded-none bg-white text-black hover:bg-signal border-white"
               aria-label="View Details"
             >
               <ChevronRight className="w-5 h-5" />
@@ -137,7 +137,7 @@ export const StickySummary: React.FC<StickySummaryProps> = ({
               size="sm" // Use sm but style it to be prominent
               onClick={onCalculate}
               isLoading={isCalculating}
-              className={`h-10 px-4 rounded-full shadow-sm transition-all ${isStale ? 'animate-pulse' : ''}`}
+              className="h-10 px-4 rounded-none shadow-none bg-signal text-black border-signal hover:bg-signal-strong"
             >
                {hasCommittedResults ? (
                  <RefreshCw className="w-4 h-4" />

@@ -46,7 +46,7 @@ export const ImportStrategyModal: React.FC<ImportStrategyModalProps> = ({
           <div
             className={`
               cursor-pointer rounded-lg border-2 p-lg transition-all outline-none
-              ${strategy === 'merge' ? 'border-clay bg-surface' : 'border-border-base bg-white hover:border-clay/50'}
+              ${strategy === 'merge' ? 'border-clay bg-surface' : 'border-border-base bg-bg-elevated hover:border-clay/50'}
             `}
             onClick={() => setStrategy('merge')}
             role="radio"
@@ -67,7 +67,7 @@ export const ImportStrategyModal: React.FC<ImportStrategyModalProps> = ({
           <div
             className={`
               cursor-pointer rounded-lg border-2 p-lg transition-all outline-none
-              ${strategy === 'replace' ? 'border-rust bg-surface' : 'border-border-base bg-white hover:border-rust/50'}
+              ${strategy === 'replace' ? 'border-rust bg-surface' : 'border-border-base bg-bg-elevated hover:border-rust/50'}
             `}
             onClick={() => setStrategy('replace')}
             role="radio"

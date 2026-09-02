@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useLayoutEffect, useState, useCallback } from 'react';
 
 const STORAGE_KEY = 'pricing_calculator_settings';
 
@@ -61,12 +61,17 @@ function applyTheme(theme: AppSettings['theme']) {
   const effective = theme === 'auto' ? (prefersDark ? 'dark' : 'light') : theme;
   if (effective === 'dark') root.classList.add('dark');
   else root.classList.remove('dark');
+  root.dataset.theme = effective;
+  root.style.colorScheme = effective;
+
+  const themeMeta = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+  themeMeta?.setAttribute('content', effective === 'dark' ? '#050505' : '#ffffff');
 }
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [settings, setSettings] = useState<AppSettings>(() => readFromStorage());
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     writeToStorage(settings);
     applyTheme(settings.theme);
   }, [settings]);

@@ -22,12 +22,12 @@ describe('Card', () => {
     const { container } = render(<Card>Content</Card>);
     const card = container.firstChild;
     expect(card).toHaveClass('bg-bg-elevated');
-    expect(card).toHaveClass('rounded-lg');
-    expect(card).toHaveClass('shadow-level-1');
+    expect(card).toHaveClass('rounded-none');
+    expect(card).toHaveClass('shadow-none');
   });
 
   it('applies interactive classes when interactive prop is true', () => {
     const { container } = render(<Card interactive>Content</Card>);
-    expect(container.firstChild).toHaveClass('hover:shadow-level-2');
+    expect(container.firstChild).toHaveClass('hover:border-ink-900');
   });
 });

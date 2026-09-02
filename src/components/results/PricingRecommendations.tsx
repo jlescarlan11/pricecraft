@@ -3,7 +3,7 @@ import { CheckCircle, AlertTriangle, AlertCircle } from 'lucide-react';
 import { Badge } from '../shared/Badge';
 import type { BadgeVariant } from '../shared/Badge';
 import type { CalculationResult } from '../../types/calculator';
-import { formatCurrency, formatPercent, getMarginColor } from '../../utils/formatters';
+import { formatCurrency, formatPercent } from '../../utils/formatters';
 
 interface PricingRecommendationsProps {
   results: CalculationResult;
@@ -24,7 +24,7 @@ export const PricingRecommendations: React.FC<PricingRecommendationsProps> = ({
   const getMarginBadge = (
     margin: number
   ): { variant: BadgeVariant; label: string; icon: React.ReactNode } => {
-    const color = getMarginColor(margin);
+    const color = margin < 15 ? 'rust' : margin <= 25 ? 'clay' : 'moss';
     
     if (color === 'rust') {
       return {
@@ -50,70 +50,49 @@ export const PricingRecommendations: React.FC<PricingRecommendationsProps> = ({
   const badgeDetails = getMarginBadge(profitMarginPercent);
 
   return (
-    <div className={`space-y-2xl ${className}`}>
-      {/* Recommended Selling Price - Primary Focus */}
-      <div className="flex flex-col items-center px-6 py-8 bg-bg-elevated rounded-xl border border-border-subtle shadow-level-1 relative overflow-hidden">
-        <div className="relative z-10 w-full text-center">
-          <p className="label-caps mb-2">Recommended selling price</p>
-          <p
-            key={recommendedPrice}
-            className="font-serif text-5xl sm:text-6xl text-ink-900 tracking-tight tnum animate-pulse-once"
+    <div className={`bg-sidebar text-white border border-black ${className}`}>
+      <div className="px-5 sm:px-7 py-7 sm:py-9 border-b border-white/15">
+        <p className="font-mono text-[10px] uppercase tracking-[0.13em] text-white/45">
+          Recommended selling price
+        </p>
+        <p
+          key={recommendedPrice}
+          className="font-mono text-5xl sm:text-7xl text-signal tracking-[-0.07em] leading-none tnum animate-pulse-once mt-3"
+        >
+          {formatCurrency(recommendedPrice)}
+        </p>
+        <div className="mt-5">
+          <Badge
+            variant={badgeDetails.variant}
+            className="py-1 px-2 flex items-center justify-center bg-transparent border-white/25 text-white"
           >
-            {formatCurrency(recommendedPrice)}
-          </p>
-          <div className="flex justify-center mt-4">
-            <Badge
-              variant={badgeDetails.variant}
-              className="py-1.5 px-4 text-sm flex items-center justify-center shadow-sm"
-            >
-              {badgeDetails.icon}
-              {badgeDetails.label}
-            </Badge>
-          </div>
-        </div>
-        {/* Subtle decorative element */}
-        <div className="absolute top-0 right-0 w-64 h-64 bg-clay/5 rounded-round -mr-24 -mt-24 blur-3xl transition-opacity group-hover:opacity-100 opacity-50" />
-        <div className="absolute bottom-0 left-0 w-48 h-48 bg-moss/5 rounded-round -ml-16 -mb-16 blur-2xl transition-opacity group-hover:opacity-100 opacity-30" />
-      </div>
-
-      {/* Secondary Metrics - Clean List/Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-3xl gap-y-xl opacity-90 group-hover:opacity-100 transition-opacity">
-        <div className="flex justify-between items-center group/item py-sm">
-          <p className="text-[10px] font-bold text-ink-500 uppercase tracking-widest">
-            Break-even Price
-          </p>
-          <p className="text-xl font-bold text-ink-900 tabular-nums">
-            {formatCurrency(breakEvenPrice)}
-          </p>
-        </div>
-
-        <div className="flex justify-between items-center group/item py-sm">
-          <p className="text-[10px] font-bold text-ink-500 uppercase tracking-widest">
-            Profit Margin
-          </p>
-          <p className={`text-xl font-bold tabular-nums text-${getMarginColor(profitMarginPercent)}`}>
-            {formatPercent(profitMarginPercent)}
-          </p>
-        </div>
-
-        <div className="flex justify-between items-center group/item py-sm">
-          <p className="text-[10px] font-bold text-ink-500 uppercase tracking-widest">
-            Profit Per Unit
-          </p>
-          <p className="text-xl font-bold text-moss tabular-nums">
-            {formatCurrency(profitPerUnit)}
-          </p>
-        </div>
-
-        <div className="flex justify-between items-center group/item py-sm">
-          <p className="text-[10px] font-bold text-ink-500 uppercase tracking-widest">
-            Total Batch Profit
-          </p>
-          <p className="text-xl font-bold text-moss tabular-nums">
-            {formatCurrency(profitPerBatch)}
-          </p>
+            {badgeDetails.icon}
+            {badgeDetails.label}
+          </Badge>
         </div>
       </div>
+
+      <dl className="grid grid-cols-1 sm:grid-cols-2">
+        <RecommendationMetric label="Break-even price" value={formatCurrency(breakEvenPrice)} />
+        <RecommendationMetric
+          label="Profit margin"
+          value={formatPercent(profitMarginPercent)}
+          signal
+        />
+        <RecommendationMetric label="Profit per unit" value={formatCurrency(profitPerUnit)} />
+        <RecommendationMetric label="Total batch profit" value={formatCurrency(profitPerBatch)} />
+      </dl>
     </div>
   );
 };
+
+const RecommendationMetric: React.FC<{
+  label: string;
+  value: string;
+  signal?: boolean;
+}> = ({ label, value, signal = false }) => (
+  <div className="px-5 sm:px-6 py-4 border-b border-r border-white/15 last:border-r-0">
+    <dt className="font-mono text-[9px] uppercase tracking-[0.11em] text-white/40">{label}</dt>
+    <dd className={`font-mono text-lg mt-2 tnum ${signal ? 'text-signal' : 'text-white'}`}>{value}</dd>
+  </div>
+);

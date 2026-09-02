@@ -3,7 +3,7 @@ import { Package } from 'lucide-react';
 import { CalculatorForm } from '../components/calculator';
 import { ResultsDisplay, StickySummary, CalculatorSidePanel } from '../components/results';
 import { PresetsList } from '../components/presets';
-import { Modal, useToast } from '../components/shared';
+import { Modal, PageHeader, useToast } from '../components/shared';
 import { DriftBanner } from '../components/drift';
 import { COOKIE_SAMPLE } from '../constants';
 import { useCalculatorState } from '../hooks';
@@ -13,6 +13,7 @@ import { computeDriftFromPresets } from '../services/driftService';
 import { enrichWithVatAndWholesale } from '../utils/calculations';
 import { useSettings } from '../context/SettingsContext';
 import { triggerHapticFeedback } from '../utils/haptics';
+import { formatCurrency } from '../utils/formatters';
 import type { Preset } from '../types';
 
 export const CalculatorPage: React.FC = () => {
@@ -180,73 +181,65 @@ export const CalculatorPage: React.FC = () => {
   return (
     <>
       <div className="animate-in fade-in duration-700 relative">
-        {!driftDismissed && affectedPresetCount > 0 && (
-          <div className="mb-md">
-            <DriftBanner
-              affectedCount={affectedPresetCount}
-              onDismiss={() => setDriftDismissed(true)}
-            />
-          </div>
-        )}
-        {/* Intro Section (only when no results and form is empty) */}
-        {!showResults && (
-          <div className="mb-6 flex items-start gap-3 p-4 rounded-lg border border-clay-100 bg-clay-50/60">
-            <div className="w-1 h-10 bg-clay rounded-full shrink-0 mt-0.5" />
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-ink-900">
-                Find the right price for your product.
-              </p>
-              <p className="text-sm text-ink-700 mt-1 leading-relaxed">
-                Fill in ingredients, labor, and overhead. We&apos;ll do the math
-                so your margin stays healthy.
-              </p>
+        {/* The runway begins at the top of the workspace, matching the
+            decision-first composition of the selected direction. */}
+        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_330px] 2xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-5 2xl:gap-7 items-start">
+          <div className="min-w-0">
+            <PageHeader
+              bare
+              eyebrow="Recipe workspace"
+              title={input.productName || 'Build a profitable recipe'}
+              description="Cost the batch, test the margin, and commit a price you can defend."
+            >
+              <dl className="mt-6 grid grid-cols-2 sm:grid-cols-4 border-y border-border-base bg-bg-elevated">
+                <WorkspaceMetric label="Batch size" value={`${input.batchSize || 0} units`} />
+                <WorkspaceMetric
+                  label="Cost per unit"
+                  value={enrichedLiveResult ? formatCurrency(enrichedLiveResult.costPerUnit) : '—'}
+                />
+                <WorkspaceMetric label="Strategy" value={`${config.value}% ${config.strategy}`} />
+                <WorkspaceMetric
+                  label="Pricing state"
+                  value={showResults ? (isDirty ? 'Changed' : 'Committed') : 'Draft'}
+                  signal={showResults && !isDirty}
+                />
+              </dl>
+            </PageHeader>
+
+            {!driftDismissed && affectedPresetCount > 0 && (
+              <div className="mb-6">
+                <DriftBanner
+                  affectedCount={affectedPresetCount}
+                  onDismiss={() => setDriftDismissed(true)}
+                />
+              </div>
+            )}
+
+            <div ref={formRef} id="calculator-form" className="min-w-0 bg-bg-elevated border border-border-base">
+              <CalculatorForm
+                input={input}
+                config={config}
+                errors={errors}
+                isCalculating={isCalculating}
+                onUpdateInput={updateInput}
+                onUpdateIngredient={updateIngredient}
+                onAddIngredient={addIngredient}
+                onRemoveIngredient={removeIngredient}
+                onUpdateConfig={updateConfig}
+                onCalculate={handleCalculate}
+                onReset={handleReset}
+                onSetHasVariants={setHasVariants}
+                onAddVariant={addVariant}
+                onRemoveVariant={removeVariant}
+                onUpdateVariant={updateVariant}
+                onUpdateVariantIngredient={updateVariantIngredient}
+                onAddVariantIngredient={addVariantIngredient}
+                onRemoveVariantIngredient={removeVariantIngredient}
+                onOpenPresets={() => setIsPresetsModalOpen(true)}
+                onLoadSample={handleLoadSample}
+                catalogItems={catalog}
+              />
             </div>
-          </div>
-        )}
-
-        {/* Results Section (committed) — full width above the work area */}
-        {showResults && (
-          <div
-            ref={resultsRef}
-            className="mb-8 animate-in fade-in slide-in-from-top-4 duration-500"
-          >
-            <ResultsDisplay
-              results={enrichedResults}
-              input={input}
-              config={config}
-              onEdit={handleScrollToForm}
-            />
-
-            <div className="h-px bg-border-subtle my-8" role="separator" />
-          </div>
-        )}
-
-        {/* Two-column work area on xl+: form left, live side panel right */}
-        <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_360px] xl:gap-8">
-          <div ref={formRef} id="calculator-form" className="min-w-0">
-            <CalculatorForm
-              input={input}
-              config={config}
-              errors={errors}
-              isCalculating={isCalculating}
-              onUpdateInput={updateInput}
-              onUpdateIngredient={updateIngredient}
-              onAddIngredient={addIngredient}
-              onRemoveIngredient={removeIngredient}
-              onUpdateConfig={updateConfig}
-              onCalculate={handleCalculate}
-              onReset={handleReset}
-              onSetHasVariants={setHasVariants}
-              onAddVariant={addVariant}
-              onRemoveVariant={removeVariant}
-              onUpdateVariant={updateVariant}
-              onUpdateVariantIngredient={updateVariantIngredient}
-              onAddVariantIngredient={addVariantIngredient}
-              onRemoveVariantIngredient={removeVariantIngredient}
-              onOpenPresets={() => setIsPresetsModalOpen(true)}
-              onLoadSample={handleLoadSample}
-              catalogItems={catalog}
-            />
           </div>
 
           <CalculatorSidePanel
@@ -258,6 +251,20 @@ export const CalculatorPage: React.FC = () => {
             onScrollToResults={handleScrollToResults}
           />
         </div>
+
+        {showResults && (
+          <div
+            ref={resultsRef}
+            className="mt-12 pt-10 border-t border-ink-900 animate-in fade-in slide-in-from-bottom-4 duration-300"
+          >
+            <ResultsDisplay
+              results={enrichedResults}
+              input={input}
+              config={config}
+              onEdit={handleScrollToForm}
+            />
+          </div>
+        )}
       </div>
 
       <StickySummary
@@ -276,8 +283,8 @@ export const CalculatorPage: React.FC = () => {
         onClose={() => setIsPresetsModalOpen(false)}
         title={
           <div className="flex items-center gap-sm">
-            <Package className="text-clay w-5 h-5" />
-            <span className="text-ink-900">Saved Products</span>
+            <Package className="text-signal w-5 h-5" />
+            <span>Saved products</span>
           </div>
         }
         maxWidth="max-w-3xl"
@@ -289,3 +296,17 @@ export const CalculatorPage: React.FC = () => {
     </>
   );
 };
+
+const WorkspaceMetric: React.FC<{
+  label: string;
+  value: string;
+  signal?: boolean;
+}> = ({ label, value, signal = false }) => (
+  <div className="px-3 sm:px-4 py-3 border-r border-b sm:border-b-0 border-border-base last:border-r-0 min-w-0">
+    <dt className="label-caps">{label}</dt>
+    <dd className="mt-1.5 font-mono text-xs text-ink-900 truncate flex items-center gap-2">
+      {signal && <span className="w-1.5 h-1.5 bg-signal border border-ink-900" aria-hidden="true" />}
+      {value}
+    </dd>
+  </div>
+);

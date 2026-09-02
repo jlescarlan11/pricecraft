@@ -54,7 +54,7 @@ export const OverheadCalculator: React.FC<OverheadCalculatorProps> = ({
     <div className="space-y-xl">
       <div className="flex flex-col gap-lg">
         {/* Section 1: Monthly Costs */}
-        <div className="bg-white/50 rounded-xl p-lg border border-border-subtle/60 space-y-lg shadow-sm">
+        <div className="bg-bg-elevated/50 rounded-xl p-lg border border-border-subtle/60 space-y-lg shadow-sm">
           <div className="flex items-center justify-between border-b border-border-subtle pb-sm">
              <p className="text-[10px] font-bold text-ink-500 uppercase tracking-[0.2em] font-sans">
               1. Monthly Fixed Costs
@@ -107,7 +107,7 @@ export const OverheadCalculator: React.FC<OverheadCalculatorProps> = ({
         </div>
 
         {/* Section 2: Packaging Costs */}
-        <div className="bg-white/50 rounded-xl p-lg border border-border-subtle/60 space-y-lg shadow-sm">
+        <div className="bg-bg-elevated/50 rounded-xl p-lg border border-border-subtle/60 space-y-lg shadow-sm">
            <div className="flex items-center justify-between border-b border-border-subtle pb-sm">
             <p className="text-[10px] font-bold text-ink-500 uppercase tracking-[0.2em] font-sans">
               2. Packaging & Supplies

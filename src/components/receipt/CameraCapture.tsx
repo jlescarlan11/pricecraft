@@ -153,7 +153,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onCance
   if (error) {
     return (
       <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center p-lg">
-        <div className="bg-white rounded-xl max-w-sm p-xl space-y-md text-center">
+        <div className="bg-bg-elevated rounded-xl max-w-sm p-xl space-y-md text-center">
           <h2 className="font-medium text-ink-900">Camera unavailable</h2>
           <p className="text-sm text-ink-500">{error}</p>
           <div className="flex gap-sm justify-center pt-sm">
@@ -165,7 +165,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, onCance
             </button>
             <button
               onClick={startStream}
-              className="px-md py-sm rounded-md bg-clay text-white inline-flex items-center gap-xs"
+              className="px-md py-sm rounded-md bg-sidebar text-white inline-flex items-center gap-xs"
             >
               <RotateCcw className="w-4 h-4" />
               Try again

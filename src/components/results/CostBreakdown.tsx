@@ -36,7 +36,7 @@ export const CostBreakdown: React.FC<CostBreakdownProps> = ({ results, className
           ))}
         </ul>
 
-        <div className="mt-4 rounded-md surface-inset p-3">
+        <div className="mt-4 rounded-none surface-inset p-3">
           <div className="flex items-center justify-between">
             <span className="label-caps">Total batch cost</span>
             <span className="text-lg font-semibold text-ink-900 tnum">

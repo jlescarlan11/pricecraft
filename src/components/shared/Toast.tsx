@@ -99,7 +99,7 @@ const ToastItem: React.FC<ToastItemProps> = ({ toast, onRemove }) => {
       role="alert"
       className={`
         pointer-events-auto
-        flex items-center gap-sm px-md py-sm rounded-full border shadow-level-1
+        flex items-center gap-sm px-md py-sm rounded-none border shadow-level-3 bg-bg-elevated
         animate-in fade-in slide-in-from-top-4 duration-300
         ${getStyles()}
       `}

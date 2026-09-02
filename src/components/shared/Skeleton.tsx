@@ -8,7 +8,7 @@ interface SkeletonProps {
 export const Skeleton: React.FC<SkeletonProps> = ({ className = '' }) => {
   return (
     <div
-      className={`rounded bg-surface-strong animate-pulse ${className}`}
+      className={`rounded-none bg-surface-strong animate-pulse ${className}`}
       aria-hidden="true"
     />
   );

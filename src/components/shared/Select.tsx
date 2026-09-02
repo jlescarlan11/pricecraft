@@ -41,7 +41,7 @@ export const Select: React.FC<SelectProps> = ({
     <div className={`flex flex-col gap-xs w-full ${className}`}>
       <label
         htmlFor={id}
-        className={`text-sm font-medium text-ink-700 flex items-center justify-between mb-1 ${hideLabel ? 'sr-only' : ''}`}
+        className={`font-mono text-[10px] font-medium uppercase tracking-[0.1em] text-ink-600 flex items-center justify-between mb-1 ${hideLabel ? 'sr-only' : ''}`}
       >
         <span>
           {label}
@@ -63,14 +63,14 @@ export const Select: React.FC<SelectProps> = ({
           aria-invalid={!!error}
           aria-describedby={describedBy}
           className={`
-            block w-full rounded-md border appearance-none
-            h-9 pl-3 pr-8 text-sm transition-colors duration-150
+            block w-full rounded-none border appearance-none font-mono
+            h-10 pl-3 pr-8 text-sm transition-colors duration-150
             disabled:bg-surface disabled:text-ink-400 disabled:cursor-not-allowed
             focus-visible:outline-none focus:shadow-[var(--shadow-focus)]
             ${
               error
                 ? 'border-rust text-rust focus:border-rust'
-                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-clay'
+                : 'border-border-base bg-bg-elevated text-ink-900 focus:border-ink-900'
             }
           `}
           {...props}

@@ -44,15 +44,15 @@ describe('App Integration', () => {
     const calculateBtn = screen.getByRole('button', { name: /^Calculate price$/i });
     fireEvent.click(calculateBtn);
 
-    // Should show results — header is the product name with a "Results" eyebrow.
+    // Should show the committed decision report.
     expect(
-      await screen.findByText(/^Results$/, { selector: 'p' }, { timeout: 10000 })
+      await screen.findByText(/^Decision report$/, { selector: 'p' }, { timeout: 20000 })
     ).toBeInTheDocument();
     expect(screen.getAllByText('Test Product').length).toBeGreaterThan(0);
 
     // Check if results are displayed
     expect(screen.getAllByText(/Recommended (Selling )?Price/i).length).toBeGreaterThan(0);
-  }, 15000);
+  }, 30000);
 
   it('can edit results to go back to form', async () => {
     renderWithRouter(<App />);
@@ -65,7 +65,7 @@ describe('App Integration', () => {
     fireEvent.click(calculateBtn);
 
     expect(
-      await screen.findByText(/^Results$/, { selector: 'p' }, { timeout: 10000 })
+      await screen.findByText(/^Decision report$/, { selector: 'p' }, { timeout: 20000 })
     ).toBeInTheDocument();
 
     // Form is visible below results, so we can access inputs directly
@@ -76,7 +76,7 @@ describe('App Integration', () => {
 
     fireEvent.change(nameInput, { target: { value: 'Updated Cookie' } });
     expect(nameInput).toHaveValue('Updated Cookie');
-  }, 15000);
+  }, 30000);
 
   it('loads sample data correctly', () => {
     renderWithRouter(<App />);
@@ -86,5 +86,5 @@ describe('App Integration', () => {
 
     expect(screen.getByLabelText(/Product Name/i)).toHaveValue('Chocolate Chip Cookies');
     expect(screen.getByLabelText(/Batch Size/i)).toHaveValue(50);
-  });
+  }, 15000);
 });

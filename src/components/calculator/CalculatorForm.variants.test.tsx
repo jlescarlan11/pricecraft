@@ -58,6 +58,9 @@ const TestWrapper = ({
 
 describe('CalculatorForm Variants', () => {
   const mockOnCalculate = vi.fn();
+  const openVariantsSection = () => {
+    fireEvent.click(screen.getByRole('button', { name: /Variants \(Optional\)/i }));
+  };
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -70,9 +73,10 @@ describe('CalculatorForm Variants', () => {
 
   it('toggles variant mode UI', () => {
     render(<TestWrapper onCalculate={mockOnCalculate} />);
+    openVariantsSection();
 
     // Initially OFF
-    const toggle = screen.getByLabelText(/Variants/i);
+    const toggle = screen.getByRole('checkbox', { name: 'Variants' });
     expect(toggle).not.toBeChecked();
 
     // Check Single Mode UI exists (Pricing Strategy section)
@@ -105,6 +109,7 @@ describe('CalculatorForm Variants', () => {
     };
 
     render(<TestWrapper initialInput={input} />);
+    openVariantsSection();
 
     // Verify initial remaining batch
     expect(screen.getByText('10')).toBeInTheDocument(); // 10 units remaining
@@ -126,7 +131,7 @@ describe('CalculatorForm Variants', () => {
 
     // Reduce variant batch size to 6
     // Find the variant card to scope search
-    const variantCard = variantNameInput.closest('.shadow-level-1');
+    const variantCard = variantNameInput.closest('.variant-card');
     expect(variantCard).not.toBeNull();
 
     // Find input with value 10 inside this card
@@ -162,8 +167,13 @@ describe('CalculatorForm Variants', () => {
     };
 
     render(<TestWrapper initialInput={input} />);
+    openVariantsSection();
 
-    expect(screen.getByText('5')).toBeInTheDocument(); // Remaining
+    expect(
+      screen.getByText(
+        (_, node) => node?.textContent?.trim() === '5 units' && node.classList.contains('text-2xl')
+      )
+    ).toBeInTheDocument(); // Remaining
 
     const removeBtn = screen.getByLabelText('Remove Variant');
     fireEvent.click(removeBtn);
@@ -195,9 +205,10 @@ describe('CalculatorForm Variants', () => {
     };
 
     render(<TestWrapper initialInput={input} />);
+    openVariantsSection();
 
     // Find the variant block
-    const variantBlock = screen.getByDisplayValue('Variant A').closest('.shadow-level-1');
+    const variantBlock = screen.getByDisplayValue('Variant A').closest('.variant-card');
     expect(variantBlock).not.toBeNull();
     const withinVariant = within(variantBlock as HTMLElement);
 
@@ -240,9 +251,10 @@ describe('CalculatorForm Variants', () => {
     // Markup 50% on 20 = 30
 
     render(<TestWrapper initialInput={input} />);
+    openVariantsSection();
 
     // Find the variant block
-    const variantBlock = screen.getByDisplayValue('Variant A').closest('.shadow-level-1');
+    const variantBlock = screen.getByDisplayValue('Variant A').closest('.variant-card');
     expect(variantBlock).not.toBeNull();
 
     const withinVariant = within(variantBlock as HTMLElement);
@@ -278,6 +290,7 @@ describe('CalculatorForm Variants', () => {
     };
 
     render(<TestWrapper initialInput={input} />);
+    openVariantsSection();
 
     const v1BatchInput = screen.getByLabelText(/Batch Allocation/i);
     expect(v1BatchInput).toHaveValue(10);

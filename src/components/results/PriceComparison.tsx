@@ -58,7 +58,7 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
 
       <div className="space-y-lg">
         {/* Visual Comparison */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-lg p-xl bg-surface rounded-xl border border-border-subtle">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-lg p-xl bg-surface rounded-none border border-border-base">
           <div className="text-center sm:text-left flex-1">
             <p className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-xs">
               Current Price
@@ -76,7 +76,7 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
             <p className="text-xs font-medium text-ink-500 uppercase tracking-widest mb-xs">
               Recommended
             </p>
-            <p className="text-3xl font-bold text-clay tracking-tight tabular-nums">
+            <p className="text-3xl font-mono font-medium text-ink-900 tracking-tight tabular-nums">
               {formatCurrency(recommendedPrice)}
             </p>
           </div>
@@ -84,9 +84,9 @@ export const PriceComparison: React.FC<PriceComparisonProps> = ({
 
         {/* Opportunity Cost Message */}
         <div
-          className={`p-lg rounded-xl flex items-center gap-md transition-all duration-500 ${statusColor.replace('border', 'no-border')}`}
+          className={`p-lg rounded-none border-l-2 border-current flex items-center gap-md transition-colors duration-150 ${statusColor.replace('border', 'no-border')}`}
         >
-          <div className="p-sm bg-white/50 rounded-sm shadow-level-1">{statusIcon}</div>
+          <div className="p-sm bg-bg-elevated rounded-none shadow-none">{statusIcon}</div>
           <span className="font-bold text-sm sm:text-base tracking-tight">{statusMessage}</span>
         </div>
 

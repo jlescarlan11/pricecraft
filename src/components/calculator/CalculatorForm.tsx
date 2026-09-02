@@ -107,7 +107,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const [expandedSection, setExpandedSection] = useState<number>(() => {
     if (!isInfoComplete) return 1;
     if (!isIngredientsComplete) return 2;
-    return 3; 
+    return 2;
   });
 
   // Helper to handle manual toggling
@@ -160,31 +160,32 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
   const strategySummary = `${config.strategy === 'markup' ? 'Markup' : 'Margin'}: ${config.value}%`;
 
   return (
-    <div className="flex flex-col gap-5 w-full pb-24">
+    <div className="flex flex-col gap-6 w-full p-4 sm:p-5 lg:p-6 pb-24">
       {/* Header with Actions */}
       <div className="grid grid-cols-1 md:grid-cols-[1fr_auto] gap-y-2 md:gap-y-0 items-center">
         {/* Title */}
         <div className="flex flex-col">
-          <h2 className="text-lg text-ink-900 font-semibold">Build your recipe</h2>
-          <p className="text-xs text-ink-500 mt-0.5">
-            Step {Math.min(expandedSection || 1, 5)} of 5
+          <p className="label-caps">Editable costing ledger</p>
+          <h2 className="text-xl text-ink-900 font-medium mt-1">Recipe inputs</h2>
+          <p className="font-mono text-[10px] text-ink-500 mt-1 uppercase tracking-[0.08em]">
+            Active section {String(Math.min(expandedSection || 1, 5)).padStart(2, '0')} / 05
           </p>
         </div>
 
         {/* Action Bar */}
         <div className="md:col-start-2 md:justify-self-end mt-2 md:mt-0 w-full md:w-auto">
-          <div className="flex items-center gap-1 bg-surface p-0.5 rounded-md border border-border-subtle w-full md:w-fit">
+          <div className="flex items-center gap-1 bg-transparent rounded-none border border-border-base w-full md:w-fit">
             <Button
               variant="ghost"
               onClick={onOpenPresets}
-              className="flex-1 md:flex-none h-auto py-1 md:h-9 md:py-0 px-1 md:px-3 text-ink-700 hover:text-clay hover:bg-clay/5 min-w-0 flex flex-col md:flex-row gap-0.5 md:gap-2 items-center justify-center"
+              className="flex-1 md:flex-none h-auto py-2 md:h-9 md:py-0 px-2 md:px-3 text-ink-700 hover:text-ink-900 hover:bg-surface min-w-0 flex flex-col md:flex-row gap-0.5 md:gap-2 items-center justify-center"
               title="Saved Products"
             >
               <Package className="w-4 h-4 shrink-0" />
               <span className="text-[10px] md:text-sm font-medium md:font-normal leading-none md:leading-normal truncate w-full md:w-auto text-center">Presets</span>
             </Button>
 
-            <div className="h-4 w-px bg-border-subtle shrink-0" />
+            <div className="h-4 w-px bg-border-base shrink-0" />
 
             <div className="flex-1 md:flex-none flex justify-center min-w-0 [&>button]:h-auto [&>button]:py-1 [&>button]:md:h-9 [&>button]:md:py-0 [&>button]:px-1 [&>button]:md:px-3 [&>button]:text-ink-700 [&>button:hover]:text-clay [&>button:hover]:bg-clay/5 [&>button]:w-full [&>button]:md:w-auto [&>button]:min-w-0">
               <SavePresetButton
@@ -197,12 +198,12 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
               />
             </div>
 
-            <div className="h-4 w-px bg-border-subtle shrink-0" />
+            <div className="h-4 w-px bg-border-base shrink-0" />
 
             <Button
               variant="ghost"
               onClick={onReset}
-              className="flex-1 md:flex-none h-auto py-1 md:h-9 md:py-0 px-1 md:px-3 text-ink-700 hover:text-rust hover:bg-rust/5 min-w-0 flex flex-col md:flex-row gap-0.5 md:gap-2 items-center justify-center"
+              className="flex-1 md:flex-none h-auto py-2 md:h-9 md:py-0 px-2 md:px-3 text-ink-700 hover:text-rust hover:bg-rust/5 min-w-0 flex flex-col md:flex-row gap-0.5 md:gap-2 items-center justify-center"
               title="Reset Form"
             >
               <RefreshCcw className="w-4 h-4 shrink-0" />
@@ -214,7 +215,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
       <div className="flex flex-col space-y-md">
         {isEmpty && onLoadSample && (
-          <div className="animate-in fade-in slide-in-from-top-4 duration-500 pb-sm">
+          <div className="animate-in fade-in slide-in-from-top-4 duration-300 pb-sm">
              <SampleDemo onLoadSample={onLoadSample} />
           </div>
         )}
@@ -245,7 +246,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 size="sm"
                 onClick={() => nextSection(1)} 
                 disabled={!isInfoComplete}
-                className="bg-clay text-white hover:bg-clay/90"
+                className="min-w-28"
               >
                 Continue <ArrowRight className="w-4 h-4 ml-2" />
               </Button>
@@ -263,8 +264,8 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
           summary={ingredientsSummary}
         >
           <div className="space-y-lg">
-             <div className="bg-surface/50 rounded-lg p-sm border border-border-subtle/50">
-               <p className="text-sm text-ink-500 text-center">
+             <div className="bg-surface/60 rounded-none px-3 py-2 border-l-2 border-ink-900">
+               <p className="font-mono text-[10px] uppercase tracking-[0.06em] text-ink-500">
                  Add all ingredients used in your batch (e.g., 500g Flour, 2 Eggs).
                </p>
              </div>
@@ -315,7 +316,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   size="sm"
                   onClick={() => nextSection(2)}
                   disabled={!isIngredientsComplete}
-                  className="bg-clay text-white hover:bg-clay/90"
+                  className="min-w-28"
                  >
                    Continue <ArrowRight className="w-4 h-4 ml-2" />
                  </Button>
@@ -386,7 +387,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                 variant="primary"
                 size="sm"
                 onClick={() => nextSection(3)}
-                className="bg-clay text-white hover:bg-clay/90"
+                className="min-w-28"
                >
                  Continue <ArrowRight className="w-4 h-4 ml-2" />
                </Button>
@@ -472,7 +473,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                   variant="primary"
                   size="sm"
                   onClick={() => nextSection(4)}
-                  className="bg-clay text-white hover:bg-clay/90"
+                  className="min-w-28"
                  >
                    Continue <ArrowRight className="w-4 h-4 ml-2" />
                  </Button>
@@ -490,7 +491,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
           summary={input.hasVariants ? `${input.variants?.length || 0} Variants` : 'Disabled'}
         >
           <div className="space-y-lg">
-             <div className="flex items-center justify-between bg-surface-hover/30 px-lg py-md rounded-xl border border-border-subtle min-h-[56px] transition-colors hover:bg-surface-hover/50">
+             <div className="flex items-center justify-between bg-surface/60 px-lg py-md rounded-none border border-border-base min-h-[56px] transition-colors hover:bg-surface-hover/70">
                 <div className="flex flex-col gap-0.5">
                   <h4 id="variants-toggle-label" className="font-medium text-ink-900">Variants</h4>
                   <p className="text-sm text-ink-500 leading-tight">
@@ -541,7 +542,7 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
                       </div>
                       <div className="h-4 w-full bg-border-subtle rounded-lg overflow-hidden flex border border-border-subtle shadow-inner">
                         <div
-                          className="h-full bg-clay transition-all duration-500 flex items-center justify-center text-[8px] text-white font-bold"
+                          className="h-full bg-signal transition-all duration-500 flex items-center justify-center text-[8px] text-black font-bold"
                           style={{ width: `${(remainingBatch / (input.batchSize || 1)) * 100}%` }}
                         >
                           {remainingBatch > 0 && 'BASE'}
@@ -630,13 +631,13 @@ export const CalculatorForm: React.FC<CalculatorFormProps> = ({
 
       {/* Main Calculate Action — shown below the form on sm-xl. At xl+ the
           side panel's Calculate button takes over so we don't duplicate. */}
-      <div className="hidden sm:block xl:hidden mt-6">
+      <div className="hidden sm:block xl:hidden mt-6 border-t border-border-base pt-5">
         <Button
           variant="primary"
           size="lg"
           onClick={onCalculate}
           isLoading={isCalculating}
-          className="w-full"
+          className="w-full bg-signal text-black border-signal hover:bg-signal-strong hover:text-black"
         >
           <Calculator className="w-4 h-4" />
           Calculate price

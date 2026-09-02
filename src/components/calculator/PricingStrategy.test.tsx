@@ -27,7 +27,7 @@ describe('PricingStrategy', () => {
       <PricingStrategy strategy="margin" value={20} costPerUnit={100} onChange={mockOnChange} />
     );
 
-    expect(screen.getByText(/Margin/i, { selector: 'button' })).toHaveClass('bg-clay');
+    expect(screen.getByText(/Margin/i, { selector: 'button' })).toHaveClass('bg-sidebar');
     expect(screen.getByLabelText(/Margin Percentage/i)).toHaveValue(20);
     expect(
       screen.getByText(

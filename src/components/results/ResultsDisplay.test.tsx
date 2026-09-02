@@ -82,7 +82,7 @@ describe('ResultsDisplay', () => {
       />
     );
 
-    expect(screen.getByText(/Results/i)).toBeInTheDocument();
+    expect(screen.getByText(/Decision report/i)).toBeInTheDocument();
     expect(screen.getAllByText(/Test Product/i).length).toBeGreaterThan(0);
     // Check if sub-components are rendered (by checking for their specific text)
     expect(screen.getByText(/Recommended Selling Price/i)).toBeInTheDocument();

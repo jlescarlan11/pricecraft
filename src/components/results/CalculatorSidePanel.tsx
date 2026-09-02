@@ -1,13 +1,8 @@
 import React from 'react';
-import {
-  Calculator,
-  RefreshCw,
-  ChevronRight,
-  Lightbulb,
-} from 'lucide-react';
+import { ChevronRight, CircleDot, RefreshCw } from 'lucide-react';
 import { Button } from '../shared/Button';
 import type { CalculationResult } from '../../types/calculator';
-import { formatCurrency, getMarginColor } from '../../utils/formatters';
+import { formatCurrency } from '../../utils/formatters';
 
 interface CalculatorSidePanelProps {
   results: CalculationResult | null;
@@ -18,10 +13,7 @@ interface CalculatorSidePanelProps {
   onScrollToResults: () => void;
 }
 
-/**
- * Sticky right-rail summary used at xl+ breakpoints. Shows the live
- * calculation as the user edits, and a Calculate button to commit.
- */
+/** Persistent decision surface for the calculator workspace. */
 export const CalculatorSidePanel: React.FC<CalculatorSidePanelProps> = ({
   results,
   hasCommittedResults,
@@ -31,127 +23,145 @@ export const CalculatorSidePanel: React.FC<CalculatorSidePanelProps> = ({
   onScrollToResults,
 }) => {
   const hasNumbers = !!results && results.costPerUnit > 0;
+  const totalCost = results?.totalCost || 0;
+  const composition = results
+    ? [
+        ['Ingredients', results.breakdown.ingredients],
+        ['Labor', results.breakdown.labor],
+        ['Overhead', results.breakdown.overhead],
+        ['Packaging', results.breakdown.packaging || 0],
+      ].filter(([, value]) => Number(value) > 0)
+    : [];
 
   return (
     <aside
-      className="hidden xl:flex flex-col gap-4 sticky top-20 self-start"
-      aria-label="Live calculation summary"
+      className="hidden xl:block sticky top-[76px] self-start min-w-0"
+      aria-label="Price runway"
     >
-      <div className="card overflow-hidden">
-        <div className="px-4 py-3 border-b border-border-subtle flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <Calculator className="w-4 h-4 text-clay" aria-hidden="true" />
-            <p className="text-sm font-semibold text-ink-900">Live calculation</p>
-          </div>
-          {hasCommittedResults && isStale && (
-            <span className="inline-flex items-center gap-1 text-2xs text-amber-700 font-medium">
-              <RefreshCw className="w-3 h-3" />
-              Stale
-            </span>
-          )}
+      <div className="bg-sidebar text-white border border-black overflow-hidden">
+        <div className="px-5 py-4 border-b border-white/15 flex items-center justify-between gap-3">
+          <p className="font-mono text-[10px] uppercase tracking-[0.15em] text-white/60">
+            Price runway
+          </p>
+          <span className="inline-flex items-center gap-1.5 font-mono text-[9px] uppercase tracking-[0.12em] text-white/55">
+            {hasCommittedResults && isStale ? (
+              <RefreshCw className="w-3 h-3 text-signal" aria-hidden="true" />
+            ) : (
+              <CircleDot className="w-3 h-3 text-signal" aria-hidden="true" />
+            )}
+            {hasCommittedResults && isStale ? 'Changed' : 'Live'}
+          </span>
+        </div>
+
+        <div className="px-5 py-6">
+          <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-white/45">
+            Recommended selling price
+          </p>
+          <p
+            key={results?.recommendedPrice || 0}
+            className="mt-3 font-mono text-[clamp(2.9rem,4vw,4.6rem)] leading-none tracking-[-0.07em] text-signal tnum animate-pulse-once"
+          >
+            {hasNumbers ? formatCurrency(results.recommendedPrice) : '₱—'}
+          </p>
+          <p className="mt-4 inline-flex items-center gap-2 border border-white/20 px-2.5 py-1 font-mono text-[9px] uppercase tracking-[0.1em] text-white/70">
+            <span className="w-1.5 h-1.5 bg-signal" aria-hidden="true" />
+            {hasNumbers
+              ? results.profitMarginPercent >= 25
+                ? 'Healthy margin'
+                : 'Review margin'
+              : 'Awaiting costs'}
+          </p>
         </div>
 
         {hasNumbers ? (
-          <div className="px-4 py-4 space-y-4">
-            <div>
-              <p className="label-caps">Recommended price</p>
-              <p className="text-3xl font-serif text-ink-900 tnum mt-1">
-                {formatCurrency(results.recommendedPrice)}
-              </p>
-              {results.priceWithVat !== undefined && (
-                <p className="text-xs text-ink-500 mt-0.5 tnum">
-                  +VAT: {formatCurrency(results.priceWithVat)}
-                </p>
+          <>
+            <dl className="border-y border-white/15 divide-y divide-white/10 px-5">
+              <RunwayMetric label="Break-even price" value={formatCurrency(results.breakEvenPrice)} />
+              <RunwayMetric label="Profit per unit" value={formatCurrency(results.profitPerUnit)} />
+              <RunwayMetric
+                label="Profit margin"
+                value={`${results.profitMarginPercent.toFixed(2)}%`}
+                highlighted
+              />
+              <RunwayMetric label="Total batch profit" value={formatCurrency(results.profitPerBatch)} />
+              {results.wholesalePrice !== undefined && (
+                <RunwayMetric label="Wholesale price" value={formatCurrency(results.wholesalePrice)} />
               )}
-            </div>
+            </dl>
 
-            <div className="grid grid-cols-2 gap-3 pt-3 border-t border-border-subtle">
-              <div>
-                <p className="label-caps">Cost / unit</p>
-                <p className="text-sm font-medium text-ink-900 tnum mt-1">
-                  {formatCurrency(results.costPerUnit)}
-                </p>
+            <div className="px-5 py-5 border-b border-white/15">
+              <p className="font-mono text-[9px] uppercase tracking-[0.13em] text-white/40 mb-4">
+                Cost composition
+              </p>
+              <div className="space-y-3">
+                {composition.map(([label, rawValue]) => {
+                  const value = Number(rawValue);
+                  const percent = totalCost > 0 ? (value / totalCost) * 100 : 0;
+                  return (
+                    <div key={String(label)}>
+                      <div className="flex items-baseline justify-between gap-3 font-mono text-[10px]">
+                        <span className="text-white/55">{label}</span>
+                        <span className="text-white/85 tnum">
+                          {percent.toFixed(1)}% · {formatCurrency(value)}
+                        </span>
+                      </div>
+                      <div className="h-px bg-white/15 mt-2">
+                        <div className="h-px bg-signal" style={{ width: `${Math.min(percent, 100)}%` }} />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
-              <div>
-                <p className="label-caps">Profit / unit</p>
-                <p className="text-sm font-medium text-ink-900 tnum mt-1">
-                  {formatCurrency(results.profitPerUnit)}
-                </p>
-              </div>
-              <div>
-                <p className="label-caps">Margin</p>
-                <p
-                  className={`text-sm font-semibold tnum mt-1 ${getMarginColor(
-                    results.profitMarginPercent
-                  )}`}
-                >
-                  {results.profitMarginPercent.toFixed(1)}%
-                </p>
-              </div>
-              <div>
-                <p className="label-caps">Break-even</p>
-                <p className="text-sm font-medium text-ink-900 tnum mt-1">
-                  {formatCurrency(results.breakEvenPrice)}
-                </p>
+              <div className="mt-5 pt-4 border-t border-white/15 flex items-baseline justify-between font-mono">
+                <span className="text-[9px] uppercase tracking-[0.12em] text-white/45">Total cost</span>
+                <span className="text-sm tnum">{formatCurrency(totalCost)}</span>
               </div>
             </div>
-
-            {results.wholesalePrice !== undefined && (
-              <div className="pt-3 border-t border-border-subtle flex items-baseline justify-between">
-                <p className="label-caps">Wholesale</p>
-                <p className="text-sm font-medium text-ink-900 tnum">
-                  {formatCurrency(results.wholesalePrice)}
-                </p>
-              </div>
-            )}
-          </div>
+          </>
         ) : (
-          <div className="px-4 py-8 text-center">
-            <p className="text-sm text-ink-500">
-              Fill in the form to see live numbers here.
+          <div className="px-5 py-10 border-y border-white/15">
+            <p className="font-serif text-2xl leading-tight text-white">Build the cost picture.</p>
+            <p className="text-sm text-white/45 mt-3 leading-relaxed">
+              Add the product, ingredient and operating costs to unlock a live recommendation.
             </p>
           </div>
         )}
 
-        <div className="border-t border-border-subtle p-3 bg-surface/40 flex flex-col gap-2">
+        <div className="p-5 flex flex-col gap-2">
           <Button
             variant="primary"
-            size="md"
+            size="lg"
             onClick={onCalculate}
             isLoading={isCalculating}
             disabled={!hasNumbers}
-            className="w-full"
+            className="w-full bg-signal text-black border-signal hover:bg-signal-strong hover:text-black"
           >
-            {hasCommittedResults && !isStale ? 'Recalculate' : 'Calculate'}
+            {hasCommittedResults && !isStale ? 'Recommit price' : 'Commit price'}
           </Button>
           {hasCommittedResults && (
             <Button
-              variant="ghost"
-              size="sm"
+              variant="secondary"
+              size="md"
               onClick={onScrollToResults}
-              className="w-full"
+              className="w-full border-white/35 text-white hover:bg-white hover:text-black"
             >
-              View full results
+              Open decision report
               <ChevronRight className="w-4 h-4" aria-hidden="true" />
             </Button>
           )}
         </div>
       </div>
-
-      {/* Quick tip card — fills the right column when the form is short. */}
-      <div className="card p-4 bg-clay-50/60 border-clay-100">
-        <div className="flex items-start gap-2.5">
-          <Lightbulb
-            className="w-4 h-4 text-clay-700 mt-0.5 shrink-0"
-            aria-hidden="true"
-          />
-          <div className="text-xs text-ink-700 leading-relaxed">
-            <p className="font-semibold text-ink-900 mb-1">Quick tip</p>
-            Aim for a 30%+ profit margin to keep your business healthy. A
-            healthy margin lets you absorb cost spikes and reinvest in growth.
-          </div>
-        </div>
-      </div>
     </aside>
   );
 };
+
+const RunwayMetric: React.FC<{
+  label: string;
+  value: string;
+  highlighted?: boolean;
+}> = ({ label, value, highlighted = false }) => (
+  <div className="flex items-baseline justify-between gap-4 py-3 font-mono">
+    <dt className="text-[9px] uppercase tracking-[0.1em] text-white/45">{label}</dt>
+    <dd className={`text-sm tnum ${highlighted ? 'text-signal' : 'text-white'}`}>{value}</dd>
+  </div>
+);

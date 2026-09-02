@@ -14,7 +14,7 @@ export const DriftBanner: React.FC<DriftBannerProps> = ({
   const navigate = useNavigate();
   if (affectedCount === 0) return null;
   return (
-    <div className="flex items-center justify-between bg-clay/5 border border-clay/20 rounded-xl p-md">
+    <div className="flex items-center justify-between bg-surface border-l-2 border-ink-900 rounded-none p-md">
       <div className="flex items-center gap-md">
         <TrendingUp className="w-5 h-5 text-clay" aria-hidden="true" />
         <p className="text-sm text-ink-900">

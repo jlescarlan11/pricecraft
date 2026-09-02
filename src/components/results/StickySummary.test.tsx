@@ -53,13 +53,15 @@ describe('StickySummary', () => {
 
   it('renders placeholder when no results', () => {
     render(<StickySummary {...defaultProps} />);
-    expect(screen.getByText('Ready?')).toBeInTheDocument();
+    expect(screen.getByText('Price runway')).toBeInTheDocument();
+    expect(screen.getByText('Ready to calculate')).toBeInTheDocument();
     expect(screen.getByText('Calculate')).toBeInTheDocument();
   });
 
   it('renders single result stats', () => {
     render(<StickySummary {...defaultProps} results={mockSingleResult} hasCommittedResults={true} />);
-    expect(screen.getByText('Total Cost')).toBeInTheDocument();
+    expect(screen.getByText('Cost / unit')).toBeInTheDocument();
+    expect(screen.getByText('Sugg. Price')).toBeInTheDocument();
     expect(screen.getByText('₱10.00')).toBeInTheDocument(); // Cost per unit
     expect(screen.getByText('₱20.00')).toBeInTheDocument(); // Price
   });

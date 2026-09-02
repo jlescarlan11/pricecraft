@@ -29,11 +29,11 @@ export const Switch: React.FC<SwitchProps> = ({
       />
       <div
         className="
-          relative w-9 h-5 bg-border-base rounded-full transition-colors duration-150
-          peer-checked:bg-clay
+          relative w-9 h-5 bg-border-strong rounded-none transition-colors duration-150
+          peer-checked:bg-signal
           peer-focus-visible:shadow-[var(--shadow-focus)]
           after:content-[''] after:absolute after:top-0.5 after:left-0.5
-          after:w-4 after:h-4 after:rounded-full after:bg-white after:shadow-level-1
+          after:w-4 after:h-4 after:rounded-none after:bg-white after:shadow-level-1
           after:transition-transform after:duration-150
           peer-checked:after:translate-x-4
         "

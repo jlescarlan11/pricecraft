@@ -55,6 +55,7 @@ export const VariantBlock: React.FC<VariantBlockProps> = ({
 
   return (
     <Card
+      className="variant-card"
       title={
         <div className="flex items-center justify-between w-full">
           <Input
@@ -78,7 +79,7 @@ export const VariantBlock: React.FC<VariantBlockProps> = ({
     >
       <div className="space-y-lg">
         {/* Allocation */}
-        <div className="bg-surface-hover p-md rounded-lg border border-border-subtle">
+        <div className="bg-surface p-md border border-border-base">
           <Input
             label={`Batch Allocation (Max: ${maxBatchSize})`}
             type="number"

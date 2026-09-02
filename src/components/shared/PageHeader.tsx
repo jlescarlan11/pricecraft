@@ -24,20 +24,20 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   return (
     <header
       className={[
-        'mb-6 lg:mb-8',
-        bare ? '' : 'pb-6 border-b border-border-subtle',
+        'mb-7 lg:mb-9',
+        bare ? '' : 'pb-6 border-b border-border-base',
       ].join(' ')}
     >
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="min-w-0 flex-1">
           {eyebrow && (
-            <p className="label-caps mb-1.5">{eyebrow}</p>
+            <p className="label-caps mb-2">{eyebrow}</p>
           )}
-          <h1 className="text-2xl lg:text-3xl text-ink-900 font-semibold tracking-tight font-serif">
+          <h1 className="text-4xl lg:text-5xl text-ink-900 font-normal tracking-[-0.04em] font-serif leading-[0.98]">
             {title}
           </h1>
           {description && (
-            <p className="mt-1.5 text-sm text-ink-500 max-w-2xl">
+            <p className="mt-3 text-sm text-ink-500 max-w-2xl leading-relaxed">
               {description}
             </p>
           )}

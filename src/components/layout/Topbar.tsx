@@ -26,7 +26,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenu }) => {
 
   return (
     <header
-      className="sticky top-0 z-20 bg-bg-main/95 backdrop-blur supports-[backdrop-filter]:bg-bg-main/80 border-b border-border-subtle"
+      className="sticky top-0 z-20 bg-bg-main text-ink-900 border-b border-border-subtle"
       role="banner"
     >
       <div className="h-14 px-4 lg:px-6 flex items-center gap-3">
@@ -34,7 +34,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenu }) => {
         <button
           type="button"
           onClick={onMenu}
-          className="lg:hidden -ml-1 p-2 rounded-md text-ink-700 hover:bg-surface"
+          className="lg:hidden -ml-1 p-2 rounded-none text-ink-600 hover:text-signal hover:bg-surface"
           aria-label="Open menu"
         >
           <Menu className="w-5 h-5" />
@@ -44,7 +44,7 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenu }) => {
         <div className="flex items-center gap-1.5 min-w-0">
           <Link
             to="/"
-            className="text-sm text-ink-400 hover:text-ink-700 hidden sm:inline"
+            className="font-mono text-[10px] uppercase tracking-[0.14em] text-ink-400 hover:text-ink-900 hidden sm:inline"
           >
             PriceCraft
           </Link>
@@ -62,8 +62,6 @@ export const Topbar: React.FC<TopbarProps> = ({ onMenu }) => {
         </div>
 
         <div className="flex-1" />
-
-        {/* Slot for actions per page (future) */}
       </div>
     </header>
   );
