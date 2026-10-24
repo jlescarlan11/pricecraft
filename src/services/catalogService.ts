@@ -1,9 +1,5 @@
 import { supabase } from '../lib/supabase';
-import type {
-  CatalogIngredient,
-  PriceHistoryEntry,
-  ReceiptScan,
-} from '../types';
+import type { CatalogIngredient, PriceHistoryEntry, ReceiptScan } from '../types';
 import { normalizeIngredientName, pricePerBaseUnit } from './receiptParser';
 
 const CATALOG_KEY = 'pricing_calculator_catalog';
@@ -65,11 +61,7 @@ function getLocalReceipts(): ReceiptScan[] {
 }
 
 function setLocalReceipts(items: ReceiptScan[]) {
-  try {
-    localStorage.setItem(RECEIPTS_KEY, JSON.stringify(items));
-  } catch (e) {
-    console.error('Error saving receipts', e);
-  }
+  localStorage.setItem(RECEIPTS_KEY, JSON.stringify(items));
 }
 
 function getSyncQueue(): SyncQueueItem[] {
@@ -175,6 +167,8 @@ export interface NewIngredientInput {
   purchaseQuantity: number;
   purchaseUnit: string;
   purchaseCost: number;
+  source?: 'manual' | 'receipt';
+  receiptId?: string;
 }
 
 export interface UpdateIngredientPriceInput {
@@ -209,14 +203,10 @@ export const catalogService = {
             .eq('id', a.payload.id);
           if (error) throw error;
         } else if (a.type === 'save-history') {
-          const { error } = await supabase
-            .from('price_history')
-            .upsert(historyToDb(a.payload));
+          const { error } = await supabase.from('price_history').upsert(historyToDb(a.payload));
           if (error) throw error;
         } else if (a.type === 'save-receipt') {
-          const { error } = await supabase
-            .from('receipts')
-            .upsert(receiptToDb(a.payload));
+          const { error } = await supabase.from('receipts').upsert(receiptToDb(a.payload));
           if (error) throw error;
         }
       } catch (e) {
@@ -266,9 +256,7 @@ export const catalogService = {
     catalogIngredientId: string,
     userId?: string
   ): Promise<PriceHistoryEntry[]> {
-    const local = getLocalHistory().filter(
-      (h) => h.catalogIngredientId === catalogIngredientId
-    );
+    const local = getLocalHistory().filter((h) => h.catalogIngredientId === catalogIngredientId);
     if (!userId || !navigator.onLine) return local;
 
     try {
@@ -285,8 +273,7 @@ export const catalogService = {
       local.forEach((h) => map.set(h.id, h));
       cloud.forEach((c) => map.set(c.id, c));
       return Array.from(map.values()).sort(
-        (a, b) =>
-          new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
+        (a, b) => new Date(a.recordedAt).getTime() - new Date(b.recordedAt).getTime()
       );
     } catch (e) {
       console.error('Error fetching price history', e);
@@ -295,10 +282,7 @@ export const catalogService = {
   },
 
   // ---------- Mutations ----------
-  async addIngredient(
-    input: NewIngredientInput,
-    userId?: string
-  ): Promise<CatalogIngredient> {
+  async addIngredient(input: NewIngredientInput, userId?: string): Promise<CatalogIngredient> {
     const now = new Date().toISOString();
     const id = genId();
     const ingredient: CatalogIngredient = {
@@ -329,8 +313,8 @@ export const catalogService = {
       purchaseQuantity: input.purchaseQuantity,
       purchaseUnit: input.purchaseUnit,
       purchaseCost: input.purchaseCost,
-      source: 'manual',
-      receiptId: null,
+      source: input.source || 'manual',
+      receiptId: input.receiptId ?? null,
       recordedAt: now,
     };
     const history = getLocalHistory();
@@ -461,10 +445,7 @@ export const catalogService = {
 
     if (navigator.onLine && userId) {
       try {
-        const { error } = await supabase
-          .from('catalog_ingredients')
-          .delete()
-          .eq('id', id);
+        const { error } = await supabase.from('catalog_ingredients').delete().eq('id', id);
         if (error) throw error;
       } catch (e) {
         console.error('Delete cloud failed, queuing', e);
@@ -477,14 +458,14 @@ export const catalogService = {
 
   async saveReceipt(receipt: ReceiptScan): Promise<void> {
     const receipts = getLocalReceipts();
-    receipts.push(receipt);
+    const existing = receipts.findIndex((item) => item.id === receipt.id);
+    if (existing >= 0) receipts[existing] = receipt;
+    else receipts.push(receipt);
     setLocalReceipts(receipts);
 
     if (navigator.onLine && receipt.userId) {
       try {
-        const { error } = await supabase
-          .from('receipts')
-          .upsert(receiptToDb(receipt));
+        const { error } = await supabase.from('receipts').upsert(receiptToDb(receipt));
         if (error) throw error;
       } catch (e) {
         console.error('Receipt save failed, queuing', e);

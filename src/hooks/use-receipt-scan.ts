@@ -1,8 +1,13 @@
 import { useCallback, useRef, useState } from 'react';
-import { parseReceipt, type ParseReceiptResult } from '../services/receiptParser';
+import {
+  parseReceipt,
+  RECEIPT_PARSER_VERSION,
+  type ParseReceiptResult,
+} from '../services/receiptParser';
 import { preprocessImage } from '../components/receipt/imagePreprocess';
 import { hasOcrSpaceKey, recognizeWithOcrSpace } from '../services/ocrSpaceService';
-import { hasGroqKey, extractItemsWithGroq } from '../services/groqService';
+import { hasGroqKey, extractItemsWithGroq, GROQ_MODEL } from '../services/groqService';
+import type { ReceiptCapture } from '../types/receiptDataset';
 
 export type ScanStatus =
   | 'idle'
@@ -20,6 +25,7 @@ interface UseReceiptScanState {
   result: ParseReceiptResult | null;
   rawText: string;
   error: string | null;
+  capture: ReceiptCapture | null;
 }
 
 const INITIAL: UseReceiptScanState = {
@@ -28,14 +34,18 @@ const INITIAL: UseReceiptScanState = {
   result: null,
   rawText: '',
   error: null,
+  capture: null,
 };
 
 export function useReceiptScan() {
   const [state, setState] = useState<UseReceiptScanState>(INITIAL);
-  const cancelRef = useRef(false);
+  const runRef = useRef(0);
 
   const scan = useCallback(async (file: File | Blob) => {
-    cancelRef.current = false;
+    const run = ++runRef.current;
+    const isCancelled = () => run !== runRef.current;
+    const scanId = crypto.randomUUID();
+    const createdAt = new Date().toISOString();
     setState({ ...INITIAL, status: 'preprocessing', progress: 0.02 });
 
     try {
@@ -46,7 +56,7 @@ export function useReceiptScan() {
       try {
         imageForOcr = await preprocessImage(file, {
           onStage: (stage) => {
-            if (cancelRef.current) return;
+            if (isCancelled()) return;
             if (stage === 'converting-heic') {
               setState((s) => ({ ...s, status: 'converting', progress: 0.04 }));
             } else if (stage === 'preprocessing') {
@@ -63,15 +73,17 @@ export function useReceiptScan() {
         }
         imageForOcr = file;
       }
-      if (cancelRef.current) return;
+      if (isCancelled()) return;
 
       // Helper: given OCR text, try Groq for structured extraction; on any
       // failure fall back to the heuristic parser.
+      let extractor = 'heuristic';
       const buildResult = async (text: string): Promise<ParseReceiptResult> => {
         if (hasGroqKey() && text.trim().length > 20) {
           try {
             const items = await extractItemsWithGroq(text);
             if (items.length > 0) {
+              extractor = `groq:${GROQ_MODEL}:prompt-v1`;
               return { rawText: text, lines: items };
             }
           } catch (e) {
@@ -81,19 +93,45 @@ export function useReceiptScan() {
         return parseReceipt(text);
       };
 
+      const capture = (
+        parsed: ParseReceiptResult,
+        ocrProvider: 'ocr-space' | 'tesseract',
+        ocrModel: string,
+        image: Blob,
+        ocrEvidence: unknown
+      ): ReceiptCapture => ({
+        id: scanId,
+        createdAt,
+        original: file,
+        ocrImage: image,
+        originalName: file instanceof File ? file.name : 'receipt',
+        rawText: parsed.rawText,
+        predictedLines: parsed.lines,
+        ocrEvidence,
+        metadata: {
+          ocrProvider,
+          ocrModel,
+          extractor,
+          parserVersion: RECEIPT_PARSER_VERSION,
+          preprocessingVersion: imageForOcr === file ? 'original-fallback' : 'grayscale-1600-v1',
+        },
+      });
+
       // Prefer OCR.space if we have an API key — much better on real receipts.
       if (hasOcrSpaceKey()) {
         try {
           setState((s) => ({ ...s, status: 'recognizing', progress: 0.3 }));
-          const { text } = await recognizeWithOcrSpace(imageForOcr);
-          if (cancelRef.current) return;
+          const { text, raw, image } = await recognizeWithOcrSpace(imageForOcr);
+          if (isCancelled()) return;
           setState((s) => ({ ...s, status: 'parsing', progress: 0.95 }));
           const parsed = await buildResult(text);
+          if (isCancelled()) return;
           if (parsed.lines.length > 0 || text.trim().length > 50) {
             setState({
               status: 'done',
               progress: 1,
               result: parsed,
+              capture: capture(parsed, 'ocr-space', 'engine-2', image || imageForOcr, raw),
               rawText: text,
               error: null,
             });
@@ -109,11 +147,11 @@ export function useReceiptScan() {
       setState((s) => ({ ...s, status: 'loading-worker', progress: 0.1 }));
 
       const { createWorker, PSM } = await import('tesseract.js');
-      if (cancelRef.current) return;
+      if (isCancelled()) return;
 
       const worker = await createWorker('eng', 1, {
         logger: (m: { status: string; progress: number }) => {
-          if (cancelRef.current) return;
+          if (isCancelled()) return;
           if (m.status === 'recognizing text') {
             setState((s) => ({
               ...s,
@@ -150,14 +188,9 @@ export function useReceiptScan() {
         bbox: { x0: number; y0: number; x1: number; y1: number };
       }
 
-      const reconstructRowsFromLines = (
-        lines: LineEntry[],
-        toleranceFactor: number
-      ): string => {
+      const reconstructRowsFromLines = (lines: LineEntry[], toleranceFactor: number): string => {
         if (!lines || lines.length === 0) return '';
-        const heights = lines
-          .map((l) => Math.max(1, l.bbox.y1 - l.bbox.y0))
-          .sort((a, b) => a - b);
+        const heights = lines.map((l) => Math.max(1, l.bbox.y1 - l.bbox.y0)).sort((a, b) => a - b);
         const medianH = heights[Math.floor(heights.length / 2)] || 12;
         const tolerance = medianH * toleranceFactor;
 
@@ -181,103 +214,132 @@ export function useReceiptScan() {
             curYC = (curYC * (cur.length - 1) + yC) / cur.length;
           } else {
             cur.sort((a, b) => a.bbox.x0 - b.bbox.x0);
-            rows.push(cur.map((x) => x.text.trim()).filter(Boolean).join('  '));
+            rows.push(
+              cur
+                .map((x) => x.text.trim())
+                .filter(Boolean)
+                .join('  ')
+            );
             cur = [ln];
             curYC = yC;
           }
         }
         if (cur.length > 0) {
           cur.sort((a, b) => a.bbox.x0 - b.bbox.x0);
-          rows.push(cur.map((x) => x.text.trim()).filter(Boolean).join('  '));
+          rows.push(
+            cur
+              .map((x) => x.text.trim())
+              .filter(Boolean)
+              .join('  ')
+          );
         }
         return rows.join('\n');
       };
 
       let bestText = '';
+      let bestEvidence: unknown = null;
+      let bestPsm = '';
       let bestScore = 0;
-      for (const psm of modesToTry) {
-        if (cancelRef.current) return;
-        await worker.setParameters({
-          tessedit_pageseg_mode: psm,
-          preserve_interword_spaces: '1',
-        });
-        try {
-          // Request blocks so we get word-level bbox data for spatial regroup.
-          const result = (await worker.recognize(imageForOcr, {}, {
-            text: true,
-            blocks: true,
-          })) as { data: { text?: string; blocks?: unknown } };
-          const data = result.data;
-          const rawTxt = data.text || '';
+      try {
+        for (const psm of modesToTry) {
+          if (isCancelled()) return;
+          await worker.setParameters({
+            tessedit_pageseg_mode: psm,
+            preserve_interword_spaces: '1',
+          });
+          try {
+            // Request blocks so we get word-level bbox data for spatial regroup.
+            const result = (await worker.recognize(
+              imageForOcr,
+              {},
+              {
+                text: true,
+                blocks: true,
+              }
+            )) as { data: { text?: string; blocks?: unknown } };
+            const data = result.data;
+            const rawTxt = data.text || '';
 
-          // Walk blocks → paragraphs → lines, collecting line-level entries.
-          const allLines: LineEntry[] = [];
-          const blocks = (data.blocks || []) as Array<{
-            paragraphs?: Array<{
-              lines?: Array<{
-                text?: string;
-                bbox?: { x0: number; y0: number; x1: number; y1: number };
-                words?: Array<{
+            // Walk blocks → paragraphs → lines, collecting line-level entries.
+            const allLines: LineEntry[] = [];
+            const blocks = (data.blocks || []) as Array<{
+              paragraphs?: Array<{
+                lines?: Array<{
                   text?: string;
                   bbox?: { x0: number; y0: number; x1: number; y1: number };
+                  words?: Array<{
+                    text?: string;
+                    bbox?: { x0: number; y0: number; x1: number; y1: number };
+                  }>;
                 }>;
               }>;
             }>;
-          }>;
-          for (const b of blocks) {
-            for (const p of b.paragraphs || []) {
-              for (const ln of p.lines || []) {
-                if (!ln.bbox) continue;
-                const lineText =
-                  (ln.text || '').trim() ||
-                  (ln.words || [])
-                    .map((w) => w.text || '')
-                    .filter(Boolean)
-                    .join(' ');
-                if (!lineText) continue;
-                allLines.push({ text: lineText, bbox: ln.bbox });
+            for (const b of blocks) {
+              for (const p of b.paragraphs || []) {
+                for (const ln of p.lines || []) {
+                  if (!ln.bbox) continue;
+                  const lineText =
+                    (ln.text || '').trim() ||
+                    (ln.words || [])
+                      .map((w) => w.text || '')
+                      .filter(Boolean)
+                      .join(' ');
+                  if (!lineText) continue;
+                  allLines.push({ text: lineText, bbox: ln.bbox });
+                }
               }
             }
-          }
 
-          // Try several tolerances. Tight tolerances preserve detail; loose
-          // tolerances pair skewed columns. Pick the best-scoring result.
-          const tolerances = [0.5, 0.8, 1.2, 1.6, 2.5];
-          const labeled: Array<{ label: string; text: string; score: number }> = [
-            { label: 'raw', text: rawTxt, score: scoreText(rawTxt) },
-          ];
-          for (const tol of tolerances) {
-            const t = reconstructRowsFromLines(allLines, tol);
-            labeled.push({ label: `tol-${tol}`, text: t, score: scoreText(t) });
+            // Try several tolerances. Tight tolerances preserve detail; loose
+            // tolerances pair skewed columns. Pick the best-scoring result.
+            const tolerances = [0.5, 0.8, 1.2, 1.6, 2.5];
+            const labeled: Array<{ label: string; text: string; score: number }> = [
+              { label: 'raw', text: rawTxt, score: scoreText(rawTxt) },
+            ];
+            for (const tol of tolerances) {
+              const t = reconstructRowsFromLines(allLines, tol);
+              labeled.push({ label: `tol-${tol}`, text: t, score: scoreText(t) });
+            }
+            labeled.sort((a, b) => b.score - a.score);
+            const best = labeled[0];
+            if (best.score > bestScore) {
+              bestScore = best.score;
+              bestText = best.text;
+              bestEvidence = { lines: allLines, rowGrouping: best.label };
+              bestPsm = String(psm);
+            }
+            // Don't early-exit on a marginal result; run all PSMs for the
+            // best receipt reading.
+          } catch (recErr) {
+            console.warn('PSM attempt failed', psm, recErr);
           }
-          labeled.sort((a, b) => b.score - a.score);
-          const best = labeled[0];
-          if (best.score > bestScore) {
-            bestScore = best.score;
-            bestText = best.text;
-          }
-          // Don't early-exit on a marginal result; run all PSMs for the
-          // best receipt reading.
-        } catch (recErr) {
-          console.warn('PSM attempt failed', psm, recErr);
         }
+      } finally {
+        await worker.terminate();
       }
 
-      await worker.terminate();
-
       const data = { text: bestText };
-      if (cancelRef.current) return;
+      if (isCancelled()) return;
 
       setState((s) => ({ ...s, status: 'parsing', progress: 0.95 }));
       const parsed = await buildResult(data.text || '');
+      if (isCancelled()) return;
       setState({
         status: 'done',
         progress: 1,
         result: parsed,
+        capture: capture(
+          parsed,
+          'tesseract',
+          `tesseract.js-7:eng:psm-${bestPsm}`,
+          imageForOcr,
+          bestEvidence
+        ),
         rawText: data.text || '',
         error: null,
       });
     } catch (e) {
+      if (isCancelled()) return;
       // Get the most useful message we can out of unknown error shapes.
       let message = 'Scan failed.';
       if (e instanceof Error && e.message) {
@@ -294,6 +356,7 @@ export function useReceiptScan() {
         status: 'error',
         progress: 0,
         result: null,
+        capture: null,
         rawText: '',
         error: message,
       });
@@ -301,7 +364,7 @@ export function useReceiptScan() {
   }, []);
 
   const reset = useCallback(() => {
-    cancelRef.current = true;
+    runRef.current++;
     setState(INITIAL);
   }, []);
 

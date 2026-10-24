@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Camera, Sun, Crop, FileImage, Wand2, BookOpen } from 'lucide-react';
 import { useReceiptScan } from '../hooks/use-receipt-scan';
@@ -9,24 +9,41 @@ import type { AcceptedRow } from '../components/receipt';
 import { catalogService } from '../services/catalogService';
 import { useToast } from '../components/shared/Toast';
 import { Button, PageHeader } from '../components/shared';
+import { receiptDatasetService } from '../services/receiptDatasetService';
+import { ReceiptDatasetPanel } from '../components/receipt/ReceiptDatasetPanel';
+import type { ReceiptExample, ReceiptReview } from '../types/receiptDataset';
 
 export const ScanReceiptPage: React.FC = () => {
+  const { user } = useAuth();
+  return <ScanReceiptWorkspace key={user?.id || 'guest'} />;
+};
+
+const ScanReceiptWorkspace: React.FC = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { items: catalog, reload } = useCatalog();
-  const { status, progress, result, rawText, error, scan, reset } = useReceiptScan();
+  const { status, progress, capture, error, scan, reset } = useReceiptScan();
+  const [savedExample, setSavedExample] = useState<ReceiptExample | null>(null);
+  const [datasetRevision, setDatasetRevision] = useState(0);
+  const activeCapture = savedExample || capture;
   const toast = useToast();
 
-  const handleAccept = async (rows: AcceptedRow[]) => {
-    const receiptId = catalogService.genId();
-    const scannedAt = new Date().toISOString();
+  const handleAccept = async (rows: AcceptedRow[], review: ReceiptReview) => {
+    if (!activeCapture) throw new Error('Receipt image is unavailable. Please scan again.');
+    const receiptId = activeCapture.id;
+    const scannedAt = activeCapture.createdAt;
+    // Persist the source and labels before any catalog mutation. Storage errors
+    // leave the review screen intact so the user can retry without losing edits.
+    await receiptDatasetService.saveScan(activeCapture, user?.id);
+    await receiptDatasetService.saveReview(receiptId, user?.id, review);
+    setDatasetRevision((value) => value + 1);
     await catalogService.saveReceipt({
       id: receiptId,
       userId: user?.id,
       storeName: null,
       scannedAt,
-      rawOcrText: rawText,
-      lineCount: result?.lines.length || 0,
+      rawOcrText: activeCapture.rawText,
+      lineCount: activeCapture.predictedLines.length,
       acceptedCount: rows.length,
     });
 
@@ -50,6 +67,8 @@ export const ScanReceiptPage: React.FC = () => {
             purchaseQuantity: row.quantity,
             purchaseUnit: row.unit,
             purchaseCost: row.price,
+            source: 'receipt',
+            receiptId,
           },
           user?.id
         );
@@ -58,10 +77,14 @@ export const ScanReceiptPage: React.FC = () => {
 
     await reload();
     toast.addToast(
-      `Added ${rows.length} ingredient${rows.length === 1 ? '' : 's'} to your catalog.`,
+      rows.length
+        ? `Saved review and added ${rows.length} ingredient${rows.length === 1 ? '' : 's'} to your catalog.`
+        : 'Receipt and review saved on this device.',
       'success'
     );
-    navigate('/catalog');
+    // Stay here so pending backup status and the saved review remain visible.
+    reset();
+    setSavedExample(null);
   };
 
   const scannerActive =
@@ -78,7 +101,7 @@ export const ScanReceiptPage: React.FC = () => {
       <PageHeader
         eyebrow="Capture"
         title="Scan a receipt"
-        description="We'll read items and prices. You confirm everything before it's saved."
+        description="Read items and prices, then save the receipt photo and your corrections."
         actions={
           <Button variant="ghost" onClick={() => navigate('/catalog')}>
             Back to catalog
@@ -86,14 +109,20 @@ export const ScanReceiptPage: React.FC = () => {
         }
       />
 
-      {status === 'done' && result ? (
+      {activeCapture ? (
         // Confirmation gets the full width — there's a lot to review.
         <ReceiptConfirmation
-          lines={result.lines}
-          rawText={rawText}
+          key={`${activeCapture.id}-${savedExample?.revision || 0}`}
+          lines={activeCapture.predictedLines}
+          rawText={activeCapture.rawText}
+          image={activeCapture.ocrImage}
+          initialReview={savedExample?.reviews.at(-1)}
           catalog={catalog}
           onAccept={handleAccept}
-          onCancel={reset}
+          onCancel={() => {
+            reset();
+            setSavedExample(null);
+          }}
         />
       ) : (
         // Scanner + tips side panel.
@@ -164,6 +193,12 @@ export const ScanReceiptPage: React.FC = () => {
           </aside>
         </div>
       )}
+      <ReceiptDatasetPanel
+        key={user?.id || 'guest'}
+        userId={user?.id}
+        refreshToken={datasetRevision}
+        onReview={setSavedExample}
+      />
     </div>
   );
 };

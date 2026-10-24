@@ -104,6 +104,63 @@ describe('parseLine', () => {
 });
 
 describe('parseReceipt', () => {
+  it('extracts the three grocery items, including split weighted meat, without payment or tax rows', () => {
+    const result = parseReceipt(`FC PORK BELLY
+134.30元7
+0.34 KG x @395.00
+BARNUTS CHOCO-PEANUZ\t200G\t22.95V
+PAN2 BLCK RICE 2V\t177.00N
+TOTAL
+334.25
+CREDI7\t334.25
+Non-Taxable Sales\t134.30
+Amount Payable\t334.25
+# CUSTOMER : 1\t2.34`);
+    expect(result.lines).toHaveLength(3);
+    expect(result.lines[0]).toMatchObject({
+      itemName: 'FC PORK BELLY',
+      quantity: 0.34,
+      unit: 'kg',
+      price: 134.3,
+    });
+    expect(result.lines[0].confidence).toBeLessThan(0.8);
+    expect(result.lines[1]).toMatchObject({
+      itemName: 'BARNUTS CHOCO-PEANUZ',
+      quantity: 200,
+      unit: 'g',
+      price: 22.95,
+    });
+    expect(result.lines[2]).toMatchObject({ itemName: 'PAN2 BLCK RICE 2V', price: 177 });
+  });
+
+  it.each([
+    'CREDI7 334.25',
+    'CREDIT 334.25',
+    'Non-Taxable Sales 134.30',
+    'Amount Payable 334.25',
+    '# CUSTOMER : 1 2.34',
+    'S. Charge 12.00',
+  ])('rejects summary or payment row %s even without a total marker', (line) => {
+    expect(parseLine(line)).toBeNull();
+  });
+
+  it.each([
+    ['Rice 177.00N', 'Rice', 177],
+    ['Sugar 1kg ₱72.00V', 'Sugar', 72],
+    ['Cooking oil 1L PHP 120.00', 'Cooking oil', 120],
+    ['Product7 334.25', 'Product7', 334.25],
+  ])('removes the entire price span without consuming product digits: %s', (line, name, price) => {
+    expect(parseLine(line)).toMatchObject({ itemName: name, price });
+  });
+
+  it('keeps products after a subtotal and attaches a weight continuation without creating a duplicate', () => {
+    const result = parseReceipt(
+      'PORK BELLY 134.30N\n0.34 KG x @395.00\nSUBTOTAL 134.30\nWhite Sugar 1kg 72.00\nTOTAL 206.30\nMEMBERSHIP POINTS 2.34'
+    );
+    expect(result.lines).toHaveLength(2);
+    expect(result.lines[0]).toMatchObject({ quantity: 0.34, unit: 'kg', price: 134.3 });
+  });
+
   it('extracts multiple line items, skipping footers', () => {
     const ocr = `
       SM SUPERMARKET
@@ -122,6 +179,13 @@ describe('parseReceipt', () => {
     expect(result.lines[0].itemName.toLowerCase()).toContain('flour');
     expect(result.lines[1].itemName.toLowerCase()).toContain('sugar');
     expect(result.lines[2].itemName.toLowerCase()).toContain('eggs');
+  });
+
+  it('does not replace a purchase quantity with an inconsistent continuation', () => {
+    const result = parseReceipt('PORK BELLY 1kg 395.00\n0.34 KG x @395.00');
+    expect(result.lines).toHaveLength(1);
+    expect(result.lines[0]).toMatchObject({ quantity: 1, unit: 'kg', price: 395 });
+    expect(result.lines[0].confidence).toBeLessThanOrEqual(0.5);
   });
 
   it('returns empty for blank input', () => {

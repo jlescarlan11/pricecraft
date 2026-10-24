@@ -1,5 +1,7 @@
 import type { ParsedReceiptLine } from '../types';
 
+export const RECEIPT_PARSER_VERSION = '2';
+
 const FOOTER_KEYWORDS = [
   'subtotal',
   'sub total',
@@ -85,13 +87,10 @@ const UNIT_KEYWORDS = [
 // Find every plausible currency-shaped token in a line. We'll pick the best
 // candidate (rightmost, with decimals) as the price.
 const PRICE_TOKEN_RE =
-  /(?:₱|P|PHP|Php)?\s*(\d{1,4}(?:[,. ]\d{3})*[.,]\d{1,2})|(?:₱|PHP)\s*(\d{1,5})/gi;
+  /(?<![\p{L}\p{N}.,])(?:₱|PHP|P)?[ \t]*(\d{1,6}(?:[, ]\d{3})*[.,]\d{1,2})(?!\d)|(?<![\p{L}\p{N}])(?:₱|PHP)[ \t]*(\d{1,5})(?!\d)/giu;
 
 const LEADING_QTY_RE = /^\s*(\d+(?:\.\d+)?)\s*(?:x|@|pcs?|pc)\b\s*/i;
-const QTY_UNIT_INLINE_RE = new RegExp(
-  `(\\d+(?:\\.\\d+)?)\\s*(${UNIT_KEYWORDS.join('|')})\\b`,
-  'i'
-);
+const QTY_UNIT_INLINE_RE = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*(${UNIT_KEYWORDS.join('|')})\\b`, 'i');
 
 // Detect lines that are obviously product codes / barcodes / SKUs:
 // long runs of digits with little or no letters.
@@ -107,6 +106,12 @@ export function normalizeIngredientName(name: string): string {
 
 function isFooterLine(text: string): boolean {
   const lower = text.toLowerCase();
+  if (
+    /^\s*#?\s*(?:credi[t7]|non[- ]taxable\s+sales|amount\s+payable|customer|s\.?\s*charge)\b/i.test(
+      text
+    )
+  )
+    return true;
   return FOOTER_KEYWORDS.some((kw) => {
     // Match whole-word-ish; "totally" shouldn't trigger "total".
     if (kw.length < 5) {
@@ -130,7 +135,10 @@ function repairDigits(token: string): string {
 
 function extractName(raw: string): { name: string; nameHadNoise: boolean } {
   const trimmed = raw.trim();
-  const cleaned = trimmed.replace(/[^\p{L}\p{N}\s.&/-]/gu, ' ').replace(/\s+/g, ' ').trim();
+  const cleaned = trimmed
+    .replace(/[^\p{L}\p{N}\s.&/-]/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
   const nameHadNoise = cleaned.length < trimmed.length;
   return { name: cleaned || trimmed, nameHadNoise };
 }
@@ -172,13 +180,14 @@ interface PriceCandidate {
   raw: string;
   value: number;
   index: number;
+  length: number;
   hasDecimal: boolean;
 }
 
 function findAllPrices(line: string): PriceCandidate[] {
   const candidates: PriceCandidate[] = [];
   // Reset state if regex is global.
-  const re = new RegExp(PRICE_TOKEN_RE.source, 'gi');
+  const re = new RegExp(PRICE_TOKEN_RE.source, PRICE_TOKEN_RE.flags);
   let m: RegExpExecArray | null;
   while ((m = re.exec(line)) !== null) {
     const raw = m[1] || m[2];
@@ -189,6 +198,7 @@ function findAllPrices(line: string): PriceCandidate[] {
       raw,
       value,
       index: m.index,
+      length: m[0].length,
       hasDecimal: /[.,]\d{1,2}$/.test(raw),
     });
   }
@@ -220,9 +230,7 @@ export function parseLine(rawLine: string): ParsedReceiptLine | null {
   let remainder = (
     line.slice(0, total.index) +
     ' ' +
-    line
-      .slice(total.index + total.raw.length)
-      .replace(/^\s*[a-zA-Z]\s*$/, '')
+    line.slice(total.index + total.length).replace(/^\s*[a-zA-Z]\s*$/, '')
   )
     .replace(/[₱$]|\bPHP\b|^\s*P\b/gi, ' ')
     .replace(/\s+/g, ' ')
@@ -231,14 +239,10 @@ export function parseLine(rawLine: string): ParsedReceiptLine | null {
 
   // If a second numeric token appears before the total, it's usually a unit
   // price in a "QTY ITEM UNIT_PRICE TOTAL" layout — strip it.
-  const inlineNum = remainder.match(/(\d{1,5}(?:[.,]\d{1,2})?)\s*$/);
+  const inlineNum = remainder.match(/\s+(\d{1,5}[.,]\d{1,2})\s*$/);
   if (inlineNum) {
     const prev = parsePriceToken(inlineNum[1]);
-    if (
-      prev !== null &&
-      prev <= price + 0.01 &&
-      remainder.length > inlineNum[0].length + 2
-    ) {
+    if (prev !== null && prev <= price + 0.01 && remainder.length > inlineNum[0].length + 2) {
       remainder = remainder.slice(0, remainder.length - inlineNum[0].length).trim();
     }
   }
@@ -321,7 +325,10 @@ function preprocessReceiptText(ocrText: string): string {
   let pendingPrice: string | null = null;
 
   for (const raw of lines) {
-    let line = raw.replace(/[*•·●○■□]+/g, ' ').replace(/\s+/g, ' ').trim();
+    let line = raw
+      .replace(/[*•·●○■□]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     if (!line) {
       continue;
     }
@@ -360,10 +367,36 @@ export function parseReceipt(ocrText: string): ParseReceiptResult {
 
   const preprocessed = preprocessReceiptText(ocrText);
 
-  const rawLines = preprocessed.split('\n').map((l) => l.trim()).filter(Boolean);
+  const rawLines = preprocessed
+    .split('\n')
+    .map((l) => l.trim())
+    .filter(Boolean);
 
   for (let i = 0; i < rawLines.length; i++) {
     const current = rawLines[i];
+
+    // A final total ends the purchase section; later numbers are settlement
+    // or summary data. A subtotal does not necessarily end the item list.
+    if (/^(?:grand\s+total|total(?:\s+(?:due|amount))?)\s*(?::|$|[₱\d])/i.test(current)) break;
+
+    // Weighted goods put quantity and unit price beneath the billed amount.
+    // Attach only an immediately following, explicit quantity × unit-price row.
+    const weight = current.match(
+      /^(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?)\s*[x×]\s*@?\s*(\d+(?:[.,]\d{1,2})?)\s*$/i
+    );
+    const previous = lines[lines.length - 1];
+    if (weight && previous && i > 0 && previous.rawText.endsWith(rawLines[i - 1])) {
+      const quantity = Number(weight[1]);
+      const unitPrice = Number(weight[3].replace(',', '.'));
+      previous.rawText += `\n${current}`;
+      if (Math.abs(quantity * unitPrice - previous.price) > 0.02) {
+        previous.confidence = Math.min(previous.confidence, 0.5);
+      } else {
+        previous.quantity = quantity;
+        previous.unit = normalizeUnit(weight[2]);
+      }
+      continue;
+    }
 
     const parsed = parseLine(current);
     if (parsed) {
@@ -375,17 +408,21 @@ export function parseReceipt(ocrText: string): ParseReceiptResult {
     // AND the very next line is essentially a price-only line. This prevents
     // gluing items to unrelated sub-info ("3 PCS x 0.00").
     const looksLikeName =
-      /\b[a-zA-Z]{2,}\b.*\b[a-zA-Z]{2,}\b/.test(current) &&
-      !/\d+[.,]\d{2}/.test(current);
+      /\b[a-zA-Z]{2,}\b.*\b[a-zA-Z]{2,}\b/.test(current) && !/\d+[.,]\d{2}/.test(current);
     if (looksLikeName && i + 1 < rawLines.length) {
       const next = rawLines[i + 1];
-      const nextIsPriceOnly =
-        /^[\s$@₱P]*\d{1,4}(?:[,.]\d{3})*[.,]\d{1,2}\s*V?\s*$/i.test(next);
-      if (nextIsPriceOnly) {
-        const combined = `${current}    ${next}`;
+      const priceOnly = next.match(
+        /^[\s$₱P]*(\d{1,4}(?:[,.]\d{3})*[.,]\d{1,2})\s*([VNZ]|[^\w\s.,][0-9]?)?\s*$/i
+      );
+      if (priceOnly) {
+        const combined = `${current}    ${priceOnly[1]}`;
         const combinedParsed = parseLine(combined);
         if (combinedParsed) {
           combinedParsed.confidence = Math.max(0, combinedParsed.confidence - 0.05);
+          combinedParsed.rawText = `${current}\n${next}`;
+          if (priceOnly[2] && !/^[VNZ]$/i.test(priceOnly[2])) {
+            combinedParsed.confidence = Math.min(combinedParsed.confidence, 0.6);
+          }
           lines.push(combinedParsed);
           i++;
         }

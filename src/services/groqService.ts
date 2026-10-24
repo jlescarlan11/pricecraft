@@ -1,6 +1,4 @@
 // Groq-hosted LLM for structured extraction from receipt OCR text.
-// Free tier: ~14k requests/day, ~30/minute. No card required.
-//
 // Setup: get a free key at https://console.groq.com → API Keys, then add to
 // .env.local:
 //   VITE_GROQ_API_KEY=gsk_...
@@ -8,10 +6,9 @@
 import type { ParsedReceiptLine } from '../types';
 
 const ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
-// 70B reasons hierarchically about receipt structure (parent items, sub-line
-// breakdowns, OCR error recovery) much better than 8B. Still free on Groq's
-// free tier; the per-minute limits are lower but receipt scans are infrequent.
-const MODEL = 'llama-3.3-70b-versatile';
+// Groq's supported replacement for Llama 3.3 70B, retired from free/developer
+// usage in August 2026. Supports the JSON object response format used below.
+export const GROQ_MODEL = 'openai/gpt-oss-120b';
 
 export function hasGroqKey(): boolean {
   const key = import.meta.env.VITE_GROQ_API_KEY;
@@ -191,7 +188,6 @@ Reasoning:
 
 Return ONLY the JSON object.`;
 
-
 function coerceNumber(v: unknown): number | undefined {
   if (typeof v === 'number' && Number.isFinite(v)) return v;
   if (typeof v === 'string') {
@@ -209,9 +205,7 @@ function coerceString(v: unknown): string | undefined {
   return undefined;
 }
 
-export async function extractItemsWithGroq(
-  ocrText: string
-): Promise<ParsedReceiptLine[]> {
+export async function extractItemsWithGroq(ocrText: string): Promise<ParsedReceiptLine[]> {
   const key = import.meta.env.VITE_GROQ_API_KEY as string | undefined;
   if (!key) throw new Error('Missing VITE_GROQ_API_KEY');
 
@@ -222,7 +216,7 @@ export async function extractItemsWithGroq(
       Authorization: `Bearer ${key}`,
     },
     body: JSON.stringify({
-      model: MODEL,
+      model: GROQ_MODEL,
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: ocrText },
@@ -251,7 +245,7 @@ export async function extractItemsWithGroq(
   const items: GroqItem[] = Array.isArray(parsed)
     ? (parsed as GroqItem[])
     : Array.isArray((parsed as { items?: unknown }).items)
-      ? ((parsed as { items: GroqItem[] }).items)
+      ? (parsed as { items: GroqItem[] }).items
       : [];
 
   const result: ParsedReceiptLine[] = [];

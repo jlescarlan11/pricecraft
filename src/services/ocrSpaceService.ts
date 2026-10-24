@@ -15,6 +15,7 @@ export function hasOcrSpaceKey(): boolean {
 export interface OcrSpaceResult {
   text: string;
   raw: unknown;
+  image: Blob;
 }
 
 interface OcrSpaceParsedResult {
@@ -34,10 +35,7 @@ interface OcrSpaceResponse {
 async function compressToUnder(file: Blob, max: number): Promise<Blob> {
   if (file.size <= max) return file;
 
-  const bitmap =
-    typeof createImageBitmap === 'function'
-      ? await createImageBitmap(file)
-      : null;
+  const bitmap = typeof createImageBitmap === 'function' ? await createImageBitmap(file) : null;
 
   const canvas = document.createElement('canvas');
   if (bitmap) {
@@ -106,7 +104,7 @@ export async function recognizeWithOcrSpace(file: Blob): Promise<OcrSpaceResult>
   const form = new FormData();
   form.append('apikey', key);
   form.append('language', 'eng');
-  form.append('isOverlayRequired', 'false');
+  form.append('isOverlayRequired', 'true');
   form.append('detectOrientation', 'true');
   form.append('scale', 'true');
   form.append('isTable', 'true');
@@ -136,5 +134,5 @@ export async function recognizeWithOcrSpace(file: Blob): Promise<OcrSpaceResult>
     .join('\n')
     .trim();
 
-  return { text: parsed, raw: json };
+  return { text: parsed, raw: json, image: upload };
 }
