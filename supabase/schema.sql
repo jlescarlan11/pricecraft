@@ -1,5 +1,4 @@
--- Enable RLS
-alter table if exists public.presets enable row level security;
+begin;
 
 -- Create presets table
 create table if not exists public.presets (
@@ -17,21 +16,24 @@ create table if not exists public.presets (
   constraint presets_pkey primary key (id)
 );
 
+alter table public.presets enable row level security;
+
 -- Policies
 create policy "Users can view their own presets"
-  on public.presets for select
+  on public.presets for select to authenticated
   using (auth.uid() = user_id);
 
 create policy "Users can insert their own presets"
-  on public.presets for insert
+  on public.presets for insert to authenticated
   with check (auth.uid() = user_id);
 
 create policy "Users can update their own presets"
-  on public.presets for update
-  using (auth.uid() = user_id);
+  on public.presets for update to authenticated
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 
 create policy "Users can delete their own presets"
-  on public.presets for delete
+  on public.presets for delete to authenticated
   using (auth.uid() = user_id);
 
 -- Optional: Create an index on user_id for faster lookups
@@ -59,13 +61,14 @@ create table if not exists public.catalog_ingredients (
 alter table public.catalog_ingredients enable row level security;
 
 create policy "Users can view their own catalog"
-  on public.catalog_ingredients for select using (auth.uid() = user_id);
+  on public.catalog_ingredients for select to authenticated using (auth.uid() = user_id);
 create policy "Users can insert their own catalog"
-  on public.catalog_ingredients for insert with check (auth.uid() = user_id);
+  on public.catalog_ingredients for insert to authenticated with check (auth.uid() = user_id);
 create policy "Users can update their own catalog"
-  on public.catalog_ingredients for update using (auth.uid() = user_id);
+  on public.catalog_ingredients for update to authenticated using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 create policy "Users can delete their own catalog"
-  on public.catalog_ingredients for delete using (auth.uid() = user_id);
+  on public.catalog_ingredients for delete to authenticated using (auth.uid() = user_id);
 
 create index if not exists catalog_ingredients_user_id_idx on public.catalog_ingredients (user_id);
 create index if not exists catalog_ingredients_normalized_name_idx on public.catalog_ingredients (user_id, normalized_name);
@@ -88,11 +91,11 @@ create table if not exists public.receipts (
 alter table public.receipts enable row level security;
 
 create policy "Users can view their own receipts"
-  on public.receipts for select using (auth.uid() = user_id);
+  on public.receipts for select to authenticated using (auth.uid() = user_id);
 create policy "Users can insert their own receipts"
-  on public.receipts for insert with check (auth.uid() = user_id);
+  on public.receipts for insert to authenticated with check (auth.uid() = user_id);
 create policy "Users can delete their own receipts"
-  on public.receipts for delete using (auth.uid() = user_id);
+  on public.receipts for delete to authenticated using (auth.uid() = user_id);
 
 create index if not exists receipts_user_id_idx on public.receipts (user_id);
 
@@ -116,11 +119,11 @@ create table if not exists public.price_history (
 alter table public.price_history enable row level security;
 
 create policy "Users can view their own price history"
-  on public.price_history for select using (auth.uid() = user_id);
+  on public.price_history for select to authenticated using (auth.uid() = user_id);
 create policy "Users can insert their own price history"
-  on public.price_history for insert with check (auth.uid() = user_id);
+  on public.price_history for insert to authenticated with check (auth.uid() = user_id);
 create policy "Users can delete their own price history"
-  on public.price_history for delete using (auth.uid() = user_id);
+  on public.price_history for delete to authenticated using (auth.uid() = user_id);
 
 create index if not exists price_history_ingredient_idx on public.price_history (catalog_ingredient_id, recorded_at desc);
 create index if not exists price_history_user_id_idx on public.price_history (user_id);
@@ -146,12 +149,32 @@ create table if not exists public.sales (
 alter table public.sales enable row level security;
 
 create policy "Users can view their own sales"
-  on public.sales for select using (auth.uid() = user_id);
+  on public.sales for select to authenticated using (auth.uid() = user_id);
 create policy "Users can insert their own sales"
-  on public.sales for insert with check (auth.uid() = user_id);
+  on public.sales for insert to authenticated with check (auth.uid() = user_id);
 create policy "Users can update their own sales"
-  on public.sales for update using (auth.uid() = user_id);
+  on public.sales for update to authenticated using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
 create policy "Users can delete their own sales"
-  on public.sales for delete using (auth.uid() = user_id);
+  on public.sales for delete to authenticated using (auth.uid() = user_id);
 
 create index if not exists sales_user_idx on public.sales (user_id, occurred_at desc);
+
+-- Only signed-in users can access application tables; RLS limits rows by owner.
+grant usage on schema public to authenticated;
+grant select, insert, update, delete on public.presets to authenticated;
+grant select, insert, update, delete on public.catalog_ingredients to authenticated;
+grant select, insert, update, delete on public.receipts to authenticated;
+grant select, insert, update, delete on public.price_history to authenticated;
+grant select, insert, update, delete on public.sales to authenticated;
+
+-- Supabase's optional automatic-RLS event trigger is not a client RPC.
+do $$
+begin
+  if to_regprocedure('public.rls_auto_enable()') is not null then
+    revoke execute on function public.rls_auto_enable() from public, anon, authenticated;
+  end if;
+end;
+$$;
+
+commit;
