@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local receipt model experiments: public data, weights, caches, and environments
+.receipt-ml/
+__pycache__/
+.pytest_cache/

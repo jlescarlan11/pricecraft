@@ -1,0 +1,296 @@
+{
+  "date": "2026-10-25",
+  "status": "completed_local_pilot_not_deployed",
+  "production_decision": "Retain Groq. Adapter is far below Groq on this small public validation sample, regresses comparable count accuracy, and has no actual-PriceCraft evaluation.",
+  "dataset": {
+    "source": "https://universe.roboflow.com/capstone-emk5p/receipts-dataset-philippines",
+    "publisher": "Capstone (Roboflow user)",
+    "version": 1,
+    "license": "CC BY 4.0",
+    "archive_sha256": "52e419736b51e1f985cfa9d671e33577b765eca4ce3bb92063859b3686b37bd7",
+    "archive_bytes": 11581824,
+    "downloaded_at": "2026-10-24T19:23:57.932225+00:00",
+    "images": 278,
+    "published_labels": [
+      "Date",
+      "Merchant",
+      "Total"
+    ],
+    "normalizations": [
+      "Apple Vision local draft OCR; no language correction",
+      "Heuristic item candidates, then limited direct AI image checks",
+      "Remove tax markers and codes from checked names",
+      "Separate count from package size",
+      "Net explicit adjacent item discount against its item",
+      "Do not emit unpriced meal components as standalone products"
+    ],
+    "review_status": {
+      "draft_records": 278,
+      "image_checked_ai": 19,
+      "human_verified": 0
+    },
+    "checked_sha256": "c4885a6da63e426638eece66fb54afd6b743a111c4f74be0076898b6890752c3",
+    "pilot_train_ids": [
+      "ph-0000",
+      "ph-0007",
+      "ph-0014",
+      "ph-0017",
+      "ph-0031",
+      "ph-0039",
+      "ph-0040",
+      "ph-0042",
+      "ph-0044",
+      "ph-0045",
+      "ph-0048",
+      "ph-0050",
+      "ph-0061",
+      "ph-0065",
+      "ph-0069"
+    ],
+    "pilot_validation_ids": [
+      "ph-0003",
+      "ph-0027",
+      "ph-0051",
+      "ph-0055"
+    ],
+    "test_ids": [],
+    "duplicate_candidate_pairs": 63,
+    "known_same_receipts": [
+      [
+        "ph-0033",
+        "ph-0039"
+      ],
+      [
+        "ph-0021",
+        "ph-0042",
+        "ph-0049"
+      ],
+      [
+        "ph-0037",
+        "ph-0045"
+      ],
+      [
+        "ph-0027",
+        "ph-0028"
+      ],
+      [
+        "ph-0003",
+        "ph-0058"
+      ],
+      [
+        "ph-0006",
+        "ph-0059"
+      ],
+      [
+        "ph-0010",
+        "ph-0066"
+      ],
+      [
+        "ph-0022",
+        "ph-0068"
+      ],
+      [
+        "ph-0008",
+        "ph-0057"
+      ]
+    ],
+    "actual_pricecraft_receipts": 0
+  },
+  "baseline": {
+    "commit": "1f7ceab1d9100f6ea8ba5f72fd0bf2618cc4602b",
+    "hashes": {
+      "groqService.ts": "c829ec077c5e7c02934704b593361c268646a1e105db3d8336fae634bb23e3a4",
+      "receiptParser.ts": "72b7aff3f1247f0e9bd20802844f9edd0198440a9d45ee10ba57600f5ede99e7",
+      "ocrSpaceService.ts": "28b34ba351a56964f6ec4da1bed00cbf4e1a6511f831c9b6bb213dad802e9646"
+    },
+    "description": "Git HEAD production baseline; pending local quantity fixes excluded"
+  },
+  "training": {
+    "seed": 20261025,
+    "steps": 100,
+    "learning_rate": 0.0001,
+    "rank": 8,
+    "trainable_parameters": 262144,
+    "curriculum": null,
+    "model_revision": "8003d433113256b4ce3a0f5bf604b29ff78a7451",
+    "split": "train",
+    "image_size": {
+      "height": 1280,
+      "width": 960
+    },
+    "max_length": 768,
+    "completed_steps": 100,
+    "skipped_long_or_unknown": 15
+  },
+  "unique_training_receipts": [
+    "ph-0007",
+    "ph-0014",
+    "ph-0017",
+    "ph-0031",
+    "ph-0039",
+    "ph-0042",
+    "ph-0044",
+    "ph-0045",
+    "ph-0048",
+    "ph-0050",
+    "ph-0061",
+    "ph-0065",
+    "ph-0069"
+  ],
+  "tokenizer_exclusions": [
+    {
+      "id": "ph-0000",
+      "tokens": 46,
+      "unknown_count": 1,
+      "decoded": "<s_cord-v2> <s_menu> <s_nm> PREM<unk> </s_nm> <s_cnt> 3 </s_cnt> <s_price> 120.00 </s_price> <sep/> <s_nm> IHM LATTE </s_nm> <s_cnt> 2 </s_cnt> <s_price> 290.00 </s_price> <sep/> <s_nm> ICE COFLRG </s_nm> <s_cnt> 1 </s_cnt> <s_price> 85.00 </s_price> </s_menu> </s>",
+      "tokenizer": "XLMRobertaTokenizer"
+    },
+    {
+      "id": "ph-0040",
+      "tokens": 44,
+      "unknown_count": 2,
+      "decoded": "<s_cord-v2> <s_menu> <s_nm> PREM<unk> </s_nm> <s_cnt> 1 </s_cnt> <s_price> 40.00 </s_price> <sep/> <s_nm> DONUT<unk> </s_nm> <s_cnt> 1 </s_cnt> <s_price> 30.00 </s_price> <sep/> <s_nm> DDWATER </s_nm> <s_cnt> 1 </s_cnt> <s_price> 25.00 </s_price> </s_menu> </s>",
+      "tokenizer": "XLMRobertaTokenizer"
+    }
+  ],
+  "training_loss": {
+    "mean": 2.000157551392913,
+    "first_10_mean": 3.28530410528183,
+    "last_10_mean": 0.6436373375356197,
+    "step_seconds": 563.9625906580186
+  },
+  "weights": {
+    "sha256": "e16ed43cad23c88ebd696236d2315527fc14a716bac51f64b75550fe722338fe",
+    "bytes": 1053040,
+    "nonzero_lora_B_matrices": 16
+  },
+  "validation": {
+    "split": "validation",
+    "label_status": "AI image-checked; not human verified",
+    "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+    "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+    "normalization_correction": "Initial adapter F1 0.285714 used the Indonesian three-digit separator heuristic. Final Philippine decimal-point rule yields 0.380952. All systems were rescored uniformly; this is development validation, not a final test."
+  },
+  "systems": {
+    "groq": {
+      "missing_or_failed_receipts": 0,
+      "ground_truth_items": 8,
+      "count_eligible": 4,
+      "predicted_items": 7,
+      "matched_items": 7,
+      "matched_prices": 7,
+      "exact_names": 5,
+      "matched_exact_name_prices": 5,
+      "perfect_receipts": 3,
+      "count_compared": 4,
+      "matched_counts": 4,
+      "receipts": 4,
+      "item_precision": 1.0,
+      "item_recall": 0.875,
+      "item_price_f1": 0.9333333333333333,
+      "strict_name_price_f1": 0.6666666666666666,
+      "exact_price_accuracy_on_matches": 1.0,
+      "count_accuracy": 1.0,
+      "count_coverage": 1.0,
+      "perfect_receipt_rate": 0.75,
+      "mean_seconds": 6.00202695825,
+      "latency_receipts": 4,
+      "recorded_attempts": 4,
+      "recorded_failed_attempts": 0
+    },
+    "donut-base": {
+      "missing_or_failed_receipts": 0,
+      "ground_truth_items": 8,
+      "count_eligible": 4,
+      "predicted_items": 17,
+      "matched_items": 4,
+      "matched_prices": 1,
+      "exact_names": 3,
+      "matched_exact_name_prices": 1,
+      "perfect_receipts": 0,
+      "count_compared": 1,
+      "matched_counts": 1,
+      "receipts": 4,
+      "item_precision": 0.23529411764705882,
+      "item_recall": 0.5,
+      "item_price_f1": 0.08,
+      "strict_name_price_f1": 0.08,
+      "exact_price_accuracy_on_matches": 0.25,
+      "count_accuracy": 1.0,
+      "count_coverage": 0.25,
+      "perfect_receipt_rate": 0.0,
+      "mean_seconds": 22.84344337500079,
+      "latency_receipts": 4,
+      "recorded_attempts": 4,
+      "recorded_failed_attempts": 0
+    },
+    "donut-ph-v1": {
+      "missing_or_failed_receipts": 0,
+      "ground_truth_items": 8,
+      "count_eligible": 4,
+      "predicted_items": 13,
+      "matched_items": 5,
+      "matched_prices": 4,
+      "exact_names": 2,
+      "matched_exact_name_prices": 2,
+      "perfect_receipts": 0,
+      "count_compared": 1,
+      "matched_counts": 0,
+      "receipts": 4,
+      "item_precision": 0.38461538461538464,
+      "item_recall": 0.625,
+      "item_price_f1": 0.38095238095238093,
+      "strict_name_price_f1": 0.19047619047619047,
+      "exact_price_accuracy_on_matches": 0.8,
+      "count_accuracy": 0.0,
+      "count_coverage": 0.25,
+      "perfect_receipt_rate": 0.0,
+      "mean_seconds": 30.963756375007506,
+      "latency_receipts": 4,
+      "recorded_attempts": 4,
+      "recorded_failed_attempts": 0
+    }
+  },
+  "test_run": false,
+  "actual_receipts_evaluated": 0,
+  "human_verified_labels": 0,
+  "checksums": {
+    ".receipt-ml/philippines/checked-v1.jsonl": "c4885a6da63e426638eece66fb54afd6b743a111c4f74be0076898b6890752c3",
+    ".receipt-ml/philippines/draft-labels.jsonl": "3b423a0a6378f0970887b0ed4bd1c483fb74f608386b042f5da268f8ee01d0b8",
+    ".receipt-ml/philippines/pilot-v1/train.jsonl": "f421f5bbade88ff1a9be003dedde97da56ecee3c8f710744ad84cf1641d70ae9",
+    ".receipt-ml/philippines/pilot-v1/validation.jsonl": "a5a2113366e5ebd2be5b28ab697ba2417f481ae8fe7609b2f2a22bc5339b0b76",
+    ".receipt-ml/philippines/pilot-v1/adapters/donut-ph-v1/loss.jsonl": "88e0d810f5677b595213a113ea008a63437c1384ec31af0b05b6be474d914cf6",
+    ".receipt-ml/philippines/pilot-v1/adapters/donut-ph-v1/run.json": "801fb62d18d6bdbc3bebcd339c9403453bc938bc2845fb2236adbf5688ba653e",
+    ".receipt-ml/philippines/pilot-v1/predictions/donut-base-validation.jsonl": "ae25f1bb9ee1c308929c396aee3eb2c881e75115344e44da347b6552a83d5877",
+    ".receipt-ml/philippines/pilot-v1/predictions/donut-ph-v1-validation.jsonl": "6410686c5201c199af0e9b35a214be6b2f49390f16f9cdeb68b6d3a8221a3df4",
+    ".receipt-ml/philippines/pilot-v1/predictions/groq-validation.jsonl": "b146f6ebb4331d405dc4dedf12f0252d1407fd95f878d8bc2db1a526b5d59d83",
+    "experiments/receipt_model/curriculum.py": "37f3be310ba1472547a4f8ec63573d7d9229c22f762608f15245418982ebbb70",
+    "experiments/receipt_model/donut_run.py": "13712e376f9a475e4019968f49cba7458b4cb99837a00f595ad67927663656b5",
+    "experiments/receipt_model/export_results.py": "7a035e02c2b9d90e5d83c446ac653d61ef651769ff3226c9882a2792e61538d1",
+    "experiments/receipt_model/metrics.py": "b92ec68fc34adbe5cfd08f245e099f81ef49178452990a436305c6f6e12861e0",
+    "experiments/receipt_model/ph_import.py": "f0ff9198f5087f3d7dc80f7bab7aa6170fd6fa026eceb99060cee4bc5a3945bd",
+    "experiments/receipt_model/ph_labels.py": "24d7e0168735ffcdeb969ab985eea09814cf9f834ce70287f35f77c8d4deec0d",
+    "experiments/receipt_model/ph_score.py": "e34ebf88d86e591db5b7312def7a3e85dee80a3dab0fad29ee3252336ee81863",
+    "experiments/receipt_model/prepare.py": "2ad8ab5284a508aed377f9fd4a4a5d6ed44aa5e4076caf70570780d344a001b8",
+    "experiments/receipt_model/score.py": "cfc3fcf8f2d55d6702b1c381b0c72e3e6d5008168a37536f81db128a910b0930",
+    "experiments/receipt_model/select_candidate.py": "a7f817c4b297e5eb205fb91a2604b6c37f8cbc003e8bcb66f8decbf430a50388",
+    "experiments/receipt_model/test_metrics.py": "a541911746069a674efa9bf0e4437fe0c2ecee31d2ffed68273f04a2dcf63617",
+    "experiments/receipt_model/test_ph_import.py": "545b06d36c083c7111f9ed821df8ef66ec49333122bac76506c37726202ef40e",
+    "experiments/receipt_model/test_ph_labels.py": "231de12206048ed15f808274909cd7e3a62c8cce7bd3d537c3f04339e310a117",
+    "experiments/receipt_model/test_training.py": "4241a90a5948d58cbaa03d78109e0357751574a51dd8754634caaecd87d330f2",
+    "experiments/receipt_model/training_utils.py": "1eb958f3e505e89aee7aa0191418aa08b4da732f082a7078ecd023b74783d003",
+    "experiments/receipt_model/groq_benchmark.mjs": "2bb702c01167602c1599f63ab6e8760ee6b6eb3f2e4111d88e67b86bb58b8f1e",
+    "experiments/receipt_model/ph_drafts.mjs": "e4c38d5f49451c9c8f302ac85e34ddefea1436776ca76ece965d032fc20e3a07",
+    "experiments/receipt_model/ph_ocr.swift": "f162bc9d7323b8e24a1eb97935b74a2928d83bf34e09927552966b78e7dbf47c"
+  },
+  "verification": {
+    "python_tests_passed": 20,
+    "application_tests_passed_serial": 375,
+    "application_live_tests_skipped": 2,
+    "initial_concurrent_application_run": "Six timeouts; full one-worker rerun passed without changes",
+    "lint_errors": 0,
+    "existing_lint_warnings": 3,
+    "production_verified": false,
+    "deployed": false
+  }
+}

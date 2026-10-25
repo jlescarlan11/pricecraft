@@ -1,0 +1,2425 @@
+{
+  "date": "2026-10-25",
+  "experiment": "Donut receipt decoding repair; final post-review regression comparison",
+  "status": "complete; production Groq retained",
+  "protocol": {
+    "date": "2026-10-25",
+    "task": "Decoding-only repair; no training or checkpoint changes",
+    "development_only": "Four existing public development receipts. New training candidates are used only for diagnosis, never scored as holdout. Old seven and grocery three comparison sets have been seen previously and are not actual PriceCraft receipts.",
+    "groq": "Reuse all cached baseline outcomes, including one grocery HTTP 400; no selected API retries",
+    "metric": "Unchanged ph_score.py/metrics.py; duplicate aggregated name similarity >= .75 plus exactly equal price; strict-name F1 secondary. No scorer repairs for invalid outputs.",
+    "generation": {
+      "profile": "guarded",
+      "max_length": 768,
+      "beam_count": 1,
+      "forced_eos_token_id": null,
+      "name_no_repeat_ngram_size": 4,
+      "field_token_budget": 64,
+      "schema": "menu / nm / optional cnt / price",
+      "images": "Unchanged published processor and original source images"
+    },
+    "splits": {
+      "development": {
+        "split": "validation",
+        "manifest_sha256": "3eeffe8b5064412b290fde6d557f682572f3ebb41bdcd158aa5c66abd6fdcba7",
+        "ids": [
+          "ph-0003",
+          "ph-0027",
+          "ph-0051",
+          "ph-0055"
+        ],
+        "cached_predictions": {
+          "donut-ph-v3b-validation.jsonl": "ae8108f5956872772fb574eaa088bcd8b3e23ef98be6e6aea55a2c925f2a3361",
+          "donut-ph-synth-v1-validation.jsonl": "408257fddcc76fed75357f55f8576189c8a22bec96497bb088d70b2c4bf60f32",
+          "groq-validation.jsonl": "b146f6ebb4331d405dc4dedf12f0252d1407fd95f878d8bc2db1a526b5d59d83"
+        }
+      },
+      "public-old": {
+        "split": "test",
+        "manifest_sha256": "d04de039db79c89ecd600b2a9965f19cd0fcc58ad295e75e2d86906736b89efe",
+        "ids": [
+          "ph-0087",
+          "ph-0092",
+          "ph-0164",
+          "ph-0215",
+          "ph-0223",
+          "ph-0242",
+          "ph-0245"
+        ],
+        "cached_predictions": {
+          "groq-test.jsonl": "4872cc3d2f34f962df500839d63357f88692340493dedfc078b862a5c7726932",
+          "donut-ph-synth-v1-test.jsonl": "86c62ede14d79528afa119f1d35031b58b6f80672f5843d7b6290b3da522f614",
+          "donut-ph-v3b-test.jsonl": "d7244e5d167ede9ca5778ad169bc577cf55f8568b072f5d28569c1abc8acc046"
+        }
+      },
+      "public-grocery": {
+        "split": "test",
+        "manifest_sha256": "f5650e8fec31c251b48826685c8b56daef1bb69b34e2c22e3965cd3c61199049",
+        "ids": [
+          "ph-0170-original",
+          "ph-0177-original",
+          "ph-0188-original"
+        ],
+        "cached_predictions": {
+          "groq-test.jsonl": "f9dbf3f98443f0276de846bcaab816dd99d2da2d82904071b0d7544e9f39daf4",
+          "donut-ph-synth-v1-test.jsonl": "58b47ae892d058a921c3656dbd0699d376bdf48838f120d95ae646edad48844d",
+          "donut-ph-v3b-test.jsonl": "67dbc4118d13ade1c685f6cd7ee734fb447888208c69b912726a17a75a7f690f"
+        }
+      }
+    },
+    "adapters": {
+      "donut-ph-v3b": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/pilot-v3b/adapters/donut-ph-v3b",
+      "donut-ph-synth-v1": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/synthetic-pilot-v1/adapters/donut-ph-synth-v1"
+    },
+    "adapter_hashes": {
+      "donut-ph-v3b": "b7f3c39e8266b357eb93a18da2d741073a686d879e235d053ea1b79251dca100",
+      "donut-ph-synth-v1": "8b4f011e75c2f4c58d715a73374700d4bd8ce53f90ea7b89a9e8476b52d466c9"
+    },
+    "source_files": {
+      "experiments/receipt_model/donut_run.py": "947a498c8bf5fa6193549023aa342edee7133fc8d85c8aef39578c1dbf63e6ca",
+      "experiments/receipt_model/donut_decode.py": "aad8d4907b37adf80ce950933f3392c97955b5dbce09af3dd3e780e82be085a8",
+      "experiments/receipt_model/ph_score.py": "d90aae725a811bb61efd07c7bab32757119952e29f453c8c4d0250ae11f896ce",
+      "experiments/receipt_model/metrics.py": "b92ec68fc34adbe5cfd08f245e099f81ef49178452990a436305c6f6e12861e0"
+    }
+  },
+  "candidate_freeze": {
+    "status": "Frozen after development and before new test inference",
+    "selected_candidate": "donut-ph-synth-v1-guarded",
+    "selection_reason": "Choose higher fixed development F1 (lexicographic name on a tie); compare both publicly without choosing on test outcomes.",
+    "source_files": {
+      "experiments/receipt_model/donut_run.py": "947a498c8bf5fa6193549023aa342edee7133fc8d85c8aef39578c1dbf63e6ca",
+      "experiments/receipt_model/donut_decode.py": "aad8d4907b37adf80ce950933f3392c97955b5dbce09af3dd3e780e82be085a8",
+      "experiments/receipt_model/ph_score.py": "d90aae725a811bb61efd07c7bab32757119952e29f453c8c4d0250ae11f896ce",
+      "experiments/receipt_model/metrics.py": "b92ec68fc34adbe5cfd08f245e099f81ef49178452990a436305c6f6e12861e0"
+    },
+    "adapter_hashes": {
+      "donut-ph-v3b": "b7f3c39e8266b357eb93a18da2d741073a686d879e235d053ea1b79251dca100",
+      "donut-ph-synth-v1": "8b4f011e75c2f4c58d715a73374700d4bd8ce53f90ea7b89a9e8476b52d466c9"
+    },
+    "generation": {
+      "profile": "guarded",
+      "max_length": 768,
+      "beam_count": 1,
+      "forced_eos_token_id": null,
+      "name_no_repeat_ngram_size": 4,
+      "field_token_budget": 64,
+      "schema": "menu / nm / optional cnt / price",
+      "images": "Unchanged published processor and original source images"
+    },
+    "development_report_sha256": "839143fa29467b60c19a169a47a43d5b64e3b773cf439e08c3e2c5159344d3fd"
+  },
+  "reports": {
+    "development": {
+      "split": "validation",
+      "label_status": "AI image-checked; not human verified",
+      "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+      "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+      "systems": {
+        "groq": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 8,
+          "count_eligible": 4,
+          "predicted_items": 7,
+          "matched_items": 7,
+          "matched_prices": 7,
+          "exact_names": 5,
+          "matched_exact_name_prices": 5,
+          "perfect_receipts": 3,
+          "count_compared": 4,
+          "matched_counts": 4,
+          "receipts": 4,
+          "item_precision": 1.0,
+          "item_recall": 0.875,
+          "item_price_f1": 0.9333333333333333,
+          "strict_name_price_f1": 0.6666666666666666,
+          "exact_price_accuracy_on_matches": 1.0,
+          "count_accuracy": 1.0,
+          "count_coverage": 1.0,
+          "perfect_receipt_rate": 0.75,
+          "mean_seconds": 6.00202695825,
+          "latency_receipts": 4,
+          "details": [
+            {
+              "id": "ph-0003",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "goya take it 2finger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "goya take it 2einger",
+                    "price": "20.5",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "snickers classic bar",
+                    "price": "22",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0027",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "2pc chicken meal",
+                    "price": "230.00",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "2pc chicken meal",
+                    "price": "230",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "white rice",
+                    "price": "45.00",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "white rice",
+                    "price": "45",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0051",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "monea cond keratin b",
+                    "price": "102",
+                    "count": "3"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "bioflu tab x100",
+                    "price": "90",
+                    "count": "10"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0055",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "dolfenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "dolfenal tab 250mg",
+                    "price": "33.5",
+                    "count": "2"
+                  },
+                  "price_correct": true
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 4,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-v3b": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 8,
+          "count_eligible": 4,
+          "predicted_items": 10,
+          "matched_items": 6,
+          "matched_prices": 4,
+          "exact_names": 3,
+          "matched_exact_name_prices": 3,
+          "perfect_receipts": 0,
+          "count_compared": 2,
+          "matched_counts": 2,
+          "receipts": 4,
+          "item_precision": 0.6,
+          "item_recall": 0.75,
+          "item_price_f1": 0.4444444444444444,
+          "strict_name_price_f1": 0.3333333333333333,
+          "exact_price_accuracy_on_matches": 0.6666666666666666,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.5,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 5.633502281001711,
+          "latency_receipts": 4,
+          "details": [
+            {
+              "id": "ph-0003",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "goya take it 2finger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "goya take 11 2f inger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "paper bag brown kraf",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "taper bag brown kraf",
+                    "price": "-1",
+                    "count": null
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0027",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "white rice",
+                    "price": "45.00",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "white rice",
+                    "price": "45",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0051",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0055",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "dolfenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "dol fenal tab 250mg x",
+                    "price": "33",
+                    "count": "2"
+                  },
+                  "price_correct": false
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 4,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-synth-v1": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 8,
+          "count_eligible": 4,
+          "predicted_items": 11,
+          "matched_items": 6,
+          "matched_prices": 5,
+          "exact_names": 3,
+          "matched_exact_name_prices": 3,
+          "perfect_receipts": 1,
+          "count_compared": 2,
+          "matched_counts": 1,
+          "receipts": 4,
+          "item_precision": 0.5454545454545454,
+          "item_recall": 0.75,
+          "item_price_f1": 0.5263157894736842,
+          "strict_name_price_f1": 0.3157894736842105,
+          "exact_price_accuracy_on_matches": 0.8333333333333334,
+          "count_accuracy": 0.5,
+          "count_coverage": 0.5,
+          "perfect_receipt_rate": 0.25,
+          "mean_seconds": 3.3255337290029274,
+          "latency_receipts": 4,
+          "details": [
+            {
+              "id": "ph-0003",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "goya take it 2finger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "goya take 11 2f inger",
+                    "price": "20.50",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "paper bag brown kraf",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "taper bag brown kraf",
+                    "price": "2.00",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0027",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": []
+            },
+            {
+              "id": "ph-0051",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": "3"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0055",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "dolfenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "dol fenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "price_correct": true
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 4,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-v3b-guarded": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 8,
+          "count_eligible": 4,
+          "predicted_items": 11,
+          "matched_items": 7,
+          "matched_prices": 4,
+          "exact_names": 3,
+          "matched_exact_name_prices": 3,
+          "perfect_receipts": 0,
+          "count_compared": 2,
+          "matched_counts": 2,
+          "receipts": 4,
+          "item_precision": 0.6363636363636364,
+          "item_recall": 0.875,
+          "item_price_f1": 0.42105263157894735,
+          "strict_name_price_f1": 0.3157894736842105,
+          "exact_price_accuracy_on_matches": 0.5714285714285714,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.5,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 12.538536521002243,
+          "latency_receipts": 4,
+          "details": [
+            {
+              "id": "ph-0003",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "goya take it 2finger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "goya take 11 2f inger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "paper bag brown kraf",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "taper bag brown kraf",
+                    "price": "20.01",
+                    "count": null
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0027",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "white rice",
+                    "price": "45.00",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "white rice",
+                    "price": "45",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0051",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "monea monda keratin b",
+                    "price": "68.00",
+                    "count": null
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0055",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "dolfenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "dol fenal tab 250mg x",
+                    "price": "33",
+                    "count": "2"
+                  },
+                  "price_correct": false
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 4,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-synth-v1-guarded": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 8,
+          "count_eligible": 4,
+          "predicted_items": 11,
+          "matched_items": 6,
+          "matched_prices": 5,
+          "exact_names": 3,
+          "matched_exact_name_prices": 3,
+          "perfect_receipts": 1,
+          "count_compared": 2,
+          "matched_counts": 1,
+          "receipts": 4,
+          "item_precision": 0.5454545454545454,
+          "item_recall": 0.75,
+          "item_price_f1": 0.5263157894736842,
+          "strict_name_price_f1": 0.3157894736842105,
+          "exact_price_accuracy_on_matches": 0.8333333333333334,
+          "count_accuracy": 0.5,
+          "count_coverage": 0.5,
+          "perfect_receipt_rate": 0.25,
+          "mean_seconds": 7.668853614501131,
+          "latency_receipts": 4,
+          "details": [
+            {
+              "id": "ph-0003",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "goya take it 2finger",
+                    "price": "20.50",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "goya take 11 2f inger",
+                    "price": "20.50",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "snickers classic bar",
+                    "price": "22.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "paper bag brown kraf",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "taper bag brown kraf",
+                    "price": "2.00",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0027",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": []
+            },
+            {
+              "id": "ph-0051",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "monea cond keratin b",
+                    "price": "102.00",
+                    "count": "3"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "bioflu tab x100",
+                    "price": "90.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0055",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "dolfenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "dol fenal tab 250mg x",
+                    "price": "33.50",
+                    "count": "2"
+                  },
+                  "price_correct": true
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 4,
+          "recorded_failed_attempts": 0
+        }
+      }
+    },
+    "public-old": {
+      "split": "test",
+      "label_status": "AI image-checked; not human verified",
+      "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+      "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+      "systems": {
+        "groq": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 14,
+          "count_eligible": 10,
+          "predicted_items": 14,
+          "matched_items": 9,
+          "matched_prices": 3,
+          "exact_names": 7,
+          "matched_exact_name_prices": 2,
+          "count_compared": 6,
+          "matched_counts": 6,
+          "perfect_receipts": 1,
+          "receipts": 7,
+          "item_precision": 0.6428571428571429,
+          "item_recall": 0.6428571428571429,
+          "item_price_f1": 0.21428571428571427,
+          "strict_name_price_f1": 0.14285714285714285,
+          "exact_price_accuracy_on_matches": 0.3333333333333333,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.6,
+          "perfect_receipt_rate": 0.14285714285714285,
+          "mean_seconds": 7.08317214285714,
+          "latency_receipts": 7,
+          "details": [
+            {
+              "id": "ph-0087",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "coke",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gyoza",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "ichiban rha",
+                    "price": "327",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0092",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "carryout bag charge",
+                    "price": "2",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "carryout bag charge",
+                    "price": "2",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0164",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "shoppingbag s",
+                    "price": "2",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "shoppingbag s",
+                    "price": "2490",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "reversible parka",
+                    "price": "2490",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "reversible parka",
+                    "price": "2",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0215",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "iced tea medium",
+                    "price": "65",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "iced tea medium",
+                    "price": "65",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "evryday plate meal",
+                    "price": "289",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "euryday plate meal",
+                    "price": "289",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0223",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "mini block tyrannos",
+                    "price": "98",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "mini block tyrannos",
+                    "price": "96",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0242",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0245",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 10,
+          "recorded_failed_attempts": 3
+        },
+        "donut-ph-v3b": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 14,
+          "count_eligible": 10,
+          "predicted_items": 9,
+          "matched_items": 4,
+          "matched_prices": 4,
+          "exact_names": 4,
+          "matched_exact_name_prices": 4,
+          "count_compared": 3,
+          "matched_counts": 3,
+          "perfect_receipts": 1,
+          "receipts": 7,
+          "item_precision": 0.4444444444444444,
+          "item_recall": 0.2857142857142857,
+          "item_price_f1": 0.34782608695652173,
+          "strict_name_price_f1": 0.34782608695652173,
+          "exact_price_accuracy_on_matches": 1.0,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.3,
+          "perfect_receipt_rate": 0.14285714285714285,
+          "mean_seconds": 3.2001668690063525,
+          "latency_receipts": 7,
+          "details": [
+            {
+              "id": "ph-0087",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 3,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0092",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0164",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0215",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0223",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0242",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0245",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 7,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-synth-v1": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 14,
+          "count_eligible": 10,
+          "predicted_items": 13,
+          "matched_items": 5,
+          "matched_prices": 2,
+          "exact_names": 5,
+          "matched_exact_name_prices": 2,
+          "count_compared": 3,
+          "matched_counts": 3,
+          "perfect_receipts": 1,
+          "receipts": 7,
+          "item_precision": 0.38461538461538464,
+          "item_recall": 0.35714285714285715,
+          "item_price_f1": 0.14814814814814814,
+          "strict_name_price_f1": 0.14814814814814814,
+          "exact_price_accuracy_on_matches": 0.4,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.3,
+          "perfect_receipt_rate": 0.14285714285714285,
+          "mean_seconds": 6.086464922858535,
+          "latency_receipts": 7,
+          "details": [
+            {
+              "id": "ph-0087",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "coke",
+                    "price": null,
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gyoza",
+                    "price": null,
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "ichiban rmn",
+                    "price": "99",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0092",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": []
+            },
+            {
+              "id": "ph-0164",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": []
+            },
+            {
+              "id": "ph-0215",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0223",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "mini block tyrannos",
+                    "price": "98",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "mini block tyrannos",
+                    "price": "98.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0242",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0245",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 0,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 7,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-v3b-guarded": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 14,
+          "count_eligible": 10,
+          "predicted_items": 9,
+          "matched_items": 4,
+          "matched_prices": 4,
+          "exact_names": 4,
+          "matched_exact_name_prices": 4,
+          "count_compared": 3,
+          "matched_counts": 3,
+          "perfect_receipts": 1,
+          "receipts": 7,
+          "item_precision": 0.4444444444444444,
+          "item_recall": 0.2857142857142857,
+          "item_price_f1": 0.34782608695652173,
+          "strict_name_price_f1": 0.34782608695652173,
+          "exact_price_accuracy_on_matches": 1.0,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.3,
+          "perfect_receipt_rate": 0.14285714285714285,
+          "mean_seconds": 4.8617228690044225,
+          "latency_receipts": 7,
+          "details": [
+            {
+              "id": "ph-0087",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 3,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0092",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0164",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0215",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0223",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0242",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0245",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 7,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-synth-v1-guarded": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 14,
+          "count_eligible": 10,
+          "predicted_items": 15,
+          "matched_items": 5,
+          "matched_prices": 4,
+          "exact_names": 5,
+          "matched_exact_name_prices": 4,
+          "count_compared": 3,
+          "matched_counts": 3,
+          "perfect_receipts": 1,
+          "receipts": 7,
+          "item_precision": 0.3333333333333333,
+          "item_recall": 0.35714285714285715,
+          "item_price_f1": 0.27586206896551724,
+          "strict_name_price_f1": 0.27586206896551724,
+          "exact_price_accuracy_on_matches": 0.8,
+          "count_accuracy": 1.0,
+          "count_coverage": 0.3,
+          "perfect_receipt_rate": 0.14285714285714285,
+          "mean_seconds": 8.626867035711516,
+          "latency_receipts": 7,
+          "details": [
+            {
+              "id": "ph-0087",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 3,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "coke",
+                    "price": "49",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "coke",
+                    "price": "49.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "gyoza",
+                    "price": "79",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gyoza",
+                    "price": "79.00",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "ichiban rmn",
+                    "price": "199",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "ichiban rmn",
+                    "price": "99",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                }
+              ]
+            },
+            {
+              "id": "ph-0092",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 3,
+              "prediction_count": 4,
+              "matches": []
+            },
+            {
+              "id": "ph-0164",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": []
+            },
+            {
+              "id": "ph-0215",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 2,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0223",
+              "failed": false,
+              "perfect": true,
+              "truth_count": 2,
+              "prediction_count": 2,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "mini block tyrannos",
+                    "price": "98",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "mini block tyrannos",
+                    "price": "98.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "zdaiso japan paper b",
+                    "price": "0.00",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0242",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 1,
+              "matches": []
+            },
+            {
+              "id": "ph-0245",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 1,
+              "prediction_count": 2,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 7,
+          "recorded_failed_attempts": 0
+        }
+      }
+    },
+    "public-grocery": {
+      "split": "test",
+      "label_status": "AI image-checked; not human verified",
+      "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+      "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+      "systems": {
+        "groq": {
+          "missing_or_failed_receipts": 1,
+          "ground_truth_items": 64,
+          "count_eligible": 34,
+          "predicted_items": 29,
+          "matched_items": 26,
+          "matched_prices": 21,
+          "exact_names": 18,
+          "matched_exact_name_prices": 15,
+          "count_compared": 8,
+          "matched_counts": 4,
+          "perfect_receipts": 0,
+          "receipts": 3,
+          "item_precision": 0.896551724137931,
+          "item_recall": 0.40625,
+          "item_price_f1": 0.45161290322580644,
+          "strict_name_price_f1": 0.3225806451612903,
+          "exact_price_accuracy_on_matches": 0.8076923076923077,
+          "count_accuracy": 0.5,
+          "count_coverage": 0.23529411764705882,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 17.12835804166667,
+          "latency_receipts": 3,
+          "details": [
+            {
+              "id": "ph-0170-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 29,
+              "prediction_count": 16,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "snkst mgo 235ml",
+                    "price": "284.00",
+                    "count": "16"
+                  },
+                  "prediction": {
+                    "name": "snkst mgo 235ml",
+                    "price": "284",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "nestlechuckie110ml",
+                    "price": "220.50",
+                    "count": "18"
+                  },
+                  "prediction": {
+                    "name": "nestle chuckie 110ml",
+                    "price": "196",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "lp graham 10s",
+                    "price": "40.90",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "lp graham 10s",
+                    "price": "40.9",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "fbsco choco 36g",
+                    "price": "100.00",
+                    "count": "10"
+                  },
+                  "prediction": {
+                    "name": "fbsco choco 36g",
+                    "price": "100",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "dm sb ketchup 20oz",
+                    "price": "52.80",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "dm sb ketchup 200z",
+                    "price": "52.8",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "cdo swt ham500g",
+                    "price": "450.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "cdo swt ham500g",
+                    "price": "245",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "pf tj hdg rg 1kg",
+                    "price": "181.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "pf tj hdg rg 1kg",
+                    "price": "181",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "pmpnga tocin fls24",
+                    "price": "149.00",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "phpnga tocin fls24",
+                    "price": "300",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "garcias menudo cut",
+                    "price": "247.94",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "garcias menudo cut",
+                    "price": "247.94",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "garcias pchop s on",
+                    "price": "231.88",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "garcias pchop s on",
+                    "price": "231.88",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "cs adobo cut smc",
+                    "price": "72.10",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "cs adobo cut shc",
+                    "price": "72.1",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "cs liver smc",
+                    "price": "64.96",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "cs liver smc",
+                    "price": "170",
+                    "count": "1"
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "cs drumstick smc",
+                    "price": "183.94",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "cs drumstick smc",
+                    "price": "183.94",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "equal sinandomeng",
+                    "price": "352.00",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "equal sinandomeng",
+                    "price": "352",
+                    "count": "2"
+                  },
+                  "price_correct": true
+                }
+              ]
+            },
+            {
+              "id": "ph-0177-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 23,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0188-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 12,
+              "prediction_count": 13,
+              "matches": [
+                {
+                  "truth": {
+                    "name": "harvesters brwn2kg",
+                    "price": "306.00",
+                    "count": "2"
+                  },
+                  "prediction": {
+                    "name": "harvesters brown 2kg",
+                    "price": "306",
+                    "count": "2"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "hrvstrs m grain2kg",
+                    "price": "177.00",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "hrvstrs m grain 2kg",
+                    "price": "177",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "fib brisket",
+                    "price": "496.39",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "fib brisket",
+                    "price": "496.39",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "p fresca bangus xl",
+                    "price": "310.70",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "p fresca bangus xl",
+                    "price": "310.7",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "mont sirloin jrp",
+                    "price": "1909.33",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "mont sirloin jrp",
+                    "price": "1273.86",
+                    "count": null
+                  },
+                  "price_correct": false
+                },
+                {
+                  "truth": {
+                    "name": "mont g rnd80 jrp",
+                    "price": "417.17",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "mont g rnd80 jrp",
+                    "price": "417.17",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "dona elena blended",
+                    "price": "177.50",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "dona elena blended",
+                    "price": "177.5",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "gt cfee ep 100g",
+                    "price": "74.45",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "gt cfee ep 100g",
+                    "price": "74.45",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "lipton grntea2gx10",
+                    "price": "77.25",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "lipton grntea 2gx10",
+                    "price": "77.25",
+                    "count": "1"
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "juf thai sce 750ml",
+                    "price": "85.75",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "juf thai sce 750ml",
+                    "price": "85.75",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "kremtofcreamer450g",
+                    "price": "82.85",
+                    "count": "1"
+                  },
+                  "prediction": {
+                    "name": "krehtop creamer 450g",
+                    "price": "82.85",
+                    "count": null
+                  },
+                  "price_correct": true
+                },
+                {
+                  "truth": {
+                    "name": "pf dried danggit",
+                    "price": "142.89",
+                    "count": null
+                  },
+                  "prediction": {
+                    "name": "pf dried danggit",
+                    "price": "142.89",
+                    "count": null
+                  },
+                  "price_correct": true
+                }
+              ]
+            }
+          ],
+          "recorded_attempts": 3,
+          "recorded_failed_attempts": 1
+        },
+        "donut-ph-v3b": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 64,
+          "count_eligible": 34,
+          "predicted_items": 0,
+          "perfect_receipts": 0,
+          "matched_items": 0,
+          "matched_prices": 0,
+          "matched_exact_name_prices": 0,
+          "matched_counts": 0,
+          "count_compared": 0,
+          "receipts": 3,
+          "item_precision": 0.0,
+          "item_recall": 0.0,
+          "item_price_f1": 0.0,
+          "strict_name_price_f1": 0.0,
+          "exact_price_accuracy_on_matches": 0.0,
+          "count_accuracy": 0.0,
+          "count_coverage": 0.0,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 20.837875153005978,
+          "latency_receipts": 3,
+          "details": [
+            {
+              "id": "ph-0170-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 29,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0177-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 23,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0188-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 12,
+              "prediction_count": 0,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 3,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-synth-v1": {
+          "missing_or_failed_receipts": 0,
+          "ground_truth_items": 64,
+          "count_eligible": 34,
+          "predicted_items": 0,
+          "perfect_receipts": 0,
+          "matched_items": 0,
+          "matched_prices": 0,
+          "matched_exact_name_prices": 0,
+          "matched_counts": 0,
+          "count_compared": 0,
+          "receipts": 3,
+          "item_precision": 0.0,
+          "item_recall": 0.0,
+          "item_price_f1": 0.0,
+          "strict_name_price_f1": 0.0,
+          "exact_price_accuracy_on_matches": 0.0,
+          "count_accuracy": 0.0,
+          "count_coverage": 0.0,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 23.41587143067348,
+          "latency_receipts": 3,
+          "details": [
+            {
+              "id": "ph-0170-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 29,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0177-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 23,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0188-original",
+              "failed": false,
+              "perfect": false,
+              "truth_count": 12,
+              "prediction_count": 0,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 3,
+          "recorded_failed_attempts": 0
+        },
+        "donut-ph-v3b-guarded": {
+          "missing_or_failed_receipts": 3,
+          "ground_truth_items": 64,
+          "count_eligible": 34,
+          "predicted_items": 0,
+          "perfect_receipts": 0,
+          "matched_items": 0,
+          "matched_prices": 0,
+          "matched_exact_name_prices": 0,
+          "matched_counts": 0,
+          "count_compared": 0,
+          "receipts": 3,
+          "item_precision": 0.0,
+          "item_recall": 0.0,
+          "item_price_f1": 0.0,
+          "strict_name_price_f1": 0.0,
+          "exact_price_accuracy_on_matches": 0.0,
+          "count_accuracy": 0.0,
+          "count_coverage": 0.0,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 6.122735152661335,
+          "latency_receipts": 3,
+          "details": [
+            {
+              "id": "ph-0170-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 29,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0177-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 23,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0188-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 12,
+              "prediction_count": 0,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 3,
+          "recorded_failed_attempts": 3
+        },
+        "donut-ph-synth-v1-guarded": {
+          "missing_or_failed_receipts": 3,
+          "ground_truth_items": 64,
+          "count_eligible": 34,
+          "predicted_items": 0,
+          "perfect_receipts": 0,
+          "matched_items": 0,
+          "matched_prices": 0,
+          "matched_exact_name_prices": 0,
+          "matched_counts": 0,
+          "count_compared": 0,
+          "receipts": 3,
+          "item_precision": 0.0,
+          "item_recall": 0.0,
+          "item_price_f1": 0.0,
+          "strict_name_price_f1": 0.0,
+          "exact_price_accuracy_on_matches": 0.0,
+          "count_accuracy": 0.0,
+          "count_coverage": 0.0,
+          "perfect_receipt_rate": 0.0,
+          "mean_seconds": 50.04967697232496,
+          "latency_receipts": 3,
+          "details": [
+            {
+              "id": "ph-0170-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 29,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0177-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 23,
+              "prediction_count": 0,
+              "matches": []
+            },
+            {
+              "id": "ph-0188-original",
+              "failed": true,
+              "perfect": false,
+              "truth_count": 12,
+              "prediction_count": 0,
+              "matches": []
+            }
+          ],
+          "recorded_attempts": 3,
+          "recorded_failed_attempts": 3
+        }
+      }
+    }
+  },
+  "generation_audit": {
+    "development": {
+      "donut-ph-v3b": {
+        "attempts": 4,
+        "schema_valid": 4,
+        "failed": 0,
+        "cap_hits": [],
+        "field_budget_hits": [],
+        "errors": {},
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      },
+      "donut-ph-synth-v1": {
+        "attempts": 4,
+        "schema_valid": 4,
+        "failed": 0,
+        "cap_hits": [],
+        "field_budget_hits": [],
+        "errors": {},
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      }
+    },
+    "public-old": {
+      "donut-ph-v3b": {
+        "attempts": 7,
+        "schema_valid": 7,
+        "failed": 0,
+        "cap_hits": [],
+        "field_budget_hits": [],
+        "errors": {},
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      },
+      "donut-ph-synth-v1": {
+        "attempts": 7,
+        "schema_valid": 7,
+        "failed": 0,
+        "cap_hits": [],
+        "field_budget_hits": [],
+        "errors": {},
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      }
+    },
+    "public-grocery": {
+      "donut-ph-v3b": {
+        "attempts": 3,
+        "schema_valid": 0,
+        "failed": 3,
+        "cap_hits": [],
+        "field_budget_hits": [
+          "ph-0170-original",
+          "ph-0177-original",
+          "ph-0188-original"
+        ],
+        "errors": {
+          "ph-0170-original": "Receipt field token budget exceeded",
+          "ph-0177-original": "Receipt field token budget exceeded",
+          "ph-0188-original": "Receipt field token budget exceeded"
+        },
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      },
+      "donut-ph-synth-v1": {
+        "attempts": 3,
+        "schema_valid": 0,
+        "failed": 3,
+        "cap_hits": [],
+        "field_budget_hits": [
+          "ph-0170-original",
+          "ph-0177-original"
+        ],
+        "errors": {
+          "ph-0170-original": "Receipt field token budget exceeded",
+          "ph-0177-original": "Receipt field token budget exceeded",
+          "ph-0188-original": "No legal receipt continuation remains"
+        },
+        "raw_tokens_and_decode_retained": true,
+        "replay_validation": "passed"
+      }
+    }
+  },
+  "verification": {
+    "source_and_scorer_hashes_unchanged_during_final_benchmark": true,
+    "weights_unchanged": true,
+    "input_image_hash_checks": 14,
+    "cached_groq_and_legacy_predictions_byte_identical": true,
+    "complete_prediction_id_checks": true,
+    "replayed_raw_generations_validate": true,
+    "python_tests": {
+      "passed": 69,
+      "failed": 0
+    },
+    "application_tests": {
+      "passed": 375,
+      "skipped_live_api": 2,
+      "failed": 0
+    },
+    "actual_tokenizer_numeric_paths": [
+      {
+        "price": "0.00",
+        "tokens": 11,
+        "all_target_token_paths_allowed": true,
+        "amount": "0.00"
+      },
+      {
+        "price": "5.00",
+        "tokens": 11,
+        "all_target_token_paths_allowed": true,
+        "amount": "5.00"
+      },
+      {
+        "price": "P10.50",
+        "tokens": 13,
+        "all_target_token_paths_allowed": true,
+        "amount": "10.50"
+      },
+      {
+        "price": "PHP 0.00",
+        "tokens": 12,
+        "all_target_token_paths_allowed": true,
+        "amount": "0.00"
+      },
+      {
+        "price": "\u20b11,234.50",
+        "unsupported_checkpoint_glyph": true,
+        "reason": "Published tokenizer emits UNK; keep generation forbidden rather than force unknown text."
+      },
+      {
+        "price": "Rp 1.25",
+        "tokens": 12,
+        "all_target_token_paths_allowed": true,
+        "amount": "1.25"
+      }
+    ],
+    "independent_review": {
+      "critical": 0,
+      "important": 3,
+      "important_fixed": 3,
+      "minor": 0,
+      "findings": [
+        "currency-prefixed prices extracted as null",
+        "normal SentencePiece numeric boundaries forbidden",
+        "malformed numeric separators accepted"
+      ],
+      "red_tests": 8,
+      "green_suite": 69
+    }
+  },
+  "artifact_sha256": {
+    "development/predictions/donut-ph-v3b-guarded-validation.jsonl": "c9745028d9fccebb804d03e94c8ebfe7a2f4b213dbaa739448e5e00311cb9de9",
+    "development/predictions/donut-ph-synth-v1-guarded-validation.jsonl": "a7954585830248d2be4cdfc4f25043e76cc925e290f170b27f5011ad4d243d72",
+    "public-old/predictions/donut-ph-v3b-guarded-test.jsonl": "49feb3c03ae05603e531145a8fe26db25c3a185415be1cec2c60f482a6180be9",
+    "public-old/predictions/donut-ph-synth-v1-guarded-test.jsonl": "fb08c3703b598613d9dcb8f0e5e3adce32ba6d16fd9cd26cc61bfa283e9e90fc",
+    "public-grocery/predictions/donut-ph-v3b-guarded-test.jsonl": "825752ca1bc131cbde412475cc8e2ee3f0864fbe31642e8fa1e7853bd28f0349",
+    "public-grocery/predictions/donut-ph-synth-v1-guarded-test.jsonl": "4f24c05c648725ee4048477013b5ca407c483b3892547135cb84ec99041a68dd",
+    "candidate-freeze.json": "61796928136a1f9b18f488dcd1ec979b3cb3737b120656227b8ff2f11d704270",
+    "protocol-initial.json": "357133a9efb238495e1ea1abd773018890b99b39da6dffd6ac8f665f2c0819d4"
+  },
+  "limitations": [
+    "Four development, seven old comparison and three grocery public receipts are small previously-seen convenience samples with AI-only labels.",
+    "No actual PriceCraft-user holdout, so production replacement is not eligible.",
+    "Grammar validity and bounded repetition do not establish recognition accuracy; record all field budgets and cap failures.",
+    "Unchanged preprocessing scales each full image to the published encoder canvas; long-image legibility remains an unresolved hypothesis, not a tested tiling fix.",
+    "Legacy flag preserves generation options only; both profiles require complete menu-only receipt output.",
+    "First attempt and its initial scores are preserved under donut-decoding-v1; all final model generations were rerun after the review fixes."
+  ],
+  "decision": {
+    "production": "Keep Groq, pending a frozen actual-receipt benchmark showing better extraction.",
+    "training": "No training or weights changed; these are generation and output-validation repairs.",
+    "next": "Investigate long-image legibility/segmentation and product-vs-header errors using development data; retain public challenge families outside training.",
+    "actual_receipt_gate": "Not satisfied; no production switch."
+  }
+}

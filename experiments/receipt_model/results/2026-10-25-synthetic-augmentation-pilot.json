@@ -1,0 +1,362 @@
+{
+  "experiment": "bounded synthetic augmentation pilot",
+  "completedAt": "2026-10-25T08:28:51.051846+00:00",
+  "decision": "Keep Groq in production. New adapter is experimental and not an overall PH improvement; no actual PriceCraft superiority established.",
+  "source": "albertobarnabo/synthetic-receipts-ocr",
+  "revision": "ed46e02b9b1136f6b54847c1d4bce9e94d11e55c",
+  "downloaded_parquet_bytes": 351855800,
+  "sample": {
+    "train": 60,
+    "synthetic_development": 10,
+    "automatic_checks": 70,
+    "direct_AI_image_checks": 30,
+    "human_verified": 0,
+    "AI_visual_item_rows": 141
+  },
+  "training": {
+    "status": "training_complete_candidate_frozen_before_evaluation",
+    "frozenAt": "2026-10-25T08:21:18.908813+00:00",
+    "steps": 600,
+    "unique_receipts": 125,
+    "optimization_seconds": 181.30460487352684,
+    "first10_mean_loss": 2.1633593857288362,
+    "last10_mean_loss": 0.4780696354806423,
+    "all_adapter_tensors_finite": true,
+    "adapter_tensors": 32,
+    "nonzero_lora_B_tensors": 16,
+    "artifacts": {
+      "adapter_model.safetensors": {
+        "bytes": 1053040,
+        "sha256": "8b4f011e75c2f4c58d715a73374700d4bd8ce53f90ea7b89a9e8476b52d466c9"
+      },
+      "loss.jsonl": {
+        "bytes": 62320,
+        "sha256": "a8d3b535d0b8ee02601144b2cb21b8f810b6808d1bf79f3bcd6a8c5a97dd088d"
+      },
+      "README.md": {
+        "bytes": 5128,
+        "sha256": "761f9a02d12a6434a0444d774b01bd6e13cd98c392c154f2442665b8e632819b"
+      },
+      "adapter_config.json": {
+        "bytes": 1056,
+        "sha256": "feb48abec5fe98b258295d92b803a8ccb7e0fc9fcfc7e6156023f72d11847852"
+      },
+      "run.json": {
+        "bytes": 391,
+        "sha256": "374e0628a77bf6ccd6890f43eb8cf4cefd3c7589ec1a7bd250c2d5eadd0502b7"
+      }
+    },
+    "protocol_sha256": "1b5439900e32562ce452b1ff56090598b5a4a30e8e16114a4862ae98bcfd3012",
+    "evaluation_freeze_sha256": "e816873fe6bee7e6a88c062e4a60b54f5f00211732a5a83acda87b2f582a3aa7"
+  },
+  "scores": {
+    "synthetic_development": {
+      "donut-ph-v3b": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 42,
+        "count_eligible": 42,
+        "predicted_items": 32,
+        "matched_items": 26,
+        "matched_prices": 24,
+        "exact_names": 25,
+        "matched_exact_name_prices": 23,
+        "perfect_receipts": 3,
+        "count_compared": 1,
+        "matched_counts": 1,
+        "receipts": 10,
+        "item_precision": 0.8125,
+        "item_recall": 0.6190476190476191,
+        "item_price_f1": 0.6486486486486487,
+        "strict_name_price_f1": 0.6216216216216216,
+        "exact_price_accuracy_on_matches": 0.9230769230769231,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.023809523809523808,
+        "perfect_receipt_rate": 0.3,
+        "mean_seconds": 4.255341920704813,
+        "latency_receipts": 10
+      },
+      "donut-ph-synth-v1": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 42,
+        "count_eligible": 42,
+        "predicted_items": 42,
+        "matched_items": 40,
+        "matched_prices": 40,
+        "exact_names": 39,
+        "matched_exact_name_prices": 39,
+        "count_compared": 40,
+        "matched_counts": 40,
+        "perfect_receipts": 7,
+        "receipts": 10,
+        "item_precision": 0.9523809523809523,
+        "item_recall": 0.9523809523809523,
+        "item_price_f1": 0.9523809523809523,
+        "strict_name_price_f1": 0.9285714285714286,
+        "exact_price_accuracy_on_matches": 1.0,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.9523809523809523,
+        "perfect_receipt_rate": 0.7,
+        "mean_seconds": 10.938948358298513,
+        "latency_receipts": 10
+      }
+    },
+    "PH_development_validation": {
+      "groq": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 8,
+        "count_eligible": 4,
+        "predicted_items": 7,
+        "matched_items": 7,
+        "matched_prices": 7,
+        "exact_names": 5,
+        "matched_exact_name_prices": 5,
+        "perfect_receipts": 3,
+        "count_compared": 4,
+        "matched_counts": 4,
+        "receipts": 4,
+        "item_precision": 1.0,
+        "item_recall": 0.875,
+        "item_price_f1": 0.9333333333333333,
+        "strict_name_price_f1": 0.6666666666666666,
+        "exact_price_accuracy_on_matches": 1.0,
+        "count_accuracy": 1.0,
+        "count_coverage": 1.0,
+        "perfect_receipt_rate": 0.75,
+        "mean_seconds": 6.00202695825,
+        "latency_receipts": 4,
+        "recorded_attempts": 4,
+        "recorded_failed_attempts": 0
+      },
+      "donut-ph-v3b": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 8,
+        "count_eligible": 4,
+        "predicted_items": 10,
+        "matched_items": 6,
+        "matched_prices": 4,
+        "exact_names": 3,
+        "matched_exact_name_prices": 3,
+        "perfect_receipts": 0,
+        "count_compared": 2,
+        "matched_counts": 2,
+        "receipts": 4,
+        "item_precision": 0.6,
+        "item_recall": 0.75,
+        "item_price_f1": 0.4444444444444444,
+        "strict_name_price_f1": 0.3333333333333333,
+        "exact_price_accuracy_on_matches": 0.6666666666666666,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.5,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 5.633502281001711,
+        "latency_receipts": 4,
+        "recorded_attempts": 4,
+        "recorded_failed_attempts": 0
+      },
+      "donut-ph-synth-v1": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 8,
+        "count_eligible": 4,
+        "predicted_items": 11,
+        "matched_items": 6,
+        "matched_prices": 5,
+        "exact_names": 3,
+        "matched_exact_name_prices": 3,
+        "perfect_receipts": 1,
+        "count_compared": 2,
+        "matched_counts": 1,
+        "receipts": 4,
+        "item_precision": 0.5454545454545454,
+        "item_recall": 0.75,
+        "item_price_f1": 0.5263157894736842,
+        "strict_name_price_f1": 0.3157894736842105,
+        "exact_price_accuracy_on_matches": 0.8333333333333334,
+        "count_accuracy": 0.5,
+        "count_coverage": 0.5,
+        "perfect_receipt_rate": 0.25,
+        "mean_seconds": 3.3255337290029274,
+        "latency_receipts": 4,
+        "recorded_attempts": 4,
+        "recorded_failed_attempts": 0
+      }
+    },
+    "PH_public_comparison": {
+      "groq": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 14,
+        "count_eligible": 10,
+        "predicted_items": 14,
+        "matched_items": 9,
+        "matched_prices": 3,
+        "exact_names": 7,
+        "matched_exact_name_prices": 2,
+        "count_compared": 6,
+        "matched_counts": 6,
+        "perfect_receipts": 1,
+        "receipts": 7,
+        "item_precision": 0.6428571428571429,
+        "item_recall": 0.6428571428571429,
+        "item_price_f1": 0.21428571428571427,
+        "strict_name_price_f1": 0.14285714285714285,
+        "exact_price_accuracy_on_matches": 0.3333333333333333,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.6,
+        "perfect_receipt_rate": 0.14285714285714285,
+        "mean_seconds": 7.08317214285714,
+        "latency_receipts": 7,
+        "recorded_attempts": 10,
+        "recorded_failed_attempts": 3
+      },
+      "donut-ph-v3b": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 14,
+        "count_eligible": 10,
+        "predicted_items": 9,
+        "matched_items": 4,
+        "matched_prices": 4,
+        "exact_names": 4,
+        "matched_exact_name_prices": 4,
+        "count_compared": 3,
+        "matched_counts": 3,
+        "perfect_receipts": 1,
+        "receipts": 7,
+        "item_precision": 0.4444444444444444,
+        "item_recall": 0.2857142857142857,
+        "item_price_f1": 0.34782608695652173,
+        "strict_name_price_f1": 0.34782608695652173,
+        "exact_price_accuracy_on_matches": 1.0,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.3,
+        "perfect_receipt_rate": 0.14285714285714285,
+        "mean_seconds": 3.2001668690063525,
+        "latency_receipts": 7,
+        "recorded_attempts": 7,
+        "recorded_failed_attempts": 0
+      },
+      "donut-ph-synth-v1": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 14,
+        "count_eligible": 10,
+        "predicted_items": 13,
+        "matched_items": 5,
+        "matched_prices": 2,
+        "exact_names": 5,
+        "matched_exact_name_prices": 2,
+        "count_compared": 3,
+        "matched_counts": 3,
+        "perfect_receipts": 1,
+        "receipts": 7,
+        "item_precision": 0.38461538461538464,
+        "item_recall": 0.35714285714285715,
+        "item_price_f1": 0.14814814814814814,
+        "strict_name_price_f1": 0.14814814814814814,
+        "exact_price_accuracy_on_matches": 0.4,
+        "count_accuracy": 1.0,
+        "count_coverage": 0.3,
+        "perfect_receipt_rate": 0.14285714285714285,
+        "mean_seconds": 6.086464922858535,
+        "latency_receipts": 7,
+        "recorded_attempts": 7,
+        "recorded_failed_attempts": 0
+      }
+    }
+  },
+  "inference_audit": {
+    "attempts": 31,
+    "runtime_exceptions": 0,
+    "max_length_cap_hits": [
+      {
+        "system": "donut-ph-synth-v1",
+        "split": ".receipt-ml/synthetic-pilot-v1/synthetic-evaluation/validation",
+        "id": "synth-eval-000517",
+        "generated_tokens": 768,
+        "runner_error": null,
+        "runner_truncated": false
+      },
+      {
+        "system": "donut-ph-synth-v1",
+        "split": ".receipt-ml/synthetic-pilot-v1/test",
+        "id": "ph-0245",
+        "generated_tokens": 768,
+        "runner_error": null,
+        "runner_truncated": false
+      }
+    ],
+    "non_dict_parsed_outputs": [
+      {
+        "system": "donut-ph-synth-v1",
+        "split": ".receipt-ml/synthetic-pilot-v1/test",
+        "id": "ph-0245",
+        "generated_tokens": 768,
+        "runner_error": null,
+        "runner_truncated": false
+      }
+    ],
+    "note": "Legacy inference only marks truncation when EOS is absent; the model can force EOS at max_length. Raw outputs and frozen primary scores retained. Both new-candidate cap hits contribute zero extracted items; the PH output has an invalid root list. Conservative failed-generation treatment applied uniformly leaves every primary F1 value unchanged.",
+    "conservative_failed_cap_analysis": {
+      "validation/donut-ph-v3b": {
+        "item_price_f1": 0.4444444444444444,
+        "missing_or_failed_receipts": 0
+      },
+      "validation/donut-ph-synth-v1": {
+        "item_price_f1": 0.5263157894736842,
+        "missing_or_failed_receipts": 0
+      },
+      "test/donut-ph-v3b": {
+        "item_price_f1": 0.34782608695652173,
+        "missing_or_failed_receipts": 0
+      },
+      "test/donut-ph-synth-v1": {
+        "item_price_f1": 0.14814814814814814,
+        "missing_or_failed_receipts": 1
+      },
+      "synthetic-development/donut-ph-v3b": {
+        "item_price_f1": 0.6486486486486487,
+        "missing_or_failed_receipts": 0
+      },
+      "synthetic-development/donut-ph-synth-v1": {
+        "item_price_f1": 0.9523809523809523,
+        "missing_or_failed_receipts": 1
+      }
+    }
+  },
+  "verification": {
+    "experiment_tests": "33 passed in 2.22 seconds; full experiments/receipt_model suite",
+    "independent_review": "No material findings; ten label tests also independently run",
+    "PH_manifest_and_cached_baselines": "byte-identical and full baseline metrics reproduced",
+    "production_app": "unchanged and not re-tested by this local experiment"
+  },
+  "limitations": [
+    "First train/eval shard only; 70 locale-stratified samples, not all 32000",
+    "AI sample checks are not human verification",
+    "Synthetic font holdout does not establish real-photo transfer",
+    "Fixed600-step fresh-base mix changes PH exposure relative to PH-only v3b; no causal or optimal-training claim",
+    "Existing PH four/seven public sets are previously evaluated, not fresh blind or actual-user tests",
+    "Package count does not measure purchased weight/volume",
+    "No Groq benchmark on synthetic set; prior PH Groq calls reused",
+    "Legacy runner underflags two new-candidate max-length forced-EOS generations; explicit supplemental cap audit provided"
+  ],
+  "artifact_sha256": {
+    "protocol.json": "1b5439900e32562ce452b1ff56090598b5a4a30e8e16114a4862ae98bcfd3012",
+    "candidate-freeze.json": "c07d55180c6c65f496289bb37438f342daacf17859fa46809c22d172bba57771",
+    "source-files.json": "e10a9b93b42bf48b0b5e1175e604dc4cebfd18f22439b0435079877e05919e76",
+    "sample-selection.json": "65b795c23fe597b2a7ba494461ef438c41f7b13abcd4b2894e8af68dd9b09206",
+    "visual-audit.json": "1c8fc1ea5292507b8b46a3cb3e6708142b12a912a6a2e41e3ca2f6991bab28d1",
+    "automatic-audit.json": "9e52f5bd441b415a1febabad8b3df1cd155b86d0f8699980c90b667e9687c60d",
+    "tokenizer-exclusions.json": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+    "evaluation-freeze.json": "e816873fe6bee7e6a88c062e4a60b54f5f00211732a5a83acda87b2f582a3aa7",
+    "inference-audit.json": "773198b768713c7994b2a7b9133cdba225b3f0f5ed85acc2fe0d1838f0e75a23",
+    "review-notes.json": "dcc1163d327f58298be13d9c5224ab9f4be2d69851f5bbd31363fb4f7a2b40a1",
+    "experiment-tests.log": "dbaf85b16a679446f2ae7f82d8827d7dfc08a5ac5f0cb0fef2ae78be282215aa",
+    "training.log": "ff847d7a57b5c5ea1f9f1eab7f7d5509e5d865f9d78cea3d4cac81edf63ea529",
+    "evaluation.log": "8dea2db71ecec317821da2538fb9e1f54b925ad1e3a7eb2cb3e6b623097ec860",
+    "reports/validation.json": "181cc10473cd5a1aa449ff0f342bb9ad427e616bde44e23ab37912565179335d",
+    "reports/test.json": "f952d4d5c52f4f8ea0539696867b1d55230217f75396c2ac066c2db8a48e645c",
+    "synthetic-evaluation/reports/validation.json": "e4ba937f516f02d818e563fefbc3cdaaa854d9f5379d6f4611cccbe84f64344d",
+    "predictions/donut-ph-synth-v1-validation.jsonl": "408257fddcc76fed75357f55f8576189c8a22bec96497bb088d70b2c4bf60f32",
+    "predictions/donut-ph-synth-v1-test.jsonl": "86c62ede14d79528afa119f1d35031b58b6f80672f5843d7b6290b3da522f614",
+    "synthetic-evaluation/predictions/donut-ph-v3b-validation.jsonl": "2422416a976ad9b88457683e359f01132c10e37c080fd7c9b558ca96e2d6cd7e",
+    "synthetic-evaluation/predictions/donut-ph-synth-v1-validation.jsonl": "5ff2240f410a9d2764c2e8d68c54650732432b9d817467d946eaa2868ca64eb9",
+    "adapters/donut-ph-synth-v1/adapter_model.safetensors": "8b4f011e75c2f4c58d715a73374700d4bd8ce53f90ea7b89a9e8476b52d466c9"
+  }
+}

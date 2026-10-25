@@ -1,0 +1,1208 @@
+{
+  "date": "2026-10-25",
+  "experiment": "High-resolution original Philippine public receipt review and frozen grocery challenge",
+  "collection": {
+    "complete_ai_checks": 8,
+    "human_verified": 0,
+    "item_rows": 85,
+    "per_split": {
+      "train": {
+        "receipts": 5,
+        "items": 14
+      },
+      "test": {
+        "receipts": 3,
+        "items": 71
+      }
+    },
+    "receipt_sum_checks": 8,
+    "unit_price_arithmetic_checks": 58,
+    "unknown_physical_units_preserved": true,
+    "prior_reviews_unchanged": true,
+    "combined_review_gate": "passed",
+    "labels_sha256": "50622e145ea8bc9774cc6e407e1f906aa5bf1344fcb400611dd96d8e76d1e766",
+    "status": "Labels frozen before predictions; not a production readiness claim"
+  },
+  "combined_corpus": {
+    "complete_ai_checked_receipts": 87,
+    "newly_checked_receipts": 8,
+    "human_verified": 0,
+    "split_counts": {
+      "train": 73,
+      "validation": 4,
+      "test": 10
+    },
+    "prior_v3_sha256": "3e4596a1ce30603944dfb148b9ec513e71aa4eb94fbc3ae3630700530304d5f4",
+    "combined_v4_sha256": "49712693dce67f2b0575ce7025ddaf607eb2b7b0ab83c1ea34ec8071abdf0e5b",
+    "all_source_hash_checks": "passed",
+    "new_originals_not_used_for_training": true
+  },
+  "public_source": "https://universe.roboflow.com/capstone-emk5p/receipts-1m88i",
+  "license": "CC BY 4.0",
+  "downloaded_originals": 10,
+  "uncertain_withheld": 1,
+  "duplicate_reserved_test": 1,
+  "protocol": {
+    "status": "Frozen before predictions",
+    "date": "2026-10-25",
+    "sample": "All three newly visually readable Puregold originals among this batch; convenience challenge set, not random and not actual PriceCraft receipts.",
+    "merchant_holdout": "Puregold absent from every previous checked-v3 label; no previous reviewed labels or receipt families overlap. Related unreviewed source pictures are reserved with this merchant and excluded from future training.",
+    "training": "No new training in this experiment; compare two existing frozen adapters. Five newly checked training images are not used in these models.",
+    "truth_sha256": "50622e145ea8bc9774cc6e407e1f906aa5bf1344fcb400611dd96d8e76d1e766",
+    "test_manifest_sha256": "f5650e8fec31c251b48826685c8b56daef1bb69b34e2c22e3965cd3c61199049",
+    "test_ids": [
+      "ph-0170-original",
+      "ph-0177-original",
+      "ph-0188-original"
+    ],
+    "metric": "Existing PH duplicate-aggregated name similarity >= .75 and exactly equal line price. Strict-name F1 also reported. Unknown counts omitted; physical-quantity/unit accuracy not measured by current scorer.",
+    "generation_cap": "Existing inference maximum 768 tokens retained; any output >= 768 is also treated as failed in a separate conservative comparison, including forced EOS. Preserve raw output and report both.",
+    "groq_baseline": {
+      "commit": "1f7ceab1d9100f6ea8ba5f72fd0bf2618cc4602b",
+      "hashes": {
+        "groqService.ts": "c829ec077c5e7c02934704b593361c268646a1e105db3d8336fae634bb23e3a4",
+        "receiptParser.ts": "72b7aff3f1247f0e9bd20802844f9edd0198440a9d45ee10ba57600f5ede99e7",
+        "ocrSpaceService.ts": "28b34ba351a56964f6ec4da1bed00cbf4e1a6511f831c9b6bb213dad802e9646"
+      },
+      "description": "Git HEAD production baseline; pending local quantity fixes excluded"
+    },
+    "models": {
+      "donut-ph-v3b": {
+        "adapter": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/pilot-v3b/adapters/donut-ph-v3b",
+        "weights_sha256": "b7f3c39e8266b357eb93a18da2d741073a686d879e235d053ea1b79251dca100",
+        "config_sha256": "feb48abec5fe98b258295d92b803a8ccb7e0fc9fcfc7e6156023f72d11847852"
+      },
+      "donut-ph-synth-v1": {
+        "adapter": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/synthetic-pilot-v1/adapters/donut-ph-synth-v1",
+        "weights_sha256": "8b4f011e75c2f4c58d715a73374700d4bd8ce53f90ea7b89a9e8476b52d466c9",
+        "config_sha256": "feb48abec5fe98b258295d92b803a8ccb7e0fc9fcfc7e6156023f72d11847852"
+      }
+    },
+    "harness": {
+      "experiments/receipt_model/donut_run.py": "feec2ac84caddd785177b3a5a74042190b9357f69812abe3ad63d7b02079f04d",
+      "experiments/receipt_model/ph_score.py": "d90aae725a811bb61efd07c7bab32757119952e29f453c8c4d0250ae11f896ce",
+      "experiments/receipt_model/metrics.py": "b92ec68fc34adbe5cfd08f245e099f81ef49178452990a436305c6f6e12861e0",
+      "experiments/receipt_model/groq_benchmark.mjs": "2bb702c01167602c1599f63ab6e8760ee6b6eb3f2e4111d88e67b86bb58b8f1e"
+    }
+  },
+  "inference_audit": {
+    "groq": {
+      "raw_prediction_sha256": "f9dbf3f98443f0276de846bcaab816dd99d2da2d82904071b0d7544e9f39daf4",
+      "attempts": 3,
+      "request_errors": 1,
+      "cap_reached": [],
+      "generated_tokens": {
+        "ph-0170-original": null,
+        "ph-0177-original": null,
+        "ph-0188-original": null
+      },
+      "valid_extracted_items": 30
+    },
+    "donut-ph-v3b": {
+      "raw_prediction_sha256": "67dbc4118d13ade1c685f6cd7ee734fb447888208c69b912726a17a75a7f690f",
+      "attempts": 3,
+      "request_errors": 0,
+      "cap_reached": [
+        "ph-0170-original",
+        "ph-0177-original"
+      ],
+      "generated_tokens": {
+        "ph-0170-original": 768,
+        "ph-0177-original": 768,
+        "ph-0188-original": 11
+      },
+      "valid_extracted_items": 0
+    },
+    "donut-ph-synth-v1": {
+      "raw_prediction_sha256": "58b47ae892d058a921c3656dbd0699d376bdf48838f120d95ae646edad48844d",
+      "attempts": 3,
+      "request_errors": 0,
+      "cap_reached": [
+        "ph-0170-original",
+        "ph-0177-original",
+        "ph-0188-original"
+      ],
+      "generated_tokens": {
+        "ph-0170-original": 768,
+        "ph-0177-original": 768,
+        "ph-0188-original": 768
+      },
+      "valid_extracted_items": 0
+    }
+  },
+  "tokenizer_preflight": [
+    {
+      "id": "ph-0005-original",
+      "split": "train",
+      "target_tokens": 24,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0036-original",
+      "split": "train",
+      "target_tokens": 69,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0015-original",
+      "split": "train",
+      "target_tokens": 54,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0140-original",
+      "split": "train",
+      "target_tokens": 79,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0208-original",
+      "split": "train",
+      "target_tokens": 20,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0170-original",
+      "split": "test",
+      "target_tokens": 568,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0177-original",
+      "split": "test",
+      "target_tokens": 457,
+      "fits_768": true
+    },
+    {
+      "id": "ph-0188-original",
+      "split": "test",
+      "target_tokens": 262,
+      "fits_768": true
+    }
+  ],
+  "raw_report": {
+    "split": "test",
+    "label_status": "AI image-checked; not human verified",
+    "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+    "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+    "systems": {
+      "groq": {
+        "missing_or_failed_receipts": 1,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 29,
+        "matched_items": 26,
+        "matched_prices": 21,
+        "exact_names": 18,
+        "matched_exact_name_prices": 15,
+        "count_compared": 8,
+        "matched_counts": 4,
+        "perfect_receipts": 0,
+        "receipts": 3,
+        "item_precision": 0.896551724137931,
+        "item_recall": 0.40625,
+        "item_price_f1": 0.45161290322580644,
+        "strict_name_price_f1": 0.3225806451612903,
+        "exact_price_accuracy_on_matches": 0.8076923076923077,
+        "count_accuracy": 0.5,
+        "count_coverage": 0.23529411764705882,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 17.12835804166667,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 16,
+            "matches": [
+              {
+                "truth": {
+                  "name": "snkst mgo 235ml",
+                  "price": "284.00",
+                  "count": "16"
+                },
+                "prediction": {
+                  "name": "snkst mgo 235ml",
+                  "price": "284",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "nestlechuckie110ml",
+                  "price": "220.50",
+                  "count": "18"
+                },
+                "prediction": {
+                  "name": "nestle chuckie 110ml",
+                  "price": "196",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "lp graham 10s",
+                  "price": "40.90",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "lp graham 10s",
+                  "price": "40.9",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "fbsco choco 36g",
+                  "price": "100.00",
+                  "count": "10"
+                },
+                "prediction": {
+                  "name": "fbsco choco 36g",
+                  "price": "100",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "dm sb ketchup 20oz",
+                  "price": "52.80",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "dm sb ketchup 200z",
+                  "price": "52.8",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cdo swt ham500g",
+                  "price": "450.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cdo swt ham500g",
+                  "price": "245",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "pf tj hdg rg 1kg",
+                  "price": "181.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "pf tj hdg rg 1kg",
+                  "price": "181",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "pmpnga tocin fls24",
+                  "price": "149.00",
+                  "count": "2"
+                },
+                "prediction": {
+                  "name": "phpnga tocin fls24",
+                  "price": "300",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "garcias menudo cut",
+                  "price": "247.94",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "garcias menudo cut",
+                  "price": "247.94",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "garcias pchop s on",
+                  "price": "231.88",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "garcias pchop s on",
+                  "price": "231.88",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cs adobo cut smc",
+                  "price": "72.10",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs adobo cut shc",
+                  "price": "72.1",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cs liver smc",
+                  "price": "64.96",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs liver smc",
+                  "price": "170",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "cs drumstick smc",
+                  "price": "183.94",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs drumstick smc",
+                  "price": "183.94",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "equal sinandomeng",
+                  "price": "352.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "equal sinandomeng",
+                  "price": "352",
+                  "count": "2"
+                },
+                "price_correct": true
+              }
+            ]
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 13,
+            "matches": [
+              {
+                "truth": {
+                  "name": "harvesters brwn2kg",
+                  "price": "306.00",
+                  "count": "2"
+                },
+                "prediction": {
+                  "name": "harvesters brown 2kg",
+                  "price": "306",
+                  "count": "2"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "hrvstrs m grain2kg",
+                  "price": "177.00",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "hrvstrs m grain 2kg",
+                  "price": "177",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "fib brisket",
+                  "price": "496.39",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "fib brisket",
+                  "price": "496.39",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "p fresca bangus xl",
+                  "price": "310.70",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "p fresca bangus xl",
+                  "price": "310.7",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "mont sirloin jrp",
+                  "price": "1909.33",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "mont sirloin jrp",
+                  "price": "1273.86",
+                  "count": null
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "mont g rnd80 jrp",
+                  "price": "417.17",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "mont g rnd80 jrp",
+                  "price": "417.17",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "dona elena blended",
+                  "price": "177.50",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "dona elena blended",
+                  "price": "177.5",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "gt cfee ep 100g",
+                  "price": "74.45",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "gt cfee ep 100g",
+                  "price": "74.45",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "lipton grntea2gx10",
+                  "price": "77.25",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "lipton grntea 2gx10",
+                  "price": "77.25",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "juf thai sce 750ml",
+                  "price": "85.75",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "juf thai sce 750ml",
+                  "price": "85.75",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "kremtofcreamer450g",
+                  "price": "82.85",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "krehtop creamer 450g",
+                  "price": "82.85",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "pf dried danggit",
+                  "price": "142.89",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "pf dried danggit",
+                  "price": "142.89",
+                  "count": null
+                },
+                "price_correct": true
+              }
+            ]
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 1
+      },
+      "donut-ph-v3b": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 0,
+        "perfect_receipts": 0,
+        "matched_items": 0,
+        "matched_prices": 0,
+        "matched_exact_name_prices": 0,
+        "matched_counts": 0,
+        "count_compared": 0,
+        "receipts": 3,
+        "item_precision": 0.0,
+        "item_recall": 0.0,
+        "item_price_f1": 0.0,
+        "strict_name_price_f1": 0.0,
+        "exact_price_accuracy_on_matches": 0.0,
+        "count_accuracy": 0.0,
+        "count_coverage": 0.0,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 20.837875153005978,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 0,
+            "matches": []
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 0
+      },
+      "donut-ph-synth-v1": {
+        "missing_or_failed_receipts": 0,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 0,
+        "perfect_receipts": 0,
+        "matched_items": 0,
+        "matched_prices": 0,
+        "matched_exact_name_prices": 0,
+        "matched_counts": 0,
+        "count_compared": 0,
+        "receipts": 3,
+        "item_precision": 0.0,
+        "item_recall": 0.0,
+        "item_price_f1": 0.0,
+        "strict_name_price_f1": 0.0,
+        "exact_price_accuracy_on_matches": 0.0,
+        "count_accuracy": 0.0,
+        "count_coverage": 0.0,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 23.41587143067348,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 0,
+            "matches": []
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 0
+      }
+    }
+  },
+  "conservative_cap_report": {
+    "split": "test",
+    "label_status": "AI image-checked; not human verified",
+    "limitations": "Small readability-selected public pilot; no actual PriceCraft receipts or deployment conclusion.",
+    "metric": "Duplicate-aggregated name similarity >=.75 and exactly equal line prices; Philippine decimal-point/comma-thousands convention and P currency prefixes.",
+    "systems": {
+      "groq": {
+        "missing_or_failed_receipts": 1,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 29,
+        "matched_items": 26,
+        "matched_prices": 21,
+        "exact_names": 18,
+        "matched_exact_name_prices": 15,
+        "count_compared": 8,
+        "matched_counts": 4,
+        "perfect_receipts": 0,
+        "receipts": 3,
+        "item_precision": 0.896551724137931,
+        "item_recall": 0.40625,
+        "item_price_f1": 0.45161290322580644,
+        "strict_name_price_f1": 0.3225806451612903,
+        "exact_price_accuracy_on_matches": 0.8076923076923077,
+        "count_accuracy": 0.5,
+        "count_coverage": 0.23529411764705882,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 17.12835804166667,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 16,
+            "matches": [
+              {
+                "truth": {
+                  "name": "snkst mgo 235ml",
+                  "price": "284.00",
+                  "count": "16"
+                },
+                "prediction": {
+                  "name": "snkst mgo 235ml",
+                  "price": "284",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "nestlechuckie110ml",
+                  "price": "220.50",
+                  "count": "18"
+                },
+                "prediction": {
+                  "name": "nestle chuckie 110ml",
+                  "price": "196",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "lp graham 10s",
+                  "price": "40.90",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "lp graham 10s",
+                  "price": "40.9",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "fbsco choco 36g",
+                  "price": "100.00",
+                  "count": "10"
+                },
+                "prediction": {
+                  "name": "fbsco choco 36g",
+                  "price": "100",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "dm sb ketchup 20oz",
+                  "price": "52.80",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "dm sb ketchup 200z",
+                  "price": "52.8",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cdo swt ham500g",
+                  "price": "450.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cdo swt ham500g",
+                  "price": "245",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "pf tj hdg rg 1kg",
+                  "price": "181.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "pf tj hdg rg 1kg",
+                  "price": "181",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "pmpnga tocin fls24",
+                  "price": "149.00",
+                  "count": "2"
+                },
+                "prediction": {
+                  "name": "phpnga tocin fls24",
+                  "price": "300",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "garcias menudo cut",
+                  "price": "247.94",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "garcias menudo cut",
+                  "price": "247.94",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "garcias pchop s on",
+                  "price": "231.88",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "garcias pchop s on",
+                  "price": "231.88",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cs adobo cut smc",
+                  "price": "72.10",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs adobo cut shc",
+                  "price": "72.1",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "cs liver smc",
+                  "price": "64.96",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs liver smc",
+                  "price": "170",
+                  "count": "1"
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "cs drumstick smc",
+                  "price": "183.94",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "cs drumstick smc",
+                  "price": "183.94",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "equal sinandomeng",
+                  "price": "352.00",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "equal sinandomeng",
+                  "price": "352",
+                  "count": "2"
+                },
+                "price_correct": true
+              }
+            ]
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 13,
+            "matches": [
+              {
+                "truth": {
+                  "name": "harvesters brwn2kg",
+                  "price": "306.00",
+                  "count": "2"
+                },
+                "prediction": {
+                  "name": "harvesters brown 2kg",
+                  "price": "306",
+                  "count": "2"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "hrvstrs m grain2kg",
+                  "price": "177.00",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "hrvstrs m grain 2kg",
+                  "price": "177",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "fib brisket",
+                  "price": "496.39",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "fib brisket",
+                  "price": "496.39",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "p fresca bangus xl",
+                  "price": "310.70",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "p fresca bangus xl",
+                  "price": "310.7",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "mont sirloin jrp",
+                  "price": "1909.33",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "mont sirloin jrp",
+                  "price": "1273.86",
+                  "count": null
+                },
+                "price_correct": false
+              },
+              {
+                "truth": {
+                  "name": "mont g rnd80 jrp",
+                  "price": "417.17",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "mont g rnd80 jrp",
+                  "price": "417.17",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "dona elena blended",
+                  "price": "177.50",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "dona elena blended",
+                  "price": "177.5",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "gt cfee ep 100g",
+                  "price": "74.45",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "gt cfee ep 100g",
+                  "price": "74.45",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "lipton grntea2gx10",
+                  "price": "77.25",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "lipton grntea 2gx10",
+                  "price": "77.25",
+                  "count": "1"
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "juf thai sce 750ml",
+                  "price": "85.75",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "juf thai sce 750ml",
+                  "price": "85.75",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "kremtofcreamer450g",
+                  "price": "82.85",
+                  "count": "1"
+                },
+                "prediction": {
+                  "name": "krehtop creamer 450g",
+                  "price": "82.85",
+                  "count": null
+                },
+                "price_correct": true
+              },
+              {
+                "truth": {
+                  "name": "pf dried danggit",
+                  "price": "142.89",
+                  "count": null
+                },
+                "prediction": {
+                  "name": "pf dried danggit",
+                  "price": "142.89",
+                  "count": null
+                },
+                "price_correct": true
+              }
+            ]
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 1
+      },
+      "donut-ph-v3b": {
+        "missing_or_failed_receipts": 2,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 0,
+        "perfect_receipts": 0,
+        "matched_items": 0,
+        "matched_prices": 0,
+        "matched_exact_name_prices": 0,
+        "matched_counts": 0,
+        "count_compared": 0,
+        "receipts": 3,
+        "item_precision": 0.0,
+        "item_recall": 0.0,
+        "item_price_f1": 0.0,
+        "strict_name_price_f1": 0.0,
+        "exact_price_accuracy_on_matches": 0.0,
+        "count_accuracy": 0.0,
+        "count_coverage": 0.0,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 20.837875153005978,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": false,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 0,
+            "matches": []
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 2
+      },
+      "donut-ph-synth-v1": {
+        "missing_or_failed_receipts": 3,
+        "ground_truth_items": 64,
+        "count_eligible": 34,
+        "predicted_items": 0,
+        "perfect_receipts": 0,
+        "matched_items": 0,
+        "matched_prices": 0,
+        "matched_exact_name_prices": 0,
+        "matched_counts": 0,
+        "count_compared": 0,
+        "receipts": 3,
+        "item_precision": 0.0,
+        "item_recall": 0.0,
+        "item_price_f1": 0.0,
+        "strict_name_price_f1": 0.0,
+        "exact_price_accuracy_on_matches": 0.0,
+        "count_accuracy": 0.0,
+        "count_coverage": 0.0,
+        "perfect_receipt_rate": 0.0,
+        "mean_seconds": 23.41587143067348,
+        "latency_receipts": 3,
+        "details": [
+          {
+            "id": "ph-0170-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 29,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0177-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 23,
+            "prediction_count": 0,
+            "matches": []
+          },
+          {
+            "id": "ph-0188-original",
+            "failed": true,
+            "perfect": false,
+            "truth_count": 12,
+            "prediction_count": 0,
+            "matches": []
+          }
+        ],
+        "recorded_attempts": 3,
+        "recorded_failed_attempts": 3
+      }
+    }
+  },
+  "verification": {
+    "manifest_hash_unchanged": true,
+    "harness_hashes_unchanged": true,
+    "source_image_hashes_verified": true,
+    "model_weight_hashes_verified_before_inference": true,
+    "checks": "8 receipt sums + 58 quantity/unit-price products passed; combined label gate passed; 8 label/scorer tests passed",
+    "donut_process_exit": 0,
+    "groq_process_exit": 0
+  },
+  "decision": {
+    "production": "Keep Groq; no app, provider or deployment changes",
+    "new_training": "Not run: no evidence that further training alone addresses the observed invalid output and long-receipt failures",
+    "next_experiment": "Investigate output contract/cap handling and image resolution or receipt segmentation on development data. These three frozen challenge receipts must stay excluded from training.",
+    "actual_pricecraft_evaluation": "Still unavailable; public merchant-holdout convenience challenge cannot establish actual PriceCraft receipt accuracy"
+  },
+  "local_artifacts": {
+    "root": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/original-review-v1",
+    "gallery": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/original-review-v1/review.html",
+    "labels": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/original-review-v1/checked-originals-v1.jsonl",
+    "combined_labels": "/Users/johnlesterescarlan/Personal Projects/pricecraft/.receipt-ml/philippines/checked-v4.jsonl"
+  }
+}
