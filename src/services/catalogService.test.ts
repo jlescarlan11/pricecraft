@@ -1,11 +1,13 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { catalogService } from './catalogService';
 
+const cloud = vi.hoisted(() => ({ upsert: vi.fn(() => Promise.resolve({ error: null })) }));
+
 // Mock the supabase client so the service stays offline in tests.
 vi.mock('../lib/supabase', () => ({
   supabase: {
     from: () => ({
-      upsert: () => Promise.resolve({ error: null }),
+      upsert: cloud.upsert,
       delete: () => ({ eq: () => Promise.resolve({ error: null }) }),
       select: () => ({
         eq: () => Promise.resolve({ data: [], error: null }),
@@ -18,6 +20,7 @@ vi.mock('../lib/supabase', () => ({
 describe('catalogService', () => {
   beforeEach(() => {
     catalogService._clearLocal();
+    cloud.upsert.mockClear();
     // Force offline behavior so we exercise the sync queue path.
     Object.defineProperty(navigator, 'onLine', { value: false, configurable: true });
   });
@@ -109,3 +112,32 @@ describe('catalogService', () => {
     expect(queue.some((q) => q.action.type === 'save-receipt')).toBe(true);
   });
 });
+
+it.each([true, false])(
+  'does not leak raw receipt text through catalog sync (initially online: %s)',
+  async (online) => {
+    Object.defineProperty(navigator, 'onLine', { value: online, configurable: true });
+    cloud.upsert.mockClear();
+    catalogService._clearLocal();
+    await catalogService.saveReceipt({
+      id: 'consent-receipt',
+      userId: 'user-1',
+      storeName: null,
+      scannedAt: '2026-10-25T00:00:00Z',
+      rawOcrText: 'PRIVATE RECEIPT TEXT',
+      lineCount: 1,
+      acceptedCount: 1,
+    });
+    if (!online) {
+      Object.defineProperty(navigator, 'onLine', { value: true, configurable: true });
+      await catalogService.syncPendingItems();
+    }
+    expect(cloud.upsert).toHaveBeenCalledWith(
+      expect.objectContaining({
+        id: 'consent-receipt',
+        raw_ocr_text: null,
+      })
+    );
+    expect(JSON.stringify(cloud.upsert.mock.calls)).not.toContain('PRIVATE RECEIPT TEXT');
+  }
+);

@@ -1,5 +1,14 @@
 import type { ParsedReceiptLine } from './catalog';
 
+export const RECEIPT_CONSENT_VERSION = 'receipt-data-v1';
+export interface ReceiptConsent {
+  version: typeof RECEIPT_CONSENT_VERSION;
+  decidedAt: string;
+  localSave: true;
+  cloudBackup: boolean;
+  modelTraining: boolean;
+}
+
 export interface ReceiptReviewRow {
   id: string;
   sourceIndex: number | null;
@@ -46,4 +55,8 @@ export interface ReceiptExample extends ReceiptCapture {
   syncedRevision: number;
   updatedAt: string;
   reviews: ReceiptReview[];
+  // Missing on legacy records: never interpret missing permission as an opt-in.
+  consent?: ReceiptConsent;
+  consentHistory?: ReceiptConsent[];
+  cloudCopyMayExist?: boolean;
 }

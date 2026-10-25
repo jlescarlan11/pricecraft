@@ -156,7 +156,9 @@ function receiptToDb(item: ReceiptScan) {
     user_id: item.userId,
     store_name: item.storeName,
     scanned_at: item.scannedAt,
-    raw_ocr_text: item.rawOcrText,
+    // Full receipt text belongs only in the permission-controlled dataset backup.
+    // This also sanitizes older queued catalog writes at send time.
+    raw_ocr_text: null,
     line_count: item.lineCount,
     accepted_count: item.acceptedCount,
   };

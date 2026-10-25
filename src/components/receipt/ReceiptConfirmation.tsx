@@ -2,7 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Plus } from 'lucide-react';
 import { Button, Input, Select } from '../shared';
 import type { CatalogIngredient, ParsedReceiptLine } from '../../types';
-import type { ReceiptReview, ReceiptReviewRow } from '../../types/receiptDataset';
+import { RECEIPT_CONSENT_VERSION } from '../../types/receiptDataset';
+import type { ReceiptConsent, ReceiptReview, ReceiptReviewRow } from '../../types/receiptDataset';
 import { findClosestCatalogMatch } from '../../services/receiptParser';
 
 interface ReceiptConfirmationProps {
@@ -11,7 +12,9 @@ interface ReceiptConfirmationProps {
   catalog: CatalogIngredient[];
   image?: Blob;
   initialReview?: ReceiptReview;
-  onAccept: (rows: AcceptedRow[], review: ReceiptReview) => Promise<void>;
+  initialConsent?: ReceiptConsent;
+  canBackup?: boolean;
+  onAccept: (rows: AcceptedRow[], review: ReceiptReview, consent: ReceiptConsent) => Promise<void>;
   onCancel: () => void;
 }
 export interface AcceptedRow {
@@ -59,6 +62,8 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
   catalog,
   image,
   initialReview,
+  initialConsent,
+  canBackup = false,
   onAccept,
   onCancel,
 }) => {
@@ -93,6 +98,14 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
   const [showRaw, setShowRaw] = useState(false);
   const [wholeReceiptChecked, setWholeReceiptChecked] = useState(initialReview?.complete || false);
   const [imageUrl, setImageUrl] = useState('');
+  const [cloudBackup, setCloudBackup] = useState(
+    canBackup &&
+      initialConsent?.version === RECEIPT_CONSENT_VERSION &&
+      initialConsent.cloudBackup === true
+  );
+  const [modelTraining, setModelTraining] = useState(
+    initialConsent?.version === RECEIPT_CONSENT_VERSION && initialConsent.modelTraining === true
+  );
   const pendingReview = useRef<ReceiptReview | null>(null);
   useEffect(() => {
     if (!image) return;
@@ -102,6 +115,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
   }, [image]);
   const update = (id: string, patch: Partial<EditableRow>) => {
     pendingReview.current = null;
+    setWholeReceiptChecked(false);
     setRows((current) => current.map((row) => (row.id === id ? { ...row, ...patch } : row)));
   };
   const handleAccept = async () => {
@@ -153,7 +167,13 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
     pendingReview.current = review;
     setSaving(true);
     try {
-      await onAccept(accepted, review);
+      await onAccept(accepted, review, {
+        version: RECEIPT_CONSENT_VERSION,
+        decidedAt: new Date().toISOString(),
+        localSave: true,
+        cloudBackup: canBackup && cloudBackup,
+        modelTraining,
+      });
     } catch (failure) {
       setError(
         failure instanceof Error
@@ -265,11 +285,13 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
                   aria-label="Remove this row"
                   className="text-sm text-rust"
                   onClick={() => {
-                    pendingReview.current = null;
-                    setRows((current) => current.filter((item) => item.id !== row.id));
+                    update(row.id, { label: 'not-product', checked: false });
                   }}
+                  disabled={row.label === 'not-product'}
                 >
-                  Remove added item
+                  {row.label === 'not-product'
+                    ? 'Excluded; retained in correction history'
+                    : 'Remove added item'}
                 </button>
               )}
             </div>
@@ -285,6 +307,7 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
           className="w-full border border-dashed border-border-base py-sm text-sm flex items-center justify-center gap-xs"
           onClick={() => {
             pendingReview.current = null;
+            setWholeReceiptChecked(false);
             setRows((current) => [
               ...current,
               {
@@ -339,6 +362,38 @@ export const ReceiptConfirmation: React.FC<ReceiptConfirmationProps> = ({
             {error}
           </p>
         )}
+        <div className="border border-border-base p-md space-y-sm text-sm">
+          <p>
+            Saving keeps the original receipt photo and your submitted correction history on this
+            device.
+          </p>
+          {canBackup && (
+            <label className="flex items-start gap-sm">
+              <input
+                type="checkbox"
+                checked={cloudBackup}
+                onChange={(event) => setCloudBackup(event.target.checked)}
+              />
+              Back up this receipt and corrections privately to my account.
+            </label>
+          )}
+          <label className="flex items-start gap-sm">
+            <input
+              type="checkbox"
+              checked={modelTraining}
+              onChange={(event) => setModelTraining(event.target.checked)}
+            />
+            Allow this receipt photo and my checked corrections to be used for model training to
+            improve PriceCraft receipt scanning.
+          </label>
+          <p className="text-xs text-ink-500">
+            Both choices are optional. Receipts may contain personal or payment details. Only fully
+            reviewed receipts with training permission enter training exports. Save a review again
+            to change permission; turning off backup removes its cloud copy when connected. This
+            does not change the services used to scan the receipt. Products you choose to add to
+            your catalog still follow normal catalog sync.
+          </p>
+        </div>
         <div className="flex flex-wrap gap-sm justify-end pt-md">
           <Button variant="ghost" onClick={onCancel}>
             Cancel

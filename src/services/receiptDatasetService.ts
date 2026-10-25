@@ -1,10 +1,40 @@
 import { supabase } from '../lib/supabase';
-import type { ReceiptCapture, ReceiptExample, ReceiptReview } from '../types/receiptDataset';
+import { RECEIPT_CONSENT_VERSION } from '../types/receiptDataset';
+import type {
+  ReceiptCapture,
+  ReceiptConsent,
+  ReceiptExample,
+  ReceiptReview,
+} from '../types/receiptDataset';
 
 const DATABASE = 'pricecraft-receipt-dataset';
 const STORE = 'examples';
 const BUCKET = 'receipt-training-images';
 const ownerKey = (userId?: string) => userId || 'guest';
+
+function hasConsent(consent?: ReceiptConsent): consent is ReceiptConsent {
+  return (
+    !!consent &&
+    consent.version === RECEIPT_CONSENT_VERSION &&
+    consent.localSave === true &&
+    typeof consent.cloudBackup === 'boolean' &&
+    typeof consent.modelTraining === 'boolean' &&
+    Number.isFinite(Date.parse(consent.decidedAt))
+  );
+}
+function needsCloudWork(record: ReceiptExample) {
+  if (!hasConsent(record.consent)) return false;
+  return record.consent.cloudBackup
+    ? record.revision !== record.syncedRevision
+    : !!record.cloudCopyMayExist || record.syncedRevision > 0;
+}
+export function isReceiptTrainingEligible(record: ReceiptExample) {
+  return (
+    hasConsent(record.consent) &&
+    record.consent.modelTraining &&
+    record.reviews.at(-1)?.complete === true
+  );
+}
 
 function openDatabase(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -77,6 +107,8 @@ async function update(
 }
 
 function validateReview(record: ReceiptExample, review: ReceiptReview) {
+  if (!hasConsent(record.consent))
+    throw new Error('Confirm receipt saving permission before saving corrections.');
   const sourceIndices = review.rows.flatMap((row) =>
     row.sourceIndex === null ? [] : [row.sourceIndex]
   );
@@ -89,6 +121,16 @@ function validateReview(record: ReceiptExample, review: ReceiptReview) {
   }
   if (new Set(review.rows.map((row) => row.id)).size !== review.rows.length)
     throw new Error('Duplicate review rows.');
+  if (
+    record.reviews
+      .at(-1)
+      ?.rows.some(
+        (previous) =>
+          previous.sourceIndex === null &&
+          !review.rows.some((row) => row.id === previous.id && row.sourceIndex === null)
+      )
+  )
+    throw new Error('Retain earlier added rows and mark removed items as not a product.');
   for (const row of review.rows) {
     if (!['unreviewed', 'product', 'not-product'].includes(row.label))
       throw new Error('Invalid review label.');
@@ -118,7 +160,12 @@ async function imageDataUrl(blob: Blob): Promise<string> {
 const syncs = new Map<string, Promise<{ pending: number }>>();
 
 export const receiptDatasetService = {
-  async saveScan(capture: ReceiptCapture, userId?: string): Promise<void> {
+  async saveScan(
+    capture: ReceiptCapture,
+    userId?: string,
+    consent?: ReceiptConsent
+  ): Promise<void> {
+    if (!hasConsent(consent)) throw new Error('Receipt saving permission is required.');
     const record: ReceiptExample = {
       ...capture,
       schemaVersion: 1,
@@ -127,6 +174,9 @@ export const receiptDatasetService = {
       syncedRevision: 0,
       updatedAt: capture.createdAt,
       reviews: [],
+      consent,
+      consentHistory: [consent],
+      cloudCopyMayExist: false,
     };
     // add, not put: a retry must never replace predictions or erase reviews.
     const existing = await request<ReceiptExample | undefined>('readonly', (store) =>
@@ -135,6 +185,22 @@ export const receiptDatasetService = {
     if (existing) {
       if (existing.ownerId !== record.ownerId)
         throw new Error('Receipt belongs to another account.');
+      await update(capture.id, userId, (current) => {
+        const previous = current.consent;
+        if (
+          hasConsent(previous) &&
+          previous.cloudBackup === consent.cloudBackup &&
+          previous.modelTraining === consent.modelTraining
+        )
+          return current;
+        return {
+          ...current,
+          consent,
+          consentHistory: [...(current.consentHistory || []), consent],
+          revision: current.revision + 1,
+          updatedAt: consent.decidedAt,
+        };
+      });
       return;
     }
     await request('readwrite', (store) => store.add(record));
@@ -157,8 +223,15 @@ export const receiptDatasetService = {
     return request('readonly', (store) => store.index('ownerId').getAll(ownerKey(userId)));
   },
 
-  async exportReviewed(userId?: string): Promise<string> {
-    const records = (await this.list(userId)).filter((record) => record.reviews.at(-1)?.complete);
+  async exportReviewed(
+    userId?: string,
+    purpose: 'personal' | 'training' = 'personal'
+  ): Promise<string> {
+    const records = (await this.list(userId)).filter(
+      (record) =>
+        record.reviews.at(-1)?.complete &&
+        (purpose === 'personal' || isReceiptTrainingEligible(record))
+    );
     const examples = await Promise.all(
       records.map(async (record) => {
         const { original, ocrImage } = record;
@@ -174,6 +247,8 @@ export const receiptDatasetService = {
           ocrEvidence: record.ocrEvidence,
           reviews: record.reviews,
           revision: record.revision,
+          consent: record.consent ?? null,
+          consentHistory: record.consentHistory || [],
           original: { mimeType: original.type, dataUrl: await imageDataUrl(original) },
           ocrImage: { mimeType: ocrImage.type, dataUrl: await imageDataUrl(ocrImage) },
         };
@@ -183,6 +258,7 @@ export const receiptDatasetService = {
       {
         schemaVersion: 1,
         exportedAt: new Date().toISOString(),
+        purpose: purpose === 'training' ? 'model-training' : 'personal-backup',
         labelScope: 'structured-items-not-verbatim-transcription',
         examples,
       },
@@ -194,7 +270,7 @@ export const receiptDatasetService = {
   async sync(userId?: string): Promise<{ pending: number }> {
     if (!userId || !navigator.onLine)
       return {
-        pending: (await this.list(userId)).filter((r) => r.revision !== r.syncedRevision).length,
+        pending: (await this.list(userId)).filter(needsCloudWork).length,
       };
     const running = syncs.get(userId);
     if (running) return running;
@@ -208,53 +284,120 @@ export const receiptDatasetService = {
   },
 
   async syncOwned(userId: string): Promise<{ pending: number }> {
-    const records = await this.list(userId);
-    const pending = records.filter((record) => record.revision !== record.syncedRevision);
-    const { data, error } = await supabase.auth.getSession();
-    if (error || data.session?.user.id !== userId) return { pending: pending.length };
-    for (const record of pending) {
-      try {
-        const originalPath = `${userId}/${record.id}/original`;
-        const ocrPath = `${userId}/${record.id}/ocr-input`;
-        for (const [path, blob] of [
-          [originalPath, record.original],
-          [ocrPath, record.ocrImage],
-        ] as const) {
-          const { error: uploadError } = await supabase.storage.from(BUCKET).upload(path, blob, {
-            contentType: blob.type || 'application/octet-stream',
-            upsert: true,
-          });
-          if (uploadError) throw uploadError;
+    // The module-level map only coalesces this tab. Serialize network writes and
+    // revocation cleanup across tabs before either can clear the cleanup marker.
+    // Without browser coordination, keep the local record and surface pending work.
+    if (!navigator.locks?.request)
+      return { pending: (await this.list(userId)).filter(needsCloudWork).length };
+    return navigator.locks.request(`pricecraft-receipt-sync:${userId}`, async () => {
+      const pending = (await this.list(userId)).filter(needsCloudWork);
+      const { data, error } = await supabase.auth.getSession();
+      if (error || data.session?.user.id !== userId) return { pending: pending.length };
+      // Drain revisions changed during a request, without automatically retrying
+      // failed network operations forever. A remaining failure stays visibly pending.
+      for (let pass = 0; pass < 2; pass++) {
+        const work = (await this.list(userId)).filter(needsCloudWork);
+        const revisions = new Map(work.map((record) => [record.id, record.revision]));
+        const failed = new Set<string>();
+        for (const queued of work) {
+          // Consent may have changed while earlier receipts were syncing.
+          const record = (await this.list(userId)).find((entry) => entry.id === queued.id);
+          if (!record || !needsCloudWork(record)) continue;
+          try {
+            const originalPath = `${userId}/${record.id}/original`;
+            const ocrPath = `${userId}/${record.id}/ocr-input`;
+            if (!record.consent?.cloudBackup) {
+              // Remove permission-bearing metadata before image cleanup, so failed
+              // image removal cannot leave a stale training-eligible cloud row.
+              const { error: deleteError } = await supabase
+                .from('receipt_training_examples')
+                .delete()
+                .eq('id', record.id)
+                .eq('user_id', userId);
+              if (deleteError) throw deleteError;
+              const { error: removeError } = await supabase.storage
+                .from(BUCKET)
+                .remove([originalPath, ocrPath]);
+              if (removeError) throw removeError;
+              await update(record.id, userId, (current) => ({
+                ...current,
+                syncedRevision: 0,
+                cloudCopyMayExist: false,
+              }));
+              continue;
+            }
+            // Persist this before any upload. Interrupted/partially successful
+            // uploads must remain removable even without a successful metadata row.
+            await update(record.id, userId, (current) =>
+              current.revision === record.revision && current.consent?.cloudBackup
+                ? { ...current, cloudCopyMayExist: true }
+                : current
+            );
+            for (const [path, blob] of [
+              [originalPath, record.original],
+              [ocrPath, record.ocrImage],
+            ] as const) {
+              const beforeUpload = (await this.list(userId)).find(
+                (entry) => entry.id === record.id
+              );
+              if (!beforeUpload?.consent?.cloudBackup || beforeUpload.revision !== record.revision)
+                break;
+              const { error: uploadError } = await supabase.storage
+                .from(BUCKET)
+                .upload(path, blob, {
+                  contentType: blob.type || 'application/octet-stream',
+                  upsert: true,
+                });
+              if (uploadError) throw uploadError;
+              const current = (await this.list(userId)).find((entry) => entry.id === record.id);
+              if (!current || current.revision !== record.revision) break;
+            }
+            const latest = (await this.list(userId)).find((current) => current.id === record.id);
+            if (!latest || latest.revision !== record.revision) continue;
+            const { error: saveError } = await supabase.from('receipt_training_examples').upsert({
+              id: record.id,
+              user_id: userId,
+              schema_version: record.schemaVersion,
+              original_path: originalPath,
+              ocr_path: ocrPath,
+              original_name: record.originalName,
+              original_mime: record.original.type,
+              ocr_mime: record.ocrImage.type,
+              raw_ocr_text: record.rawText,
+              predicted_lines: record.predictedLines,
+              scan_metadata: {
+                ...record.metadata,
+                collectionConsent: record.consent,
+                consentHistory: record.consentHistory || [],
+              },
+              ocr_evidence: record.ocrEvidence ?? null,
+              reviews: record.reviews,
+              revision: record.revision,
+              created_at: record.createdAt,
+              updated_at: record.updatedAt,
+            });
+            if (saveError) throw saveError;
+            await update(record.id, userId, (current) => ({
+              ...current,
+              syncedRevision: record.revision,
+              cloudCopyMayExist: true,
+            }));
+          } catch {
+            failed.add(record.id);
+            // Keep the durable local record pending. Never claim a cloud save on error.
+          }
         }
-        const { error: saveError } = await supabase.from('receipt_training_examples').upsert({
-          id: record.id,
-          user_id: userId,
-          schema_version: record.schemaVersion,
-          original_path: originalPath,
-          ocr_path: ocrPath,
-          original_name: record.originalName,
-          original_mime: record.original.type,
-          ocr_mime: record.ocrImage.type,
-          raw_ocr_text: record.rawText,
-          predicted_lines: record.predictedLines,
-          scan_metadata: record.metadata,
-          ocr_evidence: record.ocrEvidence ?? null,
-          reviews: record.reviews,
-          revision: record.revision,
-          created_at: record.createdAt,
-          updated_at: record.updatedAt,
-        });
-        if (saveError) throw saveError;
-        await update(record.id, userId, (current) => ({
-          ...current,
-          syncedRevision: record.revision,
-        }));
-      } catch {
-        // Keep the durable local record pending. Never claim a cloud save on error.
+        const remaining = (await this.list(userId)).filter(needsCloudWork);
+        if (
+          !remaining.some(
+            (record) => !failed.has(record.id) && revisions.get(record.id) !== record.revision
+          )
+        )
+          break;
       }
-    }
-    return {
-      pending: (await this.list(userId)).filter((r) => r.revision !== r.syncedRevision).length,
-    };
+      return {
+        pending: (await this.list(userId)).filter(needsCloudWork).length,
+      };
+    });
   },
 };

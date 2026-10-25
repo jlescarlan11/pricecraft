@@ -11,7 +11,7 @@ import { useToast } from '../components/shared/Toast';
 import { Button, PageHeader } from '../components/shared';
 import { receiptDatasetService } from '../services/receiptDatasetService';
 import { ReceiptDatasetPanel } from '../components/receipt/ReceiptDatasetPanel';
-import type { ReceiptExample, ReceiptReview } from '../types/receiptDataset';
+import type { ReceiptConsent, ReceiptExample, ReceiptReview } from '../types/receiptDataset';
 
 export const ScanReceiptPage: React.FC = () => {
   const { user } = useAuth();
@@ -28,13 +28,17 @@ const ScanReceiptWorkspace: React.FC = () => {
   const activeCapture = savedExample || capture;
   const toast = useToast();
 
-  const handleAccept = async (rows: AcceptedRow[], review: ReceiptReview) => {
+  const handleAccept = async (
+    rows: AcceptedRow[],
+    review: ReceiptReview,
+    consent: ReceiptConsent
+  ) => {
     if (!activeCapture) throw new Error('Receipt image is unavailable. Please scan again.');
     const receiptId = activeCapture.id;
     const scannedAt = activeCapture.createdAt;
     // Persist the source and labels before any catalog mutation. Storage errors
     // leave the review screen intact so the user can retry without losing edits.
-    await receiptDatasetService.saveScan(activeCapture, user?.id);
+    await receiptDatasetService.saveScan(activeCapture, user?.id, consent);
     await receiptDatasetService.saveReview(receiptId, user?.id, review);
     setDatasetRevision((value) => value + 1);
     await catalogService.saveReceipt({
@@ -117,6 +121,8 @@ const ScanReceiptWorkspace: React.FC = () => {
           rawText={activeCapture.rawText}
           image={activeCapture.ocrImage}
           initialReview={savedExample?.reviews.at(-1)}
+          initialConsent={savedExample?.consent}
+          canBackup={!!user}
           catalog={catalog}
           onAccept={handleAccept}
           onCancel={() => {

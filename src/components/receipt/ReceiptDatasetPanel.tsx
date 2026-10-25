@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
-import { receiptDatasetService } from '../../services/receiptDatasetService';
+import {
+  isReceiptTrainingEligible,
+  receiptDatasetService,
+} from '../../services/receiptDatasetService';
 import type { ReceiptExample } from '../../types/receiptDataset';
 import { Button } from '../shared';
 
@@ -27,7 +30,7 @@ export function ReceiptDatasetPanel({
       const { pending } = await receiptDatasetService.sync(userId);
       setMessage(
         userId && pending
-          ? 'Saved on this device. Cloud backup is pending; retry when connected.'
+          ? 'Saved on this device. Cloud backup or removal is pending; retry when connected.'
           : ''
       );
       await refresh();
@@ -44,14 +47,15 @@ export function ReceiptDatasetPanel({
     return () => window.removeEventListener('online', online);
   }, [refresh, sync, refreshToken]);
   const completeCount = records.filter((record) => record.reviews.at(-1)?.complete).length;
-  const exportData = async () => {
+  const trainingCount = records.filter(isReceiptTrainingEligible).length;
+  const exportData = async (purpose: 'personal' | 'training') => {
     setBusy(true);
     try {
-      const json = await receiptDatasetService.exportReviewed(userId);
+      const json = await receiptDatasetService.exportReviewed(userId, purpose);
       const url = URL.createObjectURL(new Blob([json], { type: 'application/json' }));
       const link = document.createElement('a');
       link.href = url;
-      link.download = `pricecraft-receipts-${new Date().toISOString().slice(0, 10)}.json`;
+      link.download = `pricecraft-${purpose === 'training' ? 'training-' : ''}receipts-${new Date().toISOString().slice(0, 10)}.json`;
       link.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     } catch {
@@ -65,7 +69,9 @@ export function ReceiptDatasetPanel({
       <h2 className="text-lg font-medium">Saved receipts</h2>
       <p className="text-sm text-ink-500">
         {records.length} saved on this device · {completeCount} fully reviewed. Exports include
-        photos, original predictions, and correction history for your training dataset.
+        photos, original predictions, and submitted correction history. {trainingCount} receipts
+        have current permission for training and are fully reviewed. Permission can be changed by
+        reviewing a saved receipt.
       </p>
       {!userId && (
         <p className="text-xs text-ink-500">
@@ -82,9 +88,20 @@ export function ReceiptDatasetPanel({
           variant="secondary"
           disabled={!completeCount || busy}
           isLoading={busy}
-          onClick={exportData}
+          onClick={() => {
+            void exportData('personal');
+          }}
         >
           Export reviewed receipts
+        </Button>
+        <Button
+          variant="secondary"
+          disabled={!trainingCount || busy}
+          onClick={() => {
+            void exportData('training');
+          }}
+        >
+          Export training dataset
         </Button>
         {userId && (
           <Button
@@ -109,7 +126,14 @@ export function ReceiptDatasetPanel({
                 <span className="text-sm break-all">
                   {record.originalName} ·{' '}
                   {record.reviews.at(-1)?.complete ? 'Reviewed' : 'Needs review'} ·{' '}
-                  {record.syncedRevision === record.revision ? 'Backed up' : 'On this device'}
+                  {!record.consent
+                    ? 'Confirm permission before backup or training'
+                    : record.consent.cloudBackup && record.syncedRevision === record.revision
+                      ? 'Backed up'
+                      : !record.consent.cloudBackup &&
+                          (record.cloudCopyMayExist || record.syncedRevision > 0)
+                        ? 'Cloud removal pending'
+                        : 'On this device'}
                 </span>
                 <Button size="sm" variant="ghost" onClick={() => onReview(record)}>
                   Review

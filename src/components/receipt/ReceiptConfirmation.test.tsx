@@ -112,3 +112,54 @@ describe('receipt review labels', () => {
     expect(screen.getByLabelText('Item')).toHaveValue('Rice');
   });
 });
+
+it('requires separate opt-ins for cloud backup and training while disclosing local save', async () => {
+  const accept = vi.fn().mockResolvedValue(undefined);
+  render(
+    <ReceiptConfirmation
+      lines={[]}
+      rawText=""
+      catalog={[]}
+      canBackup
+      onAccept={accept}
+      onCancel={() => {}}
+    />
+  );
+  expect(screen.getByLabelText(/back up.*privately/i)).not.toBeChecked();
+  expect(screen.getByLabelText(/allow.*model training/i)).not.toBeChecked();
+  expect(screen.getByText(/saving.*original.*this device/i)).toBeInTheDocument();
+  fireEvent.click(screen.getByLabelText(/allow.*model training/i));
+  fireEvent.click(screen.getByRole('button', { name: 'Save review' }));
+  await waitFor(() => expect(accept).toHaveBeenCalled());
+  expect(accept.mock.calls[0][2]).toMatchObject({
+    version: 'receipt-data-v1',
+    localSave: true,
+    cloudBackup: false,
+    modelTraining: true,
+  });
+});
+
+it('keeps a removed manual item as a negative correction instead of erasing it', async () => {
+  const accept = vi.fn().mockResolvedValue(undefined);
+  render(
+    <ReceiptConfirmation lines={[]} rawText="" catalog={[]} onAccept={accept} onCancel={() => {}} />
+  );
+  fireEvent.click(screen.getByRole('button', { name: /add another item/i }));
+  fireEvent.change(screen.getByLabelText('Item'), { target: { value: 'Mistaken extra item' } });
+  fireEvent.change(screen.getByLabelText('Price'), { target: { value: '50' } });
+  fireEvent.click(screen.getByRole('button', { name: 'Remove this row' }));
+  fireEvent.click(screen.getByLabelText(/checked the whole receipt/i));
+  fireEvent.click(screen.getByRole('button', { name: 'Save review' }));
+  await waitFor(() => expect(accept).toHaveBeenCalled());
+  expect(accept.mock.calls[0][1]).toMatchObject({
+    complete: true,
+    rows: [
+      {
+        sourceIndex: null,
+        label: 'not-product',
+        includeInCatalog: false,
+        values: { itemName: 'Mistaken extra item', price: 50 },
+      },
+    ],
+  });
+});

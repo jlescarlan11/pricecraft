@@ -82,8 +82,8 @@ export const ReceiptScanner: React.FC<ReceiptScannerProps> = ({
             <p className="text-ink-500 text-sm mt-xs max-w-md">
               For best results: lay the receipt flat on a plain surface, fill the frame, and use
               good light. Configured OCR services may process the image or text. Saving a review
-              keeps the photo and corrections on this device and syncs them privately to your
-              account when signed in.
+              keeps the photo and corrections on this device. You can separately choose private
+              account backup and allow your checked receipts to help improve receipt scanning.
             </p>
             <ul className="text-xs text-ink-500 mt-md max-w-md mx-auto text-left list-disc pl-md space-y-xs">
               <li>Crop tight — don&apos;t include hands, the floor, or the background.</li>
