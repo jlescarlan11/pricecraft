@@ -1,25 +1,26 @@
-import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createElement } from 'react';
+import { act, renderHook, render, screen } from '@testing-library/react';
+import { ReceiptConfirmation } from '../components/receipt/ReceiptConfirmation';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { useReceiptScan } from './use-receipt-scan';
 
-const ocr = vi.hoisted(() => ({ recognize: vi.fn(), preprocess: vi.fn() }));
+const ocr = vi.hoisted(() => ({ recognize: vi.fn(), preprocess: vi.fn(), groqEnabled: false }));
 vi.mock('../services/ocrSpaceService', () => ({
   hasOcrSpaceKey: () => true,
   recognizeWithOcrSpace: ocr.recognize,
 }));
 vi.mock('../components/receipt/imagePreprocess', () => ({ preprocessImage: ocr.preprocess }));
-vi.mock('../services/groqService', () => ({
-  hasGroqKey: () => false,
-  extractItemsWithGroq: vi.fn(),
+vi.mock('../services/groqService', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('../services/groqService')>()),
+  hasGroqKey: () => ocr.groqEnabled,
 }));
 
 beforeEach(() => {
-  ocr.recognize
-    .mockReset()
-    .mockResolvedValue({
-      text: 'Rice 1kg 177.00N',
-      raw: { ParsedResults: [{ TextOverlay: { Lines: [] } }] },
-    });
+  ocr.groqEnabled = false;
+  ocr.recognize.mockReset().mockResolvedValue({
+    text: 'Rice 1kg 177.00N',
+    raw: { ParsedResults: [{ TextOverlay: { Lines: [] } }] },
+  });
   ocr.preprocess.mockReset().mockResolvedValue(new Blob(['processed'], { type: 'image/jpeg' }));
 });
 
@@ -71,4 +72,49 @@ describe('scan capture provenance', () => {
     expect(result.current.capture?.originalName).toBe('two.jpg');
     expect(result.current.rawText).toBe('Rice 1kg 177.00N');
   });
+});
+
+afterEach(() => {
+  vi.unstubAllEnvs();
+  vi.unstubAllGlobals();
+});
+
+it('carries the extracted purchased amount through the scan capture into editable review fields', async () => {
+  ocr.groqEnabled = true;
+  vi.stubEnv('VITE_GROQ_API_KEY', 'test-key');
+  ocr.recognize.mockResolvedValue({ text: 'Demo Chocolate 200G 22.95V\nTOTAL 22.95', raw: {} });
+  vi.stubGlobal(
+    'fetch',
+    vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({
+        choices: [
+          {
+            message: {
+              content: JSON.stringify({
+                items: [{ name: 'Demo Chocolate', quantity: 1, unit: 'g', price: 22.95 }],
+              }),
+            },
+          },
+        ],
+      }),
+    })
+  );
+  const { result } = renderHook(() => useReceiptScan());
+  await act(() =>
+    result.current.scan(new File(['original'], 'receipt.png', { type: 'image/png' }))
+  );
+  expect(result.current.capture?.predictedLines[0]).toMatchObject({ quantity: 200, unit: 'g' });
+  render(
+    createElement(ReceiptConfirmation, {
+      lines: result.current.result!.lines,
+      rawText: result.current.rawText,
+      catalog: [],
+      onAccept: async () => {},
+      onCancel: () => {},
+    })
+  );
+  expect(screen.getByLabelText('Qty')).toHaveValue(200);
+  expect(screen.getByLabelText('Unit')).toHaveValue('g');
+  expect(screen.getByText('OCR: Demo Chocolate 200G 22.95V')).toBeInTheDocument();
 });

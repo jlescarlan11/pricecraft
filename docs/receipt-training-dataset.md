@@ -13,11 +13,15 @@ and evaluated, but it did not improve the pretrained Donut baseline and is not
 connected to the scan workflow.
 Removing Groq selects the heuristic path; it does not select a newly trained model.
 
-The quantity follow-up uses extractor version `prompt-v2:quantity-evidence-v1`.
+The quantity follow-up uses extractor version `prompt-v2:quantity-evidence-v2`.
 Quantities mean purchased amounts, not package counts. Unambiguous same-name,
 same-price parser evidence supplies quantities and source text to Groq results;
-merged purchases and ambiguous matches are not overwritten. Unknown quantities
-remain unknown. This is a prompt and validation change, not a training run.
+merged purchases and ambiguous matches are not overwritten. Printed size identity
+is retained when matching variants, and rows with multiple count/size expressions
+are left to the extractor. Common unit aliases are normalized to review options;
+invalid quantities and unsupported units remain unknown. Missing heuristic
+amounts do not erase measured amounts supplied by the extractor. This is a prompt
+and validation change, not a training run. See [quantity repair](receipt-quantity-extraction.md).
 
 ## Reviewing a receipt
 

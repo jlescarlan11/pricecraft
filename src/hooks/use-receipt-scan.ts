@@ -6,7 +6,12 @@ import {
 } from '../services/receiptParser';
 import { preprocessImage } from '../components/receipt/imagePreprocess';
 import { hasOcrSpaceKey, recognizeWithOcrSpace } from '../services/ocrSpaceService';
-import { hasGroqKey, extractItemsWithGroq, GROQ_MODEL } from '../services/groqService';
+import {
+  hasGroqKey,
+  extractItemsWithGroq,
+  GROQ_MODEL,
+  GROQ_EXTRACTOR_VERSION,
+} from '../services/groqService';
 import type { ReceiptCapture } from '../types/receiptDataset';
 
 export type ScanStatus =
@@ -83,7 +88,7 @@ export function useReceiptScan() {
           try {
             const items = await extractItemsWithGroq(text);
             if (items.length > 0) {
-              extractor = `groq:${GROQ_MODEL}:prompt-v1`;
+              extractor = `groq:${GROQ_MODEL}:${GROQ_EXTRACTOR_VERSION}`;
               return { rawText: text, lines: items };
             }
           } catch (e) {

@@ -4,11 +4,13 @@
 //   VITE_GROQ_API_KEY=gsk_...
 
 import type { ParsedReceiptLine } from '../types';
+import { normalizeIngredientName, parseReceipt } from './receiptParser';
 
 const ENDPOINT = 'https://api.groq.com/openai/v1/chat/completions';
 // Groq's supported replacement for Llama 3.3 70B, retired from free/developer
 // usage in August 2026. Supports the JSON object response format used below.
 export const GROQ_MODEL = 'openai/gpt-oss-120b';
+export const GROQ_EXTRACTOR_VERSION = 'prompt-v2:quantity-evidence-v2';
 
 export function hasGroqKey(): boolean {
   const key = import.meta.env.VITE_GROQ_API_KEY;
@@ -99,13 +101,20 @@ are NEVER emitted as separate items.
 
 4. MERGE duplicates:
    - N identical billable lines (same name, same per-line price) → ONE object
-     with quantity = N and price = (per-line price × N).
+     with total purchased quantity (rule 5) and price = (per-line price × N).
    - Distinct items sharing part of a name stay separate.
 
-5. QUANTITY:
+5. QUANTITY is the TOTAL PURCHASED AMOUNT in the returned unit, not package count:
    - "3 PCS x 25.00 = 75.00" or "3 @ 25" → quantity 3, price 75 (line total).
-   - "Coca-Cola 1.5L" → quantity 1; "1.5L" is the size, not the count.
-   - Duplicates merged per rule 4 → quantity = N.
+   - "Coca-Cola 1.5L" → quantity 1.5, unit l. Two such bottles → quantity 3, unit l.
+   - "Chocolate 200G" → quantity 200, unit g, never 1 g. Two packs → 400 g.
+   - A weighted product priced 134.30 followed by "0.34 KG x @395.00"
+     → quantity 0.34, unit kg, price 134.30. The following row describes the
+     purchased weight, not a separate billable item. Confirm weight × unit price
+     agrees with the billed amount before using it.
+   - For merged duplicates, add their purchased amounts in the same unit.
+   - When no purchased amount is supported by the receipt, return quantity null
+     and unit null. Do not invent a default quantity of 1.
 
 6. UNIT: one of kg, g, l, ml, pcs, pack, sachet, btl, can, box, dozen — or
    null if unclear.
@@ -142,7 +151,7 @@ OUTPUT:
   {"name":"Flour APUR","quantity":1,"unit":"kg","price":65},
   {"name":"White Sugar","quantity":1,"unit":"kg","price":72},
   {"name":"Eggs Large","quantity":12,"unit":"pcs","price":96},
-  {"name":"COKE 1.5L","quantity":2,"unit":null,"price":160}
+  {"name":"COKE 1.5L","quantity":3,"unit":"l","price":160}
 ]}
 
 ## Example 2 — combo meal with section markers and sub-components
@@ -173,8 +182,8 @@ SUBTOTAL    780.00
 OUTPUT:
 {"items":[
   {"name":"Plain Box S","quantity":2,"unit":"pcs","price":0},
-  {"name":"Burger Combo","quantity":1,"unit":null,"price":420},
-  {"name":"Chicken Strips 3pc","quantity":2,"unit":null,"price":360}
+  {"name":"Burger Combo","quantity":null,"unit":null,"price":420},
+  {"name":"Chicken Strips 3pc","quantity":6,"unit":"pcs","price":360}
 ]}
 
 Reasoning:
@@ -182,7 +191,7 @@ Reasoning:
   unit 0; OCR may show "80.00" — ignore, trust the parent's 0.
 - Burger Combo: header price 420. Everything beneath (Base Price, Beef Patty,
   Soft Drink, @40.00, Curly Fries) is meal contents — skip.
-- Chicken Strips 3pc: billed twice at 180. Merge to qty 2, price 360. The
+- Chicken Strips 3pc: billed twice at 180. Merge to qty 6 pcs, price 360. The
   "Combo Add-on" + "None" lines are dip selections, not separate purchases.
 - SUBTOTAL excluded.
 
@@ -203,6 +212,68 @@ function coerceString(v: unknown): string | undefined {
     return t ? t : undefined;
   }
   return undefined;
+}
+
+const REVIEW_UNITS = new Set([
+  'kg',
+  'g',
+  'l',
+  'ml',
+  'pcs',
+  'pack',
+  'sachet',
+  'btl',
+  'can',
+  'box',
+  'dozen',
+]);
+const UNIT_ALIASES: Record<string, string> = {
+  kgs: 'kg',
+  kilogram: 'kg',
+  kilograms: 'kg',
+  gram: 'g',
+  grams: 'g',
+  gm: 'g',
+  gms: 'g',
+  liter: 'l',
+  liters: 'l',
+  litre: 'l',
+  litres: 'l',
+  milliliter: 'ml',
+  milliliters: 'ml',
+  millilitre: 'ml',
+  millilitres: 'ml',
+  pc: 'pcs',
+  piece: 'pcs',
+  pieces: 'pcs',
+  packs: 'pack',
+  pck: 'pack',
+  sachets: 'sachet',
+  bottle: 'btl',
+  bottles: 'btl',
+  cans: 'can',
+  boxes: 'box',
+  dz: 'dozen',
+};
+function reviewUnit(value: unknown): string | undefined {
+  const text = coerceString(value)?.toLowerCase().replace(/\.$/, '');
+  if (!text) return undefined;
+  const unit = UNIT_ALIASES[text] || text;
+  return REVIEW_UNITS.has(unit) ? unit : undefined;
+}
+const AMOUNT_UNIT_RE = new RegExp(
+  `\\b(\\d+(?:\\.\\d+)?)\\s*(${[...REVIEW_UNITS, ...Object.keys(UNIT_ALIASES)].sort((a, b) => b.length - a.length).join('|')})\\b`,
+  'gi'
+);
+function amountUnits(text: string): string[] {
+  return Array.from(
+    text.matchAll(AMOUNT_UNIT_RE),
+    (match) => `${Number(match[1])}:${reviewUnit(match[2])}`
+  );
+}
+function positiveQuantity(value: unknown): number | undefined {
+  const amount = coerceNumber(value);
+  return amount !== undefined && amount > 0 ? amount : undefined;
 }
 
 export async function extractItemsWithGroq(ocrText: string): Promise<ParsedReceiptLine[]> {
@@ -249,17 +320,55 @@ export async function extractItemsWithGroq(ocrText: string): Promise<ParsedRecei
       : [];
 
   const result: ParsedReceiptLine[] = [];
+  const sourceLines = parseReceipt(ocrText).lines;
+  // Reconcile only unambiguous same-name, same-price rows. A merged purchase
+  // must not inherit the amount from a single pack. Ignore trailing OCR tax
+  // noise such as "2V" when matching, without changing the stored source text.
+  const nameKey = (name: string) =>
+    normalizeIngredientName(name.replace(AMOUNT_UNIT_RE, ' ')).replace(/\s+\d+[vnz]$/i, '');
   for (const item of items) {
     const name = coerceString(item.name);
     const price = coerceNumber(item.price);
     if (!name || !price || price <= 0) continue;
+    const namedAmounts = amountUnits(name);
+    const compatible = sourceLines.filter(
+      (line) =>
+        nameKey(line.itemName) === nameKey(name) &&
+        namedAmounts.every((amount) => amountUnits(line.rawText).includes(amount))
+    );
+    // A price equal to a merged total can also be another variant's single-row
+    // price. Keep size identity, and abstain when several source rows could
+    // contribute rather than borrowing the amount from just the matching price.
+    const source =
+      compatible.length === 1 && Math.abs(compatible[0].price - price) < 0.005
+        ? compatible[0]
+        : undefined;
+    // The basic parser does not resolve count × pack-size expressions. Leave
+    // those to the extractor. A following weight × unit-price line is different:
+    // the parser already validates its arithmetic against the billed amount.
+    const sourceQuantity = positiveQuantity(source?.quantity);
+    const sourceUnit = reviewUnit(source?.unit);
+    const modelQuantity = positiveQuantity(item.quantity);
+    const modelUnit = reviewUnit(item.unit);
+    const useSourceQuantity =
+      source &&
+      sourceQuantity !== undefined &&
+      sourceUnit !== undefined &&
+      amountUnits(source.rawText).length === 1 &&
+      !/^\s*\d+(?:\.\d+)?\s*(?:x|@|pcs?)\b/i.test(source.rawText) &&
+      !/(?:\bx\b|×)\s*\d+(?:\.\d+)?\b/i.test(source.rawText.split('\n')[0]);
+    // Missing heuristic evidence must not erase a measured amount extracted from
+    // another receipt line. An unsupported default count on a matched bare item
+    // stays unknown when neither source amount nor model unit establishes it.
+    const fallbackQuantity =
+      modelUnit || !source || sourceQuantity !== undefined ? modelQuantity : undefined;
     result.push({
-      rawText: '',
+      rawText: source?.rawText || '',
       itemName: name,
-      quantity: coerceNumber(item.quantity),
-      unit: coerceString(item.unit)?.toLowerCase(),
+      quantity: useSourceQuantity ? sourceQuantity : fallbackQuantity,
+      unit: useSourceQuantity ? sourceUnit : modelUnit,
       price,
-      confidence: 0.95,
+      confidence: source ? Math.min(0.95, source.confidence) : 0.95,
     });
   }
   return result;
